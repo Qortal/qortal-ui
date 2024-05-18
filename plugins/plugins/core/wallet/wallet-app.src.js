@@ -53,8 +53,8 @@ class MultiWallet extends LitElement {
 			nodeConfig: { type: Object },
 			nodeDomain: { type: String },
 			theme: { type: String, reflect: true },
-			amount: { type: Number },
-			recipient: { type: String },
+			qortAmount: { type: Number },
+			qortRecipient: { type: String },
 			btcRecipient: { type: String },
 			btcAmount: { type: Number },
 			ltcRecipient: { type: String },
@@ -172,7 +172,7 @@ class MultiWallet extends LitElement {
 		this.dgbBookAddress = ''
 		this.rvnBookAddress = ''
 		this.arrrBookAddress = ''
-		this.recipient = ''
+		this.qortRecipient = ''
 		this.btcRecipient = ''
 		this.ltcRecipient = ''
 		this.dogeRecipient = ''
@@ -196,7 +196,7 @@ class MultiWallet extends LitElement {
 		this.btnDisable = false
 		this.qortWarning = false
 		this.balance = 0
-		this.amount = 0
+		this.qortAmount = 0
 		this.btcAmount = 0
 		this.ltcAmount = 0
 		this.dogeAmount = 0
@@ -292,31 +292,7 @@ class MultiWallet extends LitElement {
 
 	refreshWallet() {
 		const coin = this._selectedWallet
-		switch (coin) {
-			case 'qort':
-				this.tabWalletQort()
-				break
-			case 'arrr':
-				this.tabWalletArrr()
-				break
-			case 'btc':
-				this.tabWalletBtc()
-				break;
-			case 'ltc':
-				this.tabWalletLtc()
-				break;
-			case 'doge':
-				this.tabWalletDoge()
-				break
-			case 'dgb':
-				this.tabWalletDgb()
-				break;
-			case 'rvn':
-				this.tabWalletRvn()
-				break
-			default:
-				break
-		}
+		this.tabWallet(coin)
 	}
 
 	render() {
@@ -329,25 +305,25 @@ class MultiWallet extends LitElement {
 					<hr class="hrstyle">
 				</div>
 				<mwc-tab-bar id="tabs-1" activeIndex="0">
-					<mwc-tab label="Qortal" hasImageIcon minWidth @click="${(e) => this.tabWalletQort()}">
+					<mwc-tab label="Qortal" hasImageIcon minWidth @click="${(e) => this.tabWallet('qort')}">
 						<img slot="icon" width="24px" height="24px" src="/img/qort.png">
 					</mwc-tab>
-					<mwc-tab label="Bitcoin" hasImageIcon minWidth @click="${(e) => this.tabWalletBtc()}">
+					<mwc-tab label="Bitcoin" hasImageIcon minWidth @click="${(e) => this.tabWallet('btc')}">
 						<img slot="icon" width="24px" height="24px" src="/img/btc.png">
 					</mwc-tab>
-					<mwc-tab label="Litecoin" hasImageIcon minWidth @click="${(e) => this.tabWalletLtc()}">
+					<mwc-tab label="Litecoin" hasImageIcon minWidth @click="${(e) => this.tabWallet('ltc')}">
 						<img slot="icon" width="24px" height="24px" src="/img/ltc.png">
 					</mwc-tab>
-					<mwc-tab label="Dogecoin" hasImageIcon minWidth @click="${(e) => this.tabWalletDoge()}">
+					<mwc-tab label="Dogecoin" hasImageIcon minWidth @click="${(e) => this.tabWallet('doge')}">
 						<img slot="icon" width="24px" height="24px" src="/img/doge.png">
 					</mwc-tab>
-					<mwc-tab label="Digibyte" hasImageIcon minWidth @click="${(e) => this.tabWalletDgb()}">
+					<mwc-tab label="Digibyte" hasImageIcon minWidth @click="${(e) => this.tabWallet('dgb')}">
 						<img slot="icon" width="24px" height="24px" src="/img/dgb.png">
 					</mwc-tab>
-					<mwc-tab label="Ravencoin" hasImageIcon minWidth @click="${(e) => this.tabWalletRvn()}">
+					<mwc-tab label="Ravencoin" hasImageIcon minWidth @click="${(e) => this.tabWallet('rvn')}">
 						<img slot="icon" width="24px" height="24px" src="/img/rvn.png">
 					</mwc-tab>
-					<mwc-tab label="Pirate Chain" hasImageIcon minWidth @click="${(e) => this.tabWalletArrr()}">
+					<mwc-tab label="Pirate Chain" hasImageIcon minWidth @click="${(e) => this.tabWallet('arrr')}">
 						<img slot="icon" width="24px" height="24px" src="/img/arrr.png">
 					</mwc-tab>
 				</mwc-tab-bar>
@@ -394,7 +370,7 @@ class MultiWallet extends LitElement {
 						<div id="transactionsDOM"></div>
 					</div>
 				</div>
-				<mwc-dialog id="showTransactionDetailsDialog" scrimClickAction="${this.showTransactionDetailsLoading ? '' : 'close'}">
+				<mwc-dialog id="showQortTransactionDetailsDialog" scrimClickAction="${this.showTransactionDetailsLoading ? '' : 'close'}">
 					<div style="text-align: center;">
 						<h1>${translate("walletpage.wchange5")}</h1>
 						<hr />
@@ -781,11 +757,11 @@ class MultiWallet extends LitElement {
 								style="width: 100%;"
 								required
 								@input="${(e) => { this.checkQortAmount(e) }}"
-								id="amountInput"
+								id="qortAmountInput"
 								label="${translate("walletpage.wchange11")} (QORT)"
 								type="number"
 								auto-validate="false"
-								value="${this.amount}"
+								value="${this.qortAmount}"
 							>
 							</mwc-textfield>
 						</p>
@@ -793,10 +769,10 @@ class MultiWallet extends LitElement {
 							<mwc-textfield
 								style="width: 100%;"
 								required
-								id="recipient"
+								id="qortRecipient"
 								label="${translate("walletpage.wchange20")}"
 								type="text"
-								value="${this.recipient}"
+								value="${this.qortRecipient}"
 							>
 							</mwc-textfield>
 						</p>
@@ -820,7 +796,7 @@ class MultiWallet extends LitElement {
 					</div>
 					<mwc-button
 						slot="primaryAction"
-						@click="${() => this.closeQortDialog()}"
+						@click="${() => this.closeDialog('qort')}"
 						class="red"
 					>
 						${translate("general.close")}
@@ -902,7 +878,7 @@ class MultiWallet extends LitElement {
 					</div>
 					<mwc-button
 						slot="primaryAction"
-						@click="${() => this.closeBtcDialog()}"
+						@click="${() => this.closeDialog('btc')}"
 						class="red"
 					>
 						${translate("general.close")}
@@ -984,7 +960,7 @@ class MultiWallet extends LitElement {
 					</div>
 					<mwc-button
 						slot="primaryAction"
-						@click="${() => this.closeLtcDialog()}"
+						@click="${() => this.closeDialog('ltc')}"
 						class="red"
 					>
 						${translate("general.close")}
@@ -1068,7 +1044,7 @@ class MultiWallet extends LitElement {
 					</div>
 					<mwc-button
 						slot="primaryAction"
-						@click="${() => this.closeDogeDialog()}"
+						@click="${() => this.closeDialog('doge')}"
 						class="red"
 					>
 						${translate("general.close")}
@@ -1152,7 +1128,7 @@ class MultiWallet extends LitElement {
 					</div>
 					<mwc-button
 						slot="primaryAction"
-						@click="${() => this.closeDgbDialog()}"
+						@click="${() => this.closeDialog('dgb')}"
 						class="red"
 					>
 						${translate("general.close")}
@@ -1236,7 +1212,7 @@ class MultiWallet extends LitElement {
 					</div>
 					<mwc-button
 						slot="primaryAction"
-						@click="${() => this.closeRvnDialog()}"
+						@click="${() => this.closeDialog('rvn')}"
 						class="red"
 					>
 						${translate("general.close")}
@@ -1315,7 +1291,7 @@ class MultiWallet extends LitElement {
 					</div>
 					<mwc-button
 						slot="primaryAction"
-						@click="${() => this.closeArrrDialog()}"
+						@click="${() => this.closeDialog('arrr')}"
 						class="red"
 					>
 						${translate("general.close")}
@@ -1335,7 +1311,7 @@ class MultiWallet extends LitElement {
 						<vaadin-grid-column width="9rem" flex-grow="0" header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
 						<vaadin-grid-column auto-width header="${translate("login.address")}" path="address"></vaadin-grid-column>
 						<vaadin-grid-column width="11rem" flex-grow="0" header="${translate("chatpage.cchange13")}" .renderer=${(root, column, data) => {
-							render(html`${this.renderSendFromQortAddressbookButton(data.item)}`, root)
+							render(html`${this.renderSendFromAddressbookButton('qort', data.item)}`, root)
 						}}>
 						</vaadin-grid-column>
 						<vaadin-grid-column width="11rem" header="" .renderer=${(root, column, data) => {
@@ -1360,7 +1336,7 @@ class MultiWallet extends LitElement {
 					</mwc-button>
 					<mwc-button
 						slot="secondaryAction"
-						@click=${() => this.openAddToQortAddressbook()}
+						@click=${() => this.openAddToAddressbook('qort')}
 					>
 						${translate("rewardsharepage.rchange14")}
 					</mwc-button>
@@ -1379,7 +1355,7 @@ class MultiWallet extends LitElement {
 						<vaadin-grid-column width="9rem" flex-grow="0" header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
 						<vaadin-grid-column auto-width header="${translate("login.address")}" path="address"></vaadin-grid-column>
 						<vaadin-grid-column width="11rem" flex-grow="0" header="${translate("chatpage.cchange13")}" .renderer=${(root, column, data) => {
-							render(html`${this.renderSendFromBtcAddressbookButton(data.item)}`, root)
+							render(html`${this.renderSendFromAddressbookButton('btc', data.item)}`, root)
 						}}>
 						</vaadin-grid-column>
 						<vaadin-grid-column width="11rem" header="" .renderer=${(root, column, data) => {
@@ -1404,7 +1380,7 @@ class MultiWallet extends LitElement {
 					</mwc-button>
 					<mwc-button
 						slot="secondaryAction"
-						@click=${() => this.openAddToBtcAddressbook()}
+						@click=${() => this.openAddToAddressbook('btc')}
 					>
 						${translate("rewardsharepage.rchange14")}
 					</mwc-button>
@@ -1423,7 +1399,7 @@ class MultiWallet extends LitElement {
 						<vaadin-grid-column width="9rem" flex-grow="0" header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
 						<vaadin-grid-column auto-width header="${translate("login.address")}" path="address"></vaadin-grid-column>
 						<vaadin-grid-column width="11rem" flex-grow="0" header="${translate("chatpage.cchange13")}" .renderer=${(root, column, data) => {
-							render(html`${this.renderSendFromLtcAddressbookButton(data.item)}`, root)
+							render(html`${this.renderSendFromAddressbookButton('ltc', data.item)}`, root)
 						}}>
 						</vaadin-grid-column>
 						<vaadin-grid-column width="11rem" header="" .renderer=${(root, column, data) => {
@@ -1448,7 +1424,7 @@ class MultiWallet extends LitElement {
 					</mwc-button>
 					<mwc-button
 						slot="secondaryAction"
-						@click=${() => this.openAddToLtcAddressbook()}
+						@click=${() => this.openAddToAddressbook('ltc')}
 					>
 						${translate("rewardsharepage.rchange14")}
 					</mwc-button>
@@ -1467,7 +1443,7 @@ class MultiWallet extends LitElement {
 						<vaadin-grid-column width="9rem" flex-grow="0" header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
 						<vaadin-grid-column auto-width header="${translate("login.address")}" path="address"></vaadin-grid-column>
 						<vaadin-grid-column width="11rem" flex-grow="0" header="${translate("chatpage.cchange13")}" .renderer=${(root, column, data) => {
-							render(html`${this.renderSendFromDogeAddressbookButton(data.item)}`, root)
+							render(html`${this.renderSendFromAddressbookButton('doge', data.item)}`, root)
 						}}>
 						</vaadin-grid-column>
 						<vaadin-grid-column width="11rem" header="" .renderer=${(root, column, data) => {
@@ -1492,7 +1468,7 @@ class MultiWallet extends LitElement {
 					</mwc-button>
 					<mwc-button
 						slot="secondaryAction"
-						@click=${() => this.openAddToDogeAddressbook()}
+						@click=${() => this.openAddToAddressbook('doge')}
 					>
 						${translate("rewardsharepage.rchange14")}
 					</mwc-button>
@@ -1511,7 +1487,7 @@ class MultiWallet extends LitElement {
 						<vaadin-grid-column width="9rem" flex-grow="0" header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
 						<vaadin-grid-column auto-width header="${translate("login.address")}" path="address"></vaadin-grid-column>
 						<vaadin-grid-column width="11rem" flex-grow="0" header="${translate("chatpage.cchange13")}" .renderer=${(root, column, data) => {
-							render(html`${this.renderSendFromDgbAddressbookButton(data.item)}`, root)
+							render(html`${this.renderSendFromAddressbookButton('dgb', data.item)}`, root)
 						}}>
 						</vaadin-grid-column>
 						<vaadin-grid-column width="11rem" header="" .renderer=${(root, column, data) => {
@@ -1536,7 +1512,7 @@ class MultiWallet extends LitElement {
 					</mwc-button>
 					<mwc-button
 						slot="secondaryAction"
-						@click=${() => this.openAddToDgbAddressbook()}
+						@click=${() => this.openAddToAddressbook('dgb')}
 					>
 						${translate("rewardsharepage.rchange14")}
 					</mwc-button>
@@ -1555,7 +1531,7 @@ class MultiWallet extends LitElement {
 						<vaadin-grid-column width="9rem" flex-grow="0" header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
 						<vaadin-grid-column auto-width header="${translate("login.address")}" path="address"></vaadin-grid-column>
 						<vaadin-grid-column width="11rem" flex-grow="0" header="${translate("chatpage.cchange13")}" .renderer=${(root, column, data) => {
-							render(html`${this.renderSendFromRvnAddressbookButton(data.item)}`, root)
+							render(html`${this.renderSendFromAddressbookButton('rvn', data.item)}`, root)
 						}}>
 						</vaadin-grid-column>
 						<vaadin-grid-column width="11rem" header="" .renderer=${(root, column, data) => {
@@ -1580,7 +1556,7 @@ class MultiWallet extends LitElement {
 					</mwc-button>
 					<mwc-button
 						slot="secondaryAction"
-						@click=${() => this.openAddToRvnAddressbook()}
+						@click=${() => this.openAddToAddressbook('rvn')}
 					>
 						${translate("rewardsharepage.rchange14")}
 					</mwc-button>
@@ -1599,7 +1575,7 @@ class MultiWallet extends LitElement {
 						<vaadin-grid-column width="9rem" flex-grow="0" header="${translate("chatpage.cchange11")}" path="name"></vaadin-grid-column>
 						<vaadin-grid-column auto-width header="${translate("login.address")}" path="address"></vaadin-grid-column>
 						<vaadin-grid-column width="11rem" flex-grow="0" header="${translate("chatpage.cchange13")}" .renderer=${(root, column, data) => {
-							render(html`${this.renderSendFromArrrAddressbookButton(data.item)}`, root)
+							render(html`${this.renderSendFromAddressbookButton('arrr', data.item)}`, root)
 						}}>
 						</vaadin-grid-column>
 						<vaadin-grid-column width="11rem" header="" .renderer=${(root, column, data) => {
@@ -1624,7 +1600,7 @@ class MultiWallet extends LitElement {
 					</mwc-button>
 					<mwc-button
 						slot="secondaryAction"
-						@click=${() => this.openAddToArrrAddressbook()}
+						@click=${() => this.openAddToAddressbook('arrr')}
 					>
 						${translate("rewardsharepage.rchange14")}
 					</mwc-button>
@@ -1673,7 +1649,7 @@ class MultiWallet extends LitElement {
 					</div>
 					<mwc-button
 						slot="primaryAction"
-						@click="${() => this.closeQortAddressDialog()}"
+						@click="${() => this.closeAddressDialog('qort')}"
 						class="red"
 					>
 						${translate("general.close")}
@@ -1723,7 +1699,7 @@ class MultiWallet extends LitElement {
 					</div>
 					<mwc-button
 						slot="primaryAction"
-						@click="${() => this.closeBtcAddressDialog()}"
+						@click="${() => this.closeAddressDialog('btc')}"
 						class="red"
 					>
 						${translate("general.close")}
@@ -1773,7 +1749,7 @@ class MultiWallet extends LitElement {
 					</div>
 					<mwc-button
 						slot="primaryAction"
-						@click="${() => this.closeLtcAddressDialog()}"
+						@click="${() => this.closeAddressDialog('ltc')}"
 						class="red"
 					>
 						${translate("general.close")}
@@ -1823,7 +1799,7 @@ class MultiWallet extends LitElement {
 					</div>
 					<mwc-button
 						slot="primaryAction"
-						@click="${() => this.closeDogeAddressDialog()}"
+						@click="${() => this.closeAddressDialog('doge')}"
 						class="red"
 					>
 						${translate("general.close")}
@@ -1873,7 +1849,7 @@ class MultiWallet extends LitElement {
 					</div>
 					<mwc-button
 						slot="primaryAction"
-						@click="${() => this.closeDgbAddressDialog()}"
+						@click="${() => this.closeAddressDialog('dgb')}"
 						class="red"
 					>
 						${translate("general.close")}
@@ -1923,7 +1899,7 @@ class MultiWallet extends LitElement {
 					</div>
 					<mwc-button
 						slot="primaryAction"
-						@click="${() => this.closeRvnAddressDialog()}"
+						@click="${() => this.closeAddressDialog('rvn')}"
 						class="red"
 					>
 						${translate("general.close")}
@@ -1973,7 +1949,7 @@ class MultiWallet extends LitElement {
 					</div>
 					<mwc-button
 						slot="primaryAction"
-						@click="${() => this.closeArrrAddressDialog()}"
+						@click="${() => this.closeAddressDialog('arrr')}"
 						class="red"
 					>
 						${translate("general.close")}
@@ -2497,38 +2473,8 @@ class MultiWallet extends LitElement {
 		}
 	}
 
-	tabWalletQort() {
-		this._selectedWallet = 'qort'
-		this.showWallet()
-	}
-
-	tabWalletBtc() {
-		this._selectedWallet = 'btc'
-		this.showWallet()
-	}
-
-	tabWalletLtc() {
-		this._selectedWallet = 'ltc'
-		this.showWallet()
-	}
-
-	tabWalletDoge() {
-		this._selectedWallet = 'doge'
-		this.showWallet()
-	}
-
-	tabWalletDgb() {
-		this._selectedWallet = 'dgb'
-		this.showWallet()
-	}
-
-	tabWalletRvn() {
-		this._selectedWallet = 'rvn'
-		this.showWallet()
-	}
-
-	tabWalletArrr() {
-		this._selectedWallet = 'arrr'
+	tabWallet(coin) {
+		this._selectedWallet = coin
 		this.showWallet()
 	}
 
@@ -2595,214 +2541,103 @@ class MultiWallet extends LitElement {
 		}
 	}
 
-	openQortAddressbook() {
-		this.shadowRoot.querySelector("#qortBookDialog").show()
-	}
-
-	openBtcAddressbook() {
-		this.shadowRoot.querySelector("#btcBookDialog").show()
-	}
-
-	openLtcAddressbook() {
-		this.shadowRoot.querySelector("#ltcBookDialog").show()
-	}
-
-	openDogeAddressbook() {
-		this.shadowRoot.querySelector("#dogeBookDialog").show()
-	}
-
-	openDgbAddressbook() {
-		this.shadowRoot.querySelector("#dgbBookDialog").show()
-	}
-
-	openRvnAddressbook() {
-		this.shadowRoot.querySelector("#rvnBookDialog").show()
-	}
-
-	openArrrAddressbook() {
-		this.shadowRoot.querySelector("#arrrBookDialog").show()
+	openAddressbook(coin) {
+		this.shadowRoot.querySelector(`#${coin}BookDialog`).show()
 	}
 
 	openAddQortAddressDialog() {
 		this.qortBookAddress = this.selectedTransaction.recipient
-		this.openAddToQortAddressbook()
-		this.shadowRoot.querySelector('#showTransactionDetailsDialog').close()
+		this.openAddToAddressbook('qort')
+		this.shadowRoot.querySelector('#showQortTransactionDetailsDialog').close()
 	}
 
 	openAddBtcAddressDialog() {
 		this.btcBookAddress = this.selectedTransaction.btcReceiver
-		this.openAddToBtcAddressbook()
+		this.openAddToAddressbook('btc')
 		this.shadowRoot.querySelector('#showBtcTransactionDetailsDialog').close()
 	}
 
 	openAddLtcAddressDialog() {
 		this.ltcBookAddress = this.selectedTransaction.ltcReceiver
-		this.openAddToLtcAddressbook()
+		this.openAddToAddressbook('ltc')
 		this.shadowRoot.querySelector('#showLtcTransactionDetailsDialog').close()
 	}
 
 	openAddDogeAddressDialog() {
 		this.dogeBookAddress = this.selectedTransaction.dogeReceiver
-		this.openAddToDogeAddressbook()
+		this.openAddToAddressbook('doge')
 		this.shadowRoot.querySelector('#showDogeTransactionDetailsDialog').close()
 	}
 
 	openAddDgbAddressDialog() {
 		this.dgbBookAddress = this.selectedTransaction.dgbReceiver
-		this.openAddToDgbAddressbook()
+		this.openAddToAddressbook('dgb')
 		this.shadowRoot.querySelector('#showDgbTransactionDetailsDialog').close()
 	}
 
 	openAddRvnAddressDialog() {
 		this.rvnBookAddress = this.selectedTransaction.rvnReceiver
-		this.openAddToRvnAddressbook()
+		this.openAddToAddressbook('rvn')
 		this.shadowRoot.querySelector('#showRvnTransactionDetailsDialog').close()
 	}
 
 	openAddArrrAddressDialog() {
 		this.arrrBookAddress = this.selectedTransaction.arrrReceiver
-		this.openAddToArrrAddressbook()
+		this.openAddToAddressbook('arrr')
 		this.shadowRoot.querySelector('#showArrrTransactionDetailsDialog').close()
 	}
 
-	openAddToQortAddressbook() {
-		this.shadowRoot.querySelector("#addQortAddressDialog").show()
+	openAddToAddressbook(coin) {
+		const upperCoin = coin.charAt(0).toUpperCase() + coin.slice(1)
+		this.shadowRoot.querySelector(`#add${upperCoin}AddressDialog`).show()
 	}
 
-	openAddToBtcAddressbook() {
-		this.shadowRoot.querySelector("#addBtcAddressDialog").show()
+	openImportAddressbook(coin) {
+		const upperCoin = coin.charAt(0).toUpperCase() + coin.slice(1)
+		this.shadowRoot.querySelector(`#import${upperCoin}AddressbookDialog`).show()
 	}
 
-	openAddToLtcAddressbook() {
-		this.shadowRoot.querySelector("#addLtcAddressDialog").show()
-	}
+	closeAddressDialog(coin) {
+        const upperCoin = coin.charAt(0).toUpperCase() + coin.slice(1)
+        this.shadowRoot.querySelector(`#add${upperCoin}AddressDialog`).close()
+        this.shadowRoot.getElementById(`${coin}NameInput`).value = ''
+        this.shadowRoot.getElementById(`${coin}AddressInput`).value = ''
+        switch (coin) {
+            case 'qort':
+                this.qortBookName = ''
+                this.qortBookAddress = ''
+                break
+            case 'btc':
+                this.btcBookName = ''
+                this.btcBookAddress = ''
+                break
+            case 'ltc':
+                this.ltcBookName = ''
+                this.ltcBookAddress = ''
+                break
+            case 'doge':
+                this.dogeBookName = ''
+                this.dogeBookAddress = ''
+                break
+            case 'dgb':
+                this.dgbBookName = ''
+                this.dgbBookAddress = ''
+                break
+            case 'rvn':
+                this.rvnBookName = ''
+                this.rvnBookAddress = ''
+                break
+            case 'arrr':
+                this.arrrBookName = ''
+                this.arrrBookAddress = ''
+                break
+            default:
+                break
+        }
+    }
 
-	openAddToDogeAddressbook() {
-		this.shadowRoot.querySelector("#addDogeAddressDialog").show()
-	}
-
-	openAddToDgbAddressbook() {
-		this.shadowRoot.querySelector("#addDgbAddressDialog").show()
-	}
-
-	openAddToRvnAddressbook() {
-		this.shadowRoot.querySelector("#addRvnAddressDialog").show()
-	}
-
-	openAddToArrrAddressbook() {
-		this.shadowRoot.querySelector("#addArrrAddressDialog").show()
-	}
-
-	openImportQortAddressbook() {
-		this.shadowRoot.querySelector("#importQortAddressbookDialog").show()
-	}
-
-	openImportBtcAddressbook() {
-		this.shadowRoot.querySelector("#importBtcAddressbookDialog").show()
-	}
-
-	openImportLtcAddressbook() {
-		this.shadowRoot.querySelector("#importLtcAddressbookDialog").show()
-	}
-
-	openImportDogeAddressbook() {
-		this.shadowRoot.querySelector("#importDogeAddressbookDialog").show()
-	}
-
-	openImportDgbAddressbook() {
-		this.shadowRoot.querySelector("#importDgbAddressbookDialog").show()
-	}
-
-	openImportRvnAddressbook() {
-		this.shadowRoot.querySelector("#importRvnAddressbookDialog").show()
-	}
-
-	openImportArrrAddressbook() {
-		this.shadowRoot.querySelector("#importArrrAddressbookDialog").show()
-	}
-
-	closeQortAddressDialog() {
-		this.shadowRoot.querySelector('#addQortAddressDialog').close()
-		this.shadowRoot.getElementById('qortNameInput').value = ''
-		this.shadowRoot.getElementById('qortAddressInput').value = ''
-		this.qortBookName = ''
-		this.qortBookAddress = ''
-	}
-
-	closeBtcAddressDialog() {
-		this.shadowRoot.querySelector('#addBtcAddressDialog').close()
-		this.shadowRoot.getElementById('btcNameInput').value = ''
-		this.shadowRoot.getElementById('btcAddressInput').value = ''
-		this.btcBookName = ''
-		this.btcBookAddress = ''
-	}
-
-	closeLtcAddressDialog() {
-		this.shadowRoot.querySelector('#addLtcAddressDialog').close()
-		this.shadowRoot.getElementById('ltcNameInput').value = ''
-		this.shadowRoot.getElementById('ltcAddressInput').value = ''
-		this.ltcBookName = ''
-		this.ltcBookAddress = ''
-	}
-
-	closeDogeAddressDialog() {
-		this.shadowRoot.querySelector('#addDogeAddressDialog').close()
-		this.shadowRoot.getElementById('dogeNameInput').value = ''
-		this.shadowRoot.getElementById('dogeAddressInput').value = ''
-		this.dogeBookName = ''
-		this.dogeBookAddress = ''
-	}
-
-	closeDgbAddressDialog() {
-		this.shadowRoot.querySelector('#addDgbAddressDialog').close()
-		this.shadowRoot.getElementById('dgbNameInput').value = ''
-		this.shadowRoot.getElementById('dgbAddressInput').value = ''
-		this.dgbBookName = ''
-		this.dgbBookAddress = ''
-	}
-
-	closeRvnAddressDialog() {
-		this.shadowRoot.querySelector('#addRvnAddressDialog').close()
-		this.shadowRoot.getElementById('rvnNameInput').value = ''
-		this.shadowRoot.getElementById('rvnAddressInput').value = ''
-		this.rvnBookName = ''
-		this.rvnBookAddress = ''
-	}
-
-	closeArrrAddressDialog() {
-		this.shadowRoot.querySelector('#addArrrAddressDialog').close()
-		this.shadowRoot.getElementById('arrrNameInput').value = ''
-		this.shadowRoot.getElementById('arrrAddressInput').value = ''
-		this.arrrBookName = ''
-		this.arrrBookAddress = ''
-	}
-
-	closeImportQortAddressbookDialog() {
-		this.shadowRoot.querySelector("#importQortAddressbookDialog").close()
-	}
-
-	closeImportBtcAddressbookDialog() {
-		this.shadowRoot.querySelector("#importBtcAddressbookDialog").close()
-	}
-
-	closeImportLtcAddressbookDialog() {
-		this.shadowRoot.querySelector("#importLtcAddressbookDialog").close()
-	}
-
-	closeImportDogeAddressbookDialog() {
-		this.shadowRoot.querySelector("#importDogeAddressbookDialog").close()
-	}
-
-	closeImportDgbAddressbookDialog() {
-		this.shadowRoot.querySelector("#importDgbAddressbookDialog").close()
-	}
-
-	closeImportRvnAddressbookDialog() {
-		this.shadowRoot.querySelector("#importRvnAddressbookDialog").close()
-	}
-
-	closeImportArrrAddressbookDialog() {
-		this.shadowRoot.querySelector("#importArrrAddressbookDialog").close()
+	closeImportAddressbookDialog(coin) {  // This function is not currently used
+		this.shadowRoot.querySelector(`#import${coin}AddressbookDialog`).close()
 	}
 
 	addToQortalAddressbook() {
@@ -2837,7 +2672,7 @@ class MultiWallet extends LitElement {
 		let qortbookstring2 = get("walletpage.wchange52")
 		parentEpml.request('showSnackBar', `${qortbookstring2}`)
 
-		this.closeQortAddressDialog()
+		this.closeAddressDialog('qort')
 		this.qortBook = JSON.parse(localStorage.getItem(myQortalAddressBook) || "[]")
 	}
 
@@ -2873,7 +2708,7 @@ class MultiWallet extends LitElement {
 		let btcbookstring3 = get("walletpage.wchange52")
 		parentEpml.request('showSnackBar', `${btcbookstring3}`)
 
-		this.closeBtcAddressDialog()
+		this.closeAddressDialog('btc')
 		this.btcBook = JSON.parse(localStorage.getItem(myBitcoinAddressBook) || "[]")
 	}
 
@@ -2909,7 +2744,7 @@ class MultiWallet extends LitElement {
 		let ltcbookstring3 = get("walletpage.wchange52")
 		parentEpml.request('showSnackBar', `${ltcbookstring3}`)
 
-		this.closeLtcAddressDialog()
+		this.closeAddressDialog('ltc')
 		this.ltcBook = JSON.parse(localStorage.getItem(myLitecoinAddressBook) || "[]")
 	}
 
@@ -2945,7 +2780,7 @@ class MultiWallet extends LitElement {
 		let dogebookstring3 = get("walletpage.wchange52")
 		parentEpml.request('showSnackBar', `${dogebookstring3}`)
 
-		this.closeDogeAddressDialog()
+		this.closeAddressDialog('doge')
 		this.dogeBook = JSON.parse(localStorage.getItem(myDogecoinAddressBook) || "[]")
 	}
 
@@ -2981,7 +2816,7 @@ class MultiWallet extends LitElement {
 		let dgbbookstring3 = get("walletpage.wchange52")
 		parentEpml.request('showSnackBar', `${dgbbookstring3}`)
 
-		this.closeDgbAddressDialog()
+		this.closeAddressDialog('dgb')
 		this.dgbBook = JSON.parse(localStorage.getItem(myDigibyteAddressBook) || "[]")
 	}
 
@@ -3017,7 +2852,7 @@ class MultiWallet extends LitElement {
 		let rvnbookstring3 = get("walletpage.wchange52")
 		parentEpml.request('showSnackBar', `${rvnbookstring3}`)
 
-		this.closeRvnAddressDialog()
+		this.closeAddressDialog('rvn')
 		this.rvnBook = JSON.parse(localStorage.getItem(myRavencoinAddressBook) || "[]")
 	}
 
@@ -3053,51 +2888,40 @@ class MultiWallet extends LitElement {
 		let arrrbookstring3 = get("walletpage.wchange52")
 		parentEpml.request('showSnackBar', `${arrrbookstring3}`)
 
-		this.closeArrrAddressDialog()
+		this.closeAddressDialog('arrr')
 		this.arrrBook = JSON.parse(localStorage.getItem(myPiratechainAddressBook) || "[]")
 	}
 
-	sendFromQortAddressbook(websiteObj) {
-		this.recipient = websiteObj.address
-		this.openSendQort()
-		this.shadowRoot.querySelector('#qortBookDialog').close()
-	}
-
-	sendFromBtcAddressbook(websiteObj) {
-		this.btcRecipient = websiteObj.address
-		this.openSendBtc()
-		this.shadowRoot.querySelector('#btcBookDialog').close()
-	}
-
-	sendFromLtcAddressbook(websiteObj) {
-		this.ltcRecipient = websiteObj.address
-		this.openSendLtc()
-		this.shadowRoot.querySelector('#ltcBookDialog').close()
-	}
-
-	sendFromDogeAddressbook(websiteObj) {
-		this.dogeRecipient = websiteObj.address
-		this.openSendDoge()
-		this.shadowRoot.querySelector('#dogeBookDialog').close()
-	}
-
-	sendFromDgbAddressbook(websiteObj) {
-		this.dgbRecipient = websiteObj.address
-		this.openSendDgb()
-		this.shadowRoot.querySelector('#dgbBookDialog').close()
-	}
-
-	sendFromRvnAddressbook(websiteObj) {
-		this.rvnRecipient = websiteObj.address
-		this.openSendRvn()
-		this.shadowRoot.querySelector('#rvnBookDialog').close()
-	}
-
-	sendFromArrrAddressbook(websiteObj) {
-		this.arrrRecipient = websiteObj.address
-		this.openSendArrr()
-		this.shadowRoot.querySelector('#arrrBookDialog').close()
-	}
+	sendFromAddressbook(coin, websiteObj) {
+        let address = websiteObj.address
+        switch (coin) {
+            case 'qort':
+                this.qortRecipient = address
+                break
+            case 'btc':
+                this.btcRecipient = address
+                break
+            case 'ltc':
+                this.ltcRecipient = address
+                break
+            case 'doge':
+                this.dogeRecipient = address
+                break
+            case 'dgb':
+                this.dgbRecipient = address
+                break
+            case 'rvn':
+                this.rvnRecipient = address
+                break
+            case 'arrr':
+                this.arrrRecipient = address
+                break
+            default:
+                break
+        }        
+        this.openSend(coin)
+        this.shadowRoot.querySelector(`#${coin}BookDialog`).close()
+    }
 
 	removeQortAddress(adressObj) {
 		const theQortalAddressBook = 'addressbookQort-' + this.bookQortalAddress
@@ -3176,32 +3000,9 @@ class MultiWallet extends LitElement {
 		this.arrrBook = JSON.parse(localStorage.getItem(thePiratechainAddressBook) || "[]")
 	}
 
-	renderSendFromQortAddressbookButton(websiteObj) {
-		return html`<mwc-button dense unelevated label="${translate("walletpage.wchange17")} QORT" icon="send" @click="${() => this.sendFromQortAddressbook(websiteObj)}"></mwc-button>`
-	}
-
-	renderSendFromBtcAddressbookButton(websiteObj) {
-		return html`<mwc-button dense unelevated label="${translate("walletpage.wchange17")} BTC" icon="send" @click="${() => this.sendFromBtcAddressbook(websiteObj)}"></mwc-button>`
-	}
-
-	renderSendFromLtcAddressbookButton(websiteObj) {
-		return html`<mwc-button dense unelevated label="${translate("walletpage.wchange17")} LTC" icon="send" @click="${() => this.sendFromLtcAddressbook(websiteObj)}"></mwc-button>`
-	}
-
-	renderSendFromDogeAddressbookButton(websiteObj) {
-		return html`<mwc-button dense unelevated label="${translate("walletpage.wchange17")} DOGE" icon="send" @click="${() => this.sendFromDogeAddressbook(websiteObj)}"></mwc-button>`
-	}
-
-	renderSendFromDgbAddressbookButton(websiteObj) {
-		return html`<mwc-button dense unelevated label="${translate("walletpage.wchange17")} DGB" icon="send" @click="${() => this.sendFromDgbAddressbook(websiteObj)}"></mwc-button>`
-	}
-
-	renderSendFromRvnAddressbookButton(websiteObj) {
-		return html`<mwc-button dense unelevated label="${translate("walletpage.wchange17")} RVN" icon="send" @click="${() => this.sendFromRvnAddressbook(websiteObj)}"></mwc-button>`
-	}
-
-	renderSendFromArrrAddressbookButton(websiteObj) {
-		return html`<mwc-button dense unelevated label="${translate("walletpage.wchange17")} ARRR" icon="send" @click="${() => this.sendFromArrrAddressbook(websiteObj)}"></mwc-button>`
+	renderSendFromAddressbookButton(coin, websiteObj) {
+		const capsCoin = coin.toUpperCase()
+		return html`<mwc-button dense unelevated label="${translate("walletpage.wchange17")} ${capsCoin}" icon="send" @click="${() => this.sendFromAddressbook(coin, websiteObj)}"></mwc-button>`
 	}
 
 	exportQortAddressbook() {
@@ -3337,130 +3138,94 @@ class MultiWallet extends LitElement {
 		this.shadowRoot.querySelector('#importArrrAddressbookDialog').close()
 	}
 
-	closeQortDialog() {
-		this.shadowRoot.querySelector('#sendQortDialog').close()
-		this.shadowRoot.getElementById('amountInput').value = ''
-		this.shadowRoot.getElementById('recipient').value = ''
-		this.recipient = ''
-		this.amount = 0
-		this.successMessage = ''
-		this.errorMessage = ''
-	}
-
-	closeBtcDialog() {
-		this.shadowRoot.querySelector('#sendBtcDialog').close()
-		this.shadowRoot.getElementById('btcAmountInput').value = 0
-		this.shadowRoot.getElementById('btcRecipient').value = ''
-		this.btcRecipient = ''
-		this.btcAmount = 0
-		this.successMessage = ''
-		this.errorMessage = ''
-	}
-
-	closeLtcDialog() {
-		this.shadowRoot.querySelector('#sendLtcDialog').close()
-		this.shadowRoot.getElementById('ltcAmountInput').value = 0
-		this.shadowRoot.getElementById('ltcRecipient').value = ''
-		this.ltcRecipient = ''
-		this.ltcAmount = 0
-		this.successMessage = ''
-		this.errorMessage = ''
-	}
-
-	closeDogeDialog() {
-		this.shadowRoot.querySelector('#sendDogeDialog').close()
-		this.shadowRoot.getElementById('dogeAmountInput').value = 0
-		this.shadowRoot.getElementById('dogeRecipient').value = ''
-		this.dogeRecipient = ''
-		this.dogeAmount = 0
-		this.successMessage = ''
-		this.errorMessage = ''
-	}
-
-	closeDgbDialog() {
-		this.shadowRoot.querySelector('#sendDgbDialog').close()
-		this.shadowRoot.getElementById('dgbAmountInput').value = 0
-		this.shadowRoot.getElementById('dgbRecipient').value = ''
-		this.dgbRecipient = ''
-		this.dgbAmount = 0
-		this.successMessage = ''
-		this.errorMessage = ''
-	}
-
-	closeRvnDialog() {
-		this.shadowRoot.querySelector('#sendRvnDialog').close()
-		this.shadowRoot.getElementById('rvnAmountInput').value = 0
-		this.shadowRoot.getElementById('rvRecipient').value = ''
-		this.rvnRecipient = ''
-		this.rvnAmount = 0
-		this.successMessage = ''
-		this.errorMessage = ''
-	}
-
-	closeArrrDialog() {
-		this.shadowRoot.querySelector('#sendArrrDialog').close()
-		this.shadowRoot.getElementById('arrrRecipient').value = ''
-		this.shadowRoot.getElementById('arrrMemo').value = ''
-		this.arrrRecipient = ''
-		this.arrrMemo = ''
-		this.arrrAmount = 0
-		this.successMessage = ''
-		this.errorMessage = ''
-	}
+	closeDialog(coin) {
+        const upperCoin = coin.charAt(0).toUpperCase() + coin.slice(1)
+        this.shadowRoot.querySelector(`#send${upperCoin}Dialog`).close()
+        this.shadowRoot.getElementById(`${coin}AmountInput`).value = 0
+        this.shadowRoot.getElementById(`${coin}Recipient`).value = ''
+        switch (coin) {
+            case 'qort':
+                this.qortRecipient = ''
+                this.qortAmount = 0
+            case 'btc':
+                this.btcRecipient = ''
+                this.btcAmount = 0
+            case 'ltc':
+                this.ltcRecipient = ''
+                this.ltcAmount = 0
+            case 'doge':
+                this.dogeRecipient = ''
+                this.dogeAmount = 0
+            case 'dgb':
+                this.dgbRecipient = ''
+                this.dgbAmount = 0
+            case 'rvn':
+                this.rvnRecipient = ''
+                this.rvnAmount = 0
+            case 'arrr':
+                this.arrrRecipient = ''
+                this.arrrAmount = 0
+                this.arrrMemo = ''
+            default:
+                break
+        }
+        this.successMessage = ''
+        this.errorMessage = ''
+    }
 
 	sendToQortAddress() {
-		this.recipient = this.selectedTransaction.recipient
-		this.openSendQort()
-		this.shadowRoot.querySelector('#showTransactionDetailsDialog').close()
+		this.qortRecipient = this.selectedTransaction.recipient
+		this.openSend('qort')
+		this.shadowRoot.querySelector('#showQortTransactionDetailsDialog').close()
 	}
 
 	sendToBtcAddress() {
 		this.btcRecipient = this.selectedTransaction.btcReceiver
-		this.openSendBtc()
+		this.openSend('btc')
 		this.shadowRoot.querySelector('#showBtcTransactionDetailsDialog').close()
 	}
 
 	sendToLtcAddress() {
 		this.ltcRecipient = this.selectedTransaction.ltcReceiver
-		this.openSendLtc()
+		this.openSend('ltc')
 		this.shadowRoot.querySelector('#showLtcTransactionDetailsDialog').close()
 	}
 
 	sendToDogeAddress() {
 		this.dogeRecipient = this.selectedTransaction.dogeReceiver
-		this.openSendDoge()
+		this.openSend('doge')
 		this.shadowRoot.querySelector('#showDogeTransactionDetailsDialog').close()
 	}
 
 	sendToDgbAddress() {
 		this.dgbRecipient = this.selectedTransaction.dgbReceiver
-		this.openSendDgb()
+		this.openSend('dgb')
 		this.shadowRoot.querySelector('#showDgbTransactionDetailsDialog').close()
 	}
 
 	sendToRvnAddress() {
 		this.rvnRecipient = this.selectedTransaction.rvnReceiver
-		this.openSendRvn()
+		this.openSend('rvn')
 		this.shadowRoot.querySelector('#showRvnTransactionDetailsDialog').close()
 	}
 
 	sendToArrrAddress() {
 		this.arrrRecipient = this.selectedTransaction.arrrReceiver
-		this.openSendArrr()
+		this.openSend('arrr')
 		this.shadowRoot.querySelector('#showArrrTransactionDetailsDialog').close()
 	}
 
 	calculateQortAll() {
-		this.amount = 0
-		this.shadowRoot.getElementById('amountInput').value = this.amount
+		this.qortAmount = 0
+		this.shadowRoot.getElementById('qortAmountInput').value = this.qortAmount
 		if (this.balance < 0.01100000) {
 			let not_enough_string = get("walletpage.wchange26")
 			parentEpml.request('showSnackBar', `${not_enough_string}`)
 		} else {
-			this.amount = (this.balance - 0.01100000).toFixed(8)
-			this.shadowRoot.getElementById('amountInput').value = this.amount
-			this.shadowRoot.getElementById('amountInput').blur()
-			this.shadowRoot.getElementById('amountInput').focus()
+			this.qortAmount = (this.balance - 0.01100000).toFixed(8)
+			this.shadowRoot.getElementById('qortAmountInput').value = this.qortAmount
+			this.shadowRoot.getElementById('qortAmountInput').blur()
+			this.shadowRoot.getElementById('qortAmountInput').focus()
 		}
 	}
 
@@ -3641,15 +3406,15 @@ class MultiWallet extends LitElement {
 			e.target.focus()
 			e.target.invalid = true
 		} else {
-			const checkQortAmountInput = this.shadowRoot.getElementById('amountInput').value
+			const checkQortAmountInput = this.shadowRoot.getElementById('qortAmountInput').value
 			const checkQortAmount = this.round(parseFloat(checkQortAmountInput))
 			const myFunds = this.round(parseFloat(this.balance - 0.01100000))
 			if (Number(myFunds) >= Number(checkQortAmount)) {
-				this.shadowRoot.getElementById('amountInput').value = checkQortAmountInput
+				this.shadowRoot.getElementById('qortAmountInput').value = checkQortAmountInput
 				this.btnDisable = false
 				this.qortWarning = false
 			} else {
-				this.shadowRoot.getElementById('amountInput').value = checkQortAmountInput
+				this.shadowRoot.getElementById('qortAmountInput').value = checkQortAmountInput
 				this.btnDisable = true
 				this.qortWarning = true
 			}
@@ -3672,15 +3437,15 @@ class MultiWallet extends LitElement {
 						this.btnDisable = true
 						this.qortWarning = false
 					} else {
-						const checkQortAmountInput = this.shadowRoot.getElementById('amountInput').value
+						const checkQortAmountInput = this.shadowRoot.getElementById('qortAmountInput').value
 						const checkQortAmount = this.round(parseFloat(checkQortAmountInput))
 						const myFunds = this.round(parseFloat(this.balance - 0.01100000))
 						if (Number(myFunds) >= Number(checkQortAmount)) {
-							this.shadowRoot.getElementById('amountInput').value = checkQortAmountInput
+							this.shadowRoot.getElementById('qortAmountInput').value = checkQortAmountInput
 							this.btnDisable = false
 							this.qortWarning = false
 						} else {
-							this.shadowRoot.getElementById('amountInput').value = checkQortAmountInput
+							this.shadowRoot.getElementById('qortAmountInput').value = checkQortAmountInput
 							this.btnDisable = true
 							this.qortWarning = true
 						}
@@ -3690,15 +3455,15 @@ class MultiWallet extends LitElement {
 					}
 				}
 			} else {
-				const checkQortAmountInput = this.shadowRoot.getElementById('amountInput').value
+				const checkQortAmountInput = this.shadowRoot.getElementById('qortAmountInput').value
 				const checkQortAmount = this.round(parseFloat(checkQortAmountInput))
 				const myFunds = this.round(parseFloat(this.balance - 0.01100000))
 				if (Number(myFunds) >= Number(checkQortAmount)) {
-					this.shadowRoot.getElementById('amountInput').value = checkQortAmountInput
+					this.shadowRoot.getElementById('qortAmountInput').value = checkQortAmountInput
 					this.btnDisable = false
 					this.qortWarning = false
 				} else {
-					this.shadowRoot.getElementById('amountInput').value = checkQortAmountInput
+					this.shadowRoot.getElementById('qortAmountInput').value = checkQortAmountInput
 					this.btnDisable = true
 					this.qortWarning = true
 				}
@@ -3708,8 +3473,8 @@ class MultiWallet extends LitElement {
 
 	async sendQort() {
 		const sendFee = this.qortPaymentFee
-		const amount = this.shadowRoot.getElementById('amountInput').value
-		let recipient = this.shadowRoot.getElementById('recipient').value
+		const amount = this.shadowRoot.getElementById('qortAmountInput').value
+		let recipient = this.shadowRoot.getElementById('qortRecipient').value
 
 		this.sendMoneyLoading = true
 		this.btnDisable = true
@@ -3841,11 +3606,11 @@ class MultiWallet extends LitElement {
 				this.btnDisable = false
 				throw new Error(txnResponse)
 			} else if (txnResponse.success === true && !txnResponse.data.error) {
-				this.shadowRoot.getElementById('amountInput').value = ''
-				this.shadowRoot.getElementById('recipient').value = ''
+				this.shadowRoot.getElementById('qortAmountInput').value = ''
+				this.shadowRoot.getElementById('qortRecipient').value = ''
 				this.errorMessage = ''
-				this.recipient = ''
-				this.amount = 0
+				this.qortRecipient = ''
+				this.qortAmount = 0
 				this.successMessage = this.renderSuccessText()
 				this.sendMoneyLoading = false
 				this.btnDisable = false
@@ -4312,43 +4077,12 @@ class MultiWallet extends LitElement {
 	}
 
 	renderSendButton() {
-		if (this._selectedWallet === "qort") {
-			return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.openSendQort()}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange17")} QORT</vaadin-button>`
-		} else if (this._selectedWallet === "btc") {
-			return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.openSendBtc()}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange17")} BTC</vaadin-button>`
-		} else if (this._selectedWallet === "ltc") {
-			return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.openSendLtc()}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange17")} LTC</vaadin-button>`
-		} else if (this._selectedWallet === "doge") {
-			return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.openSendDoge()}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange17")} DOGE</vaadin-button>`
-		} else if (this._selectedWallet === "dgb") {
-			return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.openSendDgb()}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange17")} DGB</vaadin-button>`
-		} else if (this._selectedWallet === "rvn") {
-			return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.openSendRvn()}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange17")} RVN</vaadin-button>`
-		} else if (this._selectedWallet === "arrr") {
-			return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.openSendArrr()}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange17")} ARRR</vaadin-button>`
-		} else {
-			return html``
-		}
+		const capsCoin = this._selectedWallet.toUpperCase()
+		return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.openSend(this._selectedWallet)}><vaadin-icon icon="vaadin:coin-piles" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange17")} ${capsCoin}</vaadin-button>`
 	}
 
 	renderAddressbookButton() {
-		if (this._selectedWallet === "qort") {
-			return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.openQortAddressbook()}><vaadin-icon icon="vaadin:book" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange47")}</vaadin-button>`
-		} else if (this._selectedWallet === "btc") {
-			return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.openBtcAddressbook()}><vaadin-icon icon="vaadin:book" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange47")}</vaadin-button>`
-		} else if (this._selectedWallet === "ltc") {
-			return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.openLtcAddressbook()}><vaadin-icon icon="vaadin:book" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange47")}</vaadin-button>`
-		} else if (this._selectedWallet === "doge") {
-			return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.openDogeAddressbook()}><vaadin-icon icon="vaadin:book" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange47")}</vaadin-button>`
-		} else if (this._selectedWallet === "dgb") {
-			return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.openDgbAddressbook()}><vaadin-icon icon="vaadin:book" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange47")}</vaadin-button>`
-		} else if (this._selectedWallet === "rvn") {
-			return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.openRvnAddressbook()}><vaadin-icon icon="vaadin:book" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange47")}</vaadin-button>`
-		} else if (this._selectedWallet === "arrr") {
-			return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.openArrrAddressbook()}><vaadin-icon icon="vaadin:book" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange47")}</vaadin-button>`
-		} else {
-			return html``
-		}
+		return html`<vaadin-button theme="primary medium" style="width: 100%;" @click=${() => this.openAddressbook(this._selectedWallet)}><vaadin-icon icon="vaadin:book" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange47")}</vaadin-button>`
 	}
 
 	renderExportAddressbookButton() {
@@ -4372,51 +4106,12 @@ class MultiWallet extends LitElement {
 	}
 
 	renderImportAddressbookButton() {
-		if (this._selectedWallet === "qort") {
-			return html`<vaadin-button theme="primary small" style="width: 100%;" @click=${() => this.openImportQortAddressbook()}><vaadin-icon icon="vaadin:cloud-upload" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange53")}</vaadin-button>`
-		} else if (this._selectedWallet === "btc") {
-			return html`<vaadin-button theme="primary small" style="width: 100%;" @click=${() => this.openImportBtcAddressbook()}><vaadin-icon icon="vaadin:cloud-upload" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange53")}</vaadin-button>`
-		} else if (this._selectedWallet === "ltc") {
-			return html`<vaadin-button theme="primary small" style="width: 100%;" @click=${() => this.openImportLtcAddressbook()}><vaadin-icon icon="vaadin:cloud-upload" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange53")}</vaadin-button>`
-		} else if (this._selectedWallet === "doge") {
-			return html`<vaadin-button theme="primary small" style="width: 100%;" @click=${() => this.openImportDogeAddressbook()}><vaadin-icon icon="vaadin:cloud-upload" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange53")}</vaadin-button>`
-		} else if (this._selectedWallet === "dgb") {
-			return html`<vaadin-button theme="primary small" style="width: 100%;" @click=${() => this.openImportDgbAddressbook()}><vaadin-icon icon="vaadin:cloud-upload" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange53")}</vaadin-button>`
-		} else if (this._selectedWallet === "rvn") {
-			return html`<vaadin-button theme="primary small" style="width: 100%;" @click=${() => this.openImportRvnAddressbook()}><vaadin-icon icon="vaadin:cloud-upload" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange53")}</vaadin-button>`
-		} else if (this._selectedWallet === "arrr") {
-			return html`<vaadin-button theme="primary small" style="width: 100%;" @click=${() => this.openImportArrrAddressbook()}><vaadin-icon icon="vaadin:cloud-upload" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange53")}</vaadin-button>`
-		} else {
-			return html``
-		}
+		return html`<vaadin-button theme="primary small" style="width: 100%;" @click=${() => this.openImportAddressbook(this._selectedWallet)}><vaadin-icon icon="vaadin:cloud-upload" slot="prefix"></vaadin-icon> ${translate("walletpage.wchange53")}</vaadin-button>`
 	}
 
-	openSendQort() {
-		this.shadowRoot.querySelector("#sendQortDialog").show();
-	}
-
-	openSendBtc() {
-		this.shadowRoot.querySelector("#sendBtcDialog").show();
-	}
-
-	openSendLtc() {
-		this.shadowRoot.querySelector("#sendLtcDialog").show();
-	}
-
-	openSendDoge() {
-		this.shadowRoot.querySelector("#sendDogeDialog").show();
-	}
-
-	openSendDgb() {
-		this.shadowRoot.querySelector("#sendDgbDialog").show();
-	}
-
-	openSendRvn() {
-		this.shadowRoot.querySelector("#sendRvnDialog").show();
-	}
-
-	openSendArrr() {
-		this.shadowRoot.querySelector("#sendArrrDialog").show();
+	openSend(coin) {
+		const upperCoin = coin.charAt(0).toUpperCase() + coin.slice(1)
+		this.shadowRoot.querySelector(`#send${upperCoin}Dialog`).show();
 	}
 
 	changeTheme() {
@@ -5227,7 +4922,7 @@ class MultiWallet extends LitElement {
 				let txnFlow = myTransaction.creatorAddress === this.wallets.get('qort').wallet.address ? 'OUT' : 'IN'
 				this.selectedTransaction = { ...transaction, txnFlow }
 				if (this.selectedTransaction.signature.length != 0) {
-					this.shadowRoot.querySelector('#showTransactionDetailsDialog').show()
+					this.shadowRoot.querySelector('#showQortTransactionDetailsDialog').show()
 				}
 			}
 		})
