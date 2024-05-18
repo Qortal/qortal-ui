@@ -26,8 +26,8 @@ class ThemeToggle extends LitElement {
 	render() {
 		return html`
 			<div style="display: inline;">
-				<paper-icon-button class="light-mode" icon="image:brightness-3" @click=${() => this.toggleTheme()} title="${translate("info.inf18")}"></paper-icon-button>
-				<paper-icon-button class="dark-mode" icon="image:wb-sunny" @click=${() => this.toggleTheme()} title="${translate("info.inf17")}"></paper-icon-button>
+				<paper-icon-button class="light-mode" icon="image:wb-sunny" @click=${() => this.toggleTheme()} title="${translate("info.inf18")}"></paper-icon-button>
+				<paper-icon-button class="dark-mode" icon="image:brightness-3" @click=${() => this.toggleTheme()} title="${translate("info.inf17")}"></paper-icon-button>
 			</div>
 		`
 	}
@@ -38,10 +38,15 @@ class ThemeToggle extends LitElement {
 
 
 	toggleTheme() {
-		if (this.theme === 'light') {
-			this.theme = 'dark'
-		} else {
-			this.theme = 'light'
+		switch (this.theme) {
+			case 'light':
+				this.theme = 'dark';
+        		break;
+			case 'dark':
+				this.theme = 'light';
+        		break;
+			default:
+				this.theme = 'light';
 		}
 
 		this.dispatchEvent(new CustomEvent('qort-theme-change', {

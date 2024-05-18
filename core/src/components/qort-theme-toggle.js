@@ -20,8 +20,7 @@ class QortThemeToggle extends LitElement {
 
 	render() {
 		return html`
-			<input type="checkbox" @change=${() => this.toggleTheme()}/>
-			<div class="slider"></div>
+			<input type="button" @click=${() => this.toggleTheme()}/>
 			<div class="icon">
 				<span class="sun">${svgSun}</span>
 				<span class="moon">${svgMoon}</span>
@@ -35,10 +34,15 @@ class QortThemeToggle extends LitElement {
 
 
 	toggleTheme() {
-		if (this.theme === 'light') {
-			this.theme = 'dark'
-		} else {
-			this.theme = 'light'
+		switch (this.theme) {
+			case 'light':
+				this.theme = 'dark';
+        break;
+			case 'dark':
+				this.theme = 'light';
+        break;
+			default:
+				this.theme = 'light';
 		}
 
 		this.dispatchEvent(
