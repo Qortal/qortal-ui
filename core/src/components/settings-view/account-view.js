@@ -63,7 +63,7 @@ class AccountView extends connect(store)(LitElement) {
             const avatarName = this.accountInfo.names[0].name
             const avatarNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
             const avatarUrl = avatarNode.protocol + '://' + avatarNode.domain + ':' + avatarNode.port
-            const url = `${avatarUrl}/arbitrary/THUMBNAIL/${avatarName}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
+            const url = `${avatarUrl}/arbitrary/THUMBNAIL/${avatarName}/qortal_avatar?async=true`
             return html`<img src="${url}" style="width:150px; height:150px; border-radius: 25%;" onerror="this.src='${urlArray[1]}';">`
         }
 	}
