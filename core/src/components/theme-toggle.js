@@ -40,13 +40,13 @@ class ThemeToggle extends LitElement {
 	toggleTheme() {
 		switch (this.theme) {
 			case 'light':
-				this.theme = 'dark';
-				break;
+				this.theme = 'dark'
+				break
 			case 'dark':
-				this.theme = 'light';
-				break;
+				this.theme = 'light'
+				break
 			default:
-				this.theme = 'light';
+				this.theme = 'light'
 		}
 
 		this.dispatchEvent(new CustomEvent('qort-theme-change', {
