@@ -7,9 +7,9 @@
     <script>
         const checkBack = localStorage.getItem('qortalTheme')
         if (checkBack) {
-        	newtheme = checkBack;
+            newtheme = checkBack;
         } else {
-        	newtheme = 'light';
+            newtheme = 'light';
         }
         document.querySelector('html').setAttribute('theme', newtheme);
     </script>
