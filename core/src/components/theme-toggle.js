@@ -41,10 +41,10 @@ class ThemeToggle extends LitElement {
 		switch (this.theme) {
 			case 'light':
 				this.theme = 'dark';
-        		break;
+				break;
 			case 'dark':
 				this.theme = 'light';
-        		break;
+				break;
 			default:
 				this.theme = 'light';
 		}

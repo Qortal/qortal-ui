@@ -56,16 +56,16 @@ class AccountView extends connect(store)(LitElement) {
 
 	getAvatar() {
 		const noAvatarUrl = `${getComputedStyle(document.body).getPropertyValue('--noavatar')}`
-        const urlArray = noAvatarUrl.split("\"")
-        if (this.accountInfo.names.length === 0) {
-            return html`<img src="${urlArray[1]}" style="width:150px; height:150px; border-radius: 25%;">`
-        } else {
-            const avatarName = this.accountInfo.names[0].name
-            const avatarNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
-            const avatarUrl = avatarNode.protocol + '://' + avatarNode.domain + ':' + avatarNode.port
-            const url = `${avatarUrl}/arbitrary/THUMBNAIL/${avatarName}/qortal_avatar?async=true`
-            return html`<img src="${url}" style="width:150px; height:150px; border-radius: 25%;" onerror="this.src='${urlArray[1]}';">`
-        }
+		const urlArray = noAvatarUrl.split("\"")
+		if (this.accountInfo.names.length === 0) {
+			return html`<img src="${urlArray[1]}" style="width:150px; height:150px; border-radius: 25%;">`
+		} else {
+			const avatarName = this.accountInfo.names[0].name
+			const avatarNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
+			const avatarUrl = avatarNode.protocol + '://' + avatarNode.domain + ':' + avatarNode.port
+			const url = `${avatarUrl}/arbitrary/THUMBNAIL/${avatarName}/qortal_avatar?async=true`
+			return html`<img src="${url}" style="width:150px; height:150px; border-radius: 25%;" onerror="this.src='${urlArray[1]}';">`
+		}
 	}
 
 	getSwitchAvatar() {
