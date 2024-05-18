@@ -56,8 +56,8 @@
 		<title>Qortal UI</title>
 		<script>
 			const checkTheme = localStorage.getItem('qortalTheme')
-			if (checkTheme === 'dark') {
-			    newtheme = 'dark';
+			if (checkTheme) {
+			    newtheme = checkTheme;
 			} else {
 			    newtheme = 'light';
 			}

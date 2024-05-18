@@ -193,15 +193,7 @@ class ChatTextEditor extends LitElement {
 			const checkTheme = localStorage.getItem('qortalTheme')
 			const chatbar = this.shadowRoot.querySelector('.element')
 
-			if (checkTheme === 'dark') {
-				this.theme = 'dark'
-				chatbar.style.cssText = "color:#ffffff;"
-
-			} else {
-				this.theme = 'light'
-				chatbar.style.cssText = "color:#080808;"
-
-			}
+			chatbar.style.cssText = "color: var(--chat-bubble-msg-color);"
 		})
 
 		this.emojiPickerHandler = this.shadowRoot.querySelector('.emoji-button')

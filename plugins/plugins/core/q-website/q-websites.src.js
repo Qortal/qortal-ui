@@ -247,8 +247,8 @@ class QWebsites extends LitElement {
 
 			use(checkLanguage)
 
-			if (checkTheme === 'dark') {
-				this.theme = 'dark'
+			if (checkTheme) {
+				this.theme = checkTheme
 			} else {
 				this.theme = 'light'
 			}
@@ -308,8 +308,8 @@ class QWebsites extends LitElement {
 	changeTheme() {
 		const checkTheme = localStorage.getItem('qortalTheme')
 
-		if (checkTheme === 'dark') {
-			this.theme = 'dark'
+		if (checkTheme) {
+			this.theme = checkTheme
 		} else {
 			this.theme = 'light'
 		}

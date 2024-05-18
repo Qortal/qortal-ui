@@ -153,8 +153,8 @@ class ChatHead extends LitElement {
 		window.addEventListener('storage', () => {
 			const checkTheme = localStorage.getItem('qortalTheme')
 
-			if (checkTheme === 'dark') {
-				this.theme = 'dark'
+			if (checkTheme) {
+				this.theme = checkTheme
 			} else {
 				this.theme = 'light'
 			}
@@ -227,8 +227,8 @@ class ChatHead extends LitElement {
 	changeTheme() {
 		const checkTheme = localStorage.getItem('qortalTheme')
 
-		if (checkTheme === 'dark') {
-			this.theme = 'dark'
+		if (checkTheme) {
+			this.theme = checkThemeheme
 		} else {
 			this.theme = 'light'
 		}
