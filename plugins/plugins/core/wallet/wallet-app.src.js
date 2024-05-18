@@ -2598,43 +2598,43 @@ class MultiWallet extends LitElement {
 	}
 
 	closeAddressDialog(coin) {
-        const upperCoin = coin.charAt(0).toUpperCase() + coin.slice(1)
-        this.shadowRoot.querySelector(`#add${upperCoin}AddressDialog`).close()
-        this.shadowRoot.getElementById(`${coin}NameInput`).value = ''
-        this.shadowRoot.getElementById(`${coin}AddressInput`).value = ''
-        switch (coin) {
-            case 'qort':
-                this.qortBookName = ''
-                this.qortBookAddress = ''
-                break
-            case 'btc':
-                this.btcBookName = ''
-                this.btcBookAddress = ''
-                break
-            case 'ltc':
-                this.ltcBookName = ''
-                this.ltcBookAddress = ''
-                break
-            case 'doge':
-                this.dogeBookName = ''
-                this.dogeBookAddress = ''
-                break
-            case 'dgb':
-                this.dgbBookName = ''
-                this.dgbBookAddress = ''
-                break
-            case 'rvn':
-                this.rvnBookName = ''
-                this.rvnBookAddress = ''
-                break
-            case 'arrr':
-                this.arrrBookName = ''
-                this.arrrBookAddress = ''
-                break
-            default:
-                break
-        }
-    }
+		const upperCoin = coin.charAt(0).toUpperCase() + coin.slice(1)
+		this.shadowRoot.querySelector(`#add${upperCoin}AddressDialog`).close()
+		this.shadowRoot.getElementById(`${coin}NameInput`).value = ''
+		this.shadowRoot.getElementById(`${coin}AddressInput`).value = ''
+		switch (coin) {
+			case 'qort':
+				this.qortBookName = ''
+				this.qortBookAddress = ''
+				break
+			case 'btc':
+				this.btcBookName = ''
+				this.btcBookAddress = ''
+				break
+			case 'ltc':
+				this.ltcBookName = ''
+				this.ltcBookAddress = ''
+				break
+			case 'doge':
+				this.dogeBookName = ''
+				this.dogeBookAddress = ''
+				break
+			case 'dgb':
+				this.dgbBookName = ''
+				this.dgbBookAddress = ''
+				break
+			case 'rvn':
+				this.rvnBookName = ''
+				this.rvnBookAddress = ''
+				break
+			case 'arrr':
+				this.arrrBookName = ''
+				this.arrrBookAddress = ''
+				break
+			default:
+				break
+		}
+	}
 
 	closeImportAddressbookDialog(coin) {  // This function is not currently used
 		this.shadowRoot.querySelector(`#import${coin}AddressbookDialog`).close()
@@ -2893,35 +2893,35 @@ class MultiWallet extends LitElement {
 	}
 
 	sendFromAddressbook(coin, websiteObj) {
-        let address = websiteObj.address
-        switch (coin) {
-            case 'qort':
-                this.qortRecipient = address
-                break
-            case 'btc':
-                this.btcRecipient = address
-                break
-            case 'ltc':
-                this.ltcRecipient = address
-                break
-            case 'doge':
-                this.dogeRecipient = address
-                break
-            case 'dgb':
-                this.dgbRecipient = address
-                break
-            case 'rvn':
-                this.rvnRecipient = address
-                break
-            case 'arrr':
-                this.arrrRecipient = address
-                break
-            default:
-                break
-        }        
-        this.openSend(coin)
-        this.shadowRoot.querySelector(`#${coin}BookDialog`).close()
-    }
+		let address = websiteObj.address
+		switch (coin) {
+			case 'qort':
+				this.qortRecipient = address
+				break
+			case 'btc':
+				this.btcRecipient = address
+				break
+			case 'ltc':
+				this.ltcRecipient = address
+				break
+			case 'doge':
+				this.dogeRecipient = address
+				break
+			case 'dgb':
+				this.dgbRecipient = address
+				break
+			case 'rvn':
+				this.rvnRecipient = address
+				break
+			case 'arrr':
+				this.arrrRecipient = address
+				break
+			default:
+				break
+		}
+		this.openSend(coin)
+		this.shadowRoot.querySelector(`#${coin}BookDialog`).close()
+	}
 
 	removeQortAddress(adressObj) {
 		const theQortalAddressBook = 'addressbookQort-' + this.bookQortalAddress
@@ -3139,39 +3139,39 @@ class MultiWallet extends LitElement {
 	}
 
 	closeDialog(coin) {
-        const upperCoin = coin.charAt(0).toUpperCase() + coin.slice(1)
-        this.shadowRoot.querySelector(`#send${upperCoin}Dialog`).close()
-        this.shadowRoot.getElementById(`${coin}AmountInput`).value = 0
-        this.shadowRoot.getElementById(`${coin}Recipient`).value = ''
-        switch (coin) {
-            case 'qort':
-                this.qortRecipient = ''
-                this.qortAmount = 0
-            case 'btc':
-                this.btcRecipient = ''
-                this.btcAmount = 0
-            case 'ltc':
-                this.ltcRecipient = ''
-                this.ltcAmount = 0
-            case 'doge':
-                this.dogeRecipient = ''
-                this.dogeAmount = 0
-            case 'dgb':
-                this.dgbRecipient = ''
-                this.dgbAmount = 0
-            case 'rvn':
-                this.rvnRecipient = ''
-                this.rvnAmount = 0
-            case 'arrr':
-                this.arrrRecipient = ''
-                this.arrrAmount = 0
-                this.arrrMemo = ''
-            default:
-                break
-        }
-        this.successMessage = ''
-        this.errorMessage = ''
-    }
+		const upperCoin = coin.charAt(0).toUpperCase() + coin.slice(1)
+		this.shadowRoot.querySelector(`#send${upperCoin}Dialog`).close()
+		this.shadowRoot.getElementById(`${coin}AmountInput`).value = 0
+		this.shadowRoot.getElementById(`${coin}Recipient`).value = ''
+		switch (coin) {
+			case 'qort':
+				this.qortRecipient = ''
+				this.qortAmount = 0
+			case 'btc':
+				this.btcRecipient = ''
+				this.btcAmount = 0
+			case 'ltc':
+				this.ltcRecipient = ''
+				this.ltcAmount = 0
+			case 'doge':
+				this.dogeRecipient = ''
+				this.dogeAmount = 0
+			case 'dgb':
+				this.dgbRecipient = ''
+				this.dgbAmount = 0
+			case 'rvn':
+				this.rvnRecipient = ''
+				this.rvnAmount = 0
+			case 'arrr':
+				this.arrrRecipient = ''
+				this.arrrAmount = 0
+				this.arrrMemo = ''
+			default:
+				break
+		}
+		this.successMessage = ''
+		this.errorMessage = ''
+	}
 
 	sendToQortAddress() {
 		this.qortRecipient = this.selectedTransaction.recipient
@@ -3303,19 +3303,19 @@ class MultiWallet extends LitElement {
 
 	renderCAB() {
 		return html`
-            <span>${this.selectedTransaction.aTAddress}</span>
-            <button-icon-copy
-                title="${translate("blockpage.bcchange8")}"
-                onSuccessMessage="${translate("walletpage.wchange4")}"
-                onErrorMessage="${translate("walletpage.wchange39")}"
-                textToCopy=${this.selectedTransaction.aTAddress}
-                buttonSize="24px"
-                iconSize="16px"
-                color="var(--copybutton)"
-                offsetLeft="4px"
-            >
-            </button-icon-copy>
-        `
+			<span>${this.selectedTransaction.aTAddress}</span>
+			<button-icon-copy
+				title="${translate("blockpage.bcchange8")}"
+				onSuccessMessage="${translate("walletpage.wchange4")}"
+				onErrorMessage="${translate("walletpage.wchange39")}"
+				textToCopy=${this.selectedTransaction.aTAddress}
+				buttonSize="24px"
+				iconSize="16px"
+				color="var(--copybutton)"
+				offsetLeft="4px"
+			>
+			</button-icon-copy>
+		`
 	}
 
 	renderFetchText() {
