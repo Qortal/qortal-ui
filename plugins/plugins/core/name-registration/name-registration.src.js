@@ -466,7 +466,7 @@ class NameRegistration extends LitElement {
 	changeTheme() {
 		const checkTheme = localStorage.getItem('qortalTheme')
 		if (checkTheme) {
-			this.theme = checkThemeheme
+			this.theme = checkTheme
 		} else {
 			this.theme = 'light'
 		}
