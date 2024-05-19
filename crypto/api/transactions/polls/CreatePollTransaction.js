@@ -74,7 +74,7 @@ export default class CreatePollTransaction extends TransactionBase {
 
 	set rPollDesc(rPollDesc) {
 		this._rPollDesc = rPollDesc
-		this._rPollDescBytes = this.constructor.utils.stringtoUTF8Array(this._rPollDesc.toLocaleLowerCase())
+		this._rPollDescBytes = this.constructor.utils.stringtoUTF8Array(this._rPollDesc)
 		this._rPollDescLength = this.constructor.utils.int32ToBytes(this._rPollDescBytes.length)
 	}
 
