@@ -248,7 +248,9 @@
 		"balance": "Hitel",
 		"balances": "A PÉNZTÁRCSA EGYENLEGEK",
 		"update": "FRISSÍTSE A PÉNZTÁRCSA-EGYENLEGEKET",
-		"view": "Kilátás"
+		"view": "Kilátás",
+		"all": "Minden",
+		"page": "Oldal"
 	},
 	"gifs": {
 		"gchange1": "Gif Explorer",

@@ -248,7 +248,9 @@
 		"balance": "Solde",
 		"balances": "VOS SOLDES DE PORTEFEUILLE",
 		"update": "METTRE À JOUR LES SOLDES DES PORTEFEUILLES",
-		"view": "Voir"
+		"view": "Voir",
+		"all": "Tous",
+		"page": "Page"
 	},
 	"gifs": {
 		"gchange1": "Explorateur GIF",

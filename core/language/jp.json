@@ -248,7 +248,9 @@
 		"balance": "残高",
 		"balances": "あなたのウォレット残高",
 		"update": "ウォレット残高を更新",
-		"view": "表示"
+		"view": "表示",
+		"all": "全て",
+		"page": "ページ"
 	},
 	"gifs": {
 		"gchange1": "GIF エクスプローラー",

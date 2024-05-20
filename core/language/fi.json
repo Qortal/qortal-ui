@@ -248,7 +248,9 @@
 		"balance": "Saldosi",
 		"balances": "Sinun saldosi",
 		"update": "Saldot päivitetään",
-		"view": "Katso"
+		"view": "Katso",
+		"all": "Kaikki",
+		"page": "Sivu"
 	},
 	"gifs": {
 		"gchange1": "Gif tutkija",

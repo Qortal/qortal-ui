@@ -248,7 +248,9 @@
 		"balance": "Saldo",
 		"balances": "SALDI VAN UW PORTEFEUILLES",
 		"update": "SALDI VAN PORTEFEUILLES HEROPVRAGEN",
-		"view": "Bekijken"
+		"view": "Bekijken",
+		"all": "Alle",
+		"page": "Bladzijde"
 	},
 	"gifs": {
 		"gchange1": "GIF-Explorer",

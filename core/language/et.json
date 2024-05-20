@@ -248,7 +248,9 @@
 		"balance": "Saldo",
 		"balances": "Sinu saldoseisud",
 		"update": "Saldoseisude uuendamine",
-		"view": "Vaata"
+		"view": "Vaata",
+		"all": "Kõik",
+		"page": "Lehekülg"
 	},
 	"gifs": {
 		"gchange1": "Gif avastaja",

@@ -248,7 +248,9 @@
 		"balance": "餘額",
 		"balances": "您的錢包餘額",
 		"update": "更新錢包餘額",
-		"view": "看法"
+		"view": "看法",
+		"all": "全部",
+		"page": "頁"
 	},
 	"gifs": {
 		"gchange1": "Gif 瀏覽器",

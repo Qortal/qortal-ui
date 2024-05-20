@@ -248,7 +248,9 @@
 		"balance": "Kredit",
 		"balances": "VAŠI STANJE U NOVČANIKU",
 		"update": "AŽURIRAJTE STANJE NOVČANIKA",
-		"view": "Pogled"
+		"view": "Pogled",
+		"all": "Sve",
+		"page": "Strana"
 	},
 	"gifs": {
 		"gchange1": "Gif Ekplorer",

@@ -248,7 +248,9 @@
 		"balance": "Saldo",
 		"balances": "SEUS SALDOS DE CARTEIRA",
 		"update": "ATUALIZAR SALDOS DA CARTEIRA",
-		"view": "Ver"
+		"view": "Ver",
+		"all": "Todos",
+		"page": "Página"
 	},
 	"gifs": {
 		"gchange1": "Gif Explorer",

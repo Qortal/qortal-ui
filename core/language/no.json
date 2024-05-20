@@ -248,7 +248,9 @@
 		"balance": "Saldo",
 		"balances": "DIN WALLET-SALDO",
 		"update": "OPPDATERT WALLET-SALDOER",
-		"view": "Utsikt"
+		"view": "Utsikt",
+		"all": "Alle",
+		"page": "Side"
 	},
 	"gifs": {
 		"gchange1": "Gif Explorer",
