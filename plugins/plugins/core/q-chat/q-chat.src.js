@@ -24,6 +24,7 @@ import '@material/mwc-icon'
 import '@material/mwc-snackbar'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@vaadin/grid'
+import '@vaadin/scroller'
 import '@vaadin/tooltip'
 
 // Multi language support
@@ -149,9 +150,14 @@ class Chat extends LitElement {
 							</div>
 						</div>
 					</div>
-					<ul class="list">
-						${this.isEmptyArray(this.chatHeads) ? this.renderLoadingText() : this.renderChatHead(this.chatHeads)}
-					</ul>
+					<vaadin-scroller
+						scroll-direction="vertical"
+						style="border-bottom: 1px solid var(--lumo-contrast-20pct); padding: var(--lumo-space-s);"
+					>
+						<ul class="list">
+							${this.isEmptyArray(this.chatHeads) ? this.renderLoadingText() : this.renderChatHead(this.chatHeads)}
+						</ul>
+					</vaadin-scroller>
 				</div>
 				<div class="chat">
 					<div id="newMessageBar" class="new-message-bar hide-new-message-bar clearfix" @click=${() => this.scrollToBottom()}>
