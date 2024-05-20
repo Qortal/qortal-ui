@@ -87,7 +87,7 @@ const extractComponents = async (url) => {
 }
 
 function processText(input) {
-	const linkRegex = /(qortal:\/\/S+)/g
+	const linkRegex = /(qortal:\/\/\s+$|\S+.+)/gm
 	function processNode(node) {
 		if (node.nodeType === Node.TEXT_NODE) {
 			const parts = node.textContent.split(linkRegex)
