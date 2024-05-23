@@ -6791,8 +6791,6 @@ export const qchatStyles = css`
         --_lumo-grid-border-color: var(--border);
         --_lumo-grid-secondary-border-color: var(--border2);
         --mdc-dialog-min-width: 750px;
-        scrollbar-width: thin;
-        scrollbar-color: #6a6c75 #a1a1a1;
     }
 
     paper-spinner-lite {
@@ -6824,7 +6822,7 @@ export const qchatStyles = css`
         float: left;
         height: 100vh;
         overflow-y: hidden;
-        border-right: 3px #ddd solid;
+        border-right: 2px #ddd solid;
     }
 
     .people-list .blockedusers {
@@ -6970,20 +6968,6 @@ export const qchatStyles = css`
         height: 85vh;
         overflow-y: auto;
         overflow-x: hidden;
-    }
-
-    .people-list ul::-webkit-scrollbar-track {
-        background: #a1a1a1;
-    }
-
-    .people-list ul::-webkit-scrollbar {
-        width: 11px;
-    }
-
-    .people-list ul::-webkit-scrollbar-thumb {
-        background-color: #6a6c75;
-        border-radius: 6px;
-        border: 3px solid #a1a1a1;
     }
 
     .chat {
@@ -13205,7 +13189,7 @@ export const multiWalletStyles = css`
     }
 
     #transactions {
-        margin-top: 30px;
+        margin-top: 25px;
         margin-left: 20px;
         margin-right: 20px;
         border-top: 1px solid var(--border);

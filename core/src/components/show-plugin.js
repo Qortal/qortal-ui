@@ -1225,6 +1225,34 @@ class NavBar extends connect(store)(LitElement) {
 
 			this.myMenuPlugins = JSON.parse(localStorage.getItem('myMenuPlugs') || '[]')
 		} else {
+			let newPluginMenu = JSON.parse(localStorage.getItem('myMenuPlugs') || '[]')
+
+			const oldQchat = 'messaging/q-chat/index.html'
+			const newQchat = 'q-chat/index.html'
+			const oldMinting = 'minting/index.html'
+			const newMinting = 'minting-info/index.html'
+			const oldWebsites = 'qdn/index.html'
+			const newWebsites = 'q-website/index.html'
+			const oldDatamanager = 'qdn/data-management/index.html'
+			const newDatamanager = 'data-management/index.html'
+
+			// Check if local storage have broken links and replace them
+			newPluginMenu.find(a => {
+				if (a.page === oldQchat) {
+					a.page = newQchat
+				} else if (a.page === oldMinting) {
+					a.page = newMinting
+				} else if (a.page === oldWebsites) {
+					a.page = newWebsites
+				} else if (a.page === oldDatamanager) {
+					a.page = newDatamanager
+				} else {}
+			})
+
+			localStorage.setItem('myMenuPlugs', JSON.stringify(newPluginMenu))
+
+			await appDelay(250)
+
 			this.myMenuPlugins = JSON.parse(localStorage.getItem('myMenuPlugs') || '[]')
 		}
 	}

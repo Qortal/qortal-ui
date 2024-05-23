@@ -248,7 +248,9 @@
 		"balance": "余额",
 		"balances": "您的钱包余额",
 		"update": "更新钱包余额",
-		"view": "看法"
+		"view": "看法",
+		"all": "全部",
+		"page": "页"
 	},
 	"gifs": {
 		"gchange1": "Gif 浏览器",

@@ -248,7 +248,9 @@
 		"balance": "Saldo",
 		"balances": "SALDO TWOJEGO PORTFELA",
 		"update": "AKTUALIZUJ SALDA W PORTFELU",
-		"view": "Pogląd"
+		"view": "Pogląd",
+		"all": "Wszystko",
+		"page": "Strona"
 	},
 	"gifs": {
 		"gchange1": "Eksplorator gifów",

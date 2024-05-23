@@ -248,7 +248,9 @@
 		"balance": "Guthaben",
 		"balances": "IHR WALLET-GUTHABEN",
 		"update": "AKTUALISIERE WALLET-GUTHABEN",
-		"view": "Ansehen"
+		"view": "Ansehen",
+		"all": "Alle",
+		"page": "Seite"
 	},
 	"gifs": {
 		"gchange1": "GIF-Explorer",

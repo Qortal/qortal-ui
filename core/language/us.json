@@ -248,7 +248,9 @@
 		"balance": "Balance",
 		"balances": "YOUR WALLET BALANCES",
 		"update": "UPDATE WALLET BALANCES",
-		"view": "View"
+		"view": "View",
+		"all": "All",
+		"page": "Page"
 	},
 	"gifs": {
 		"gchange1": "Gif Explorer",

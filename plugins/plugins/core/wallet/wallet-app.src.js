@@ -29,6 +29,8 @@ import '@vaadin/grid'
 import '@vaadin/icon'
 import '@vaadin/icons'
 import '@vaadin/password-field'
+import '@vaadin/tabs'
+import '@vaadin/tabsheet'
 
 // Multi language support
 import { get, registerTranslateConfig, translate, use } from '../../../../core/translate'
@@ -127,7 +129,12 @@ class MultiWallet extends LitElement {
 			bookDogecoinAddress: { type: String },
 			bookDigibyteAddress: { type: String },
 			bookRavencoinAddress: { type: String },
-			bookPiratechainAddress: { type: String }
+			bookPiratechainAddress: { type: String },
+			visitedTab: { type: Number },
+			searchOffset: { type: Number },
+			searchLimit: { type: Number },
+			counter: { type: Number },
+			pageButtonsHidden: { type: Boolean }
 		}
 	}
 
@@ -235,6 +242,11 @@ class MultiWallet extends LitElement {
 		this.bookDigibyteAddress = ''
 		this.bookRavencoinAddress = ''
 		this.bookPiratechainAddress = ''
+		this.visitedTab = 0
+		this.searchOffset = 0
+		this.searchLimit = 10
+		this.counter = 1
+		this.pageButtonsHidden = false
 		this.wallets = new Map()
 
 		let coinProp = {
@@ -387,6 +399,7 @@ class MultiWallet extends LitElement {
 					<div class="qrcode-pos" ?hidden="${this.getSelectedWalletAddress().length < 1}">
 						<qortal-qrcode-generator data="${this.getSelectedWalletAddress()}" mode="octet" format="html" auto></qortal-qrcode-generator>
 					</div>
+					${this.renderTabTransactions()}
 					<div id="transactions">
 						${this.loading ? html`
 							<paper-spinner-lite style="display: block; margin: 5px auto;" active></paper-spinner-lite>
@@ -2246,7 +2259,7 @@ class MultiWallet extends LitElement {
 
 		this.transactionsDOM = this.shadowRoot.getElementById('transactionsDOM')
 
-		this.showWallet()
+		this.showNewQortWallet()
 
 		window.addEventListener('storage', () => {
 			const checkLanguage = localStorage.getItem('qortalLanguage')
@@ -2280,6 +2293,38 @@ class MultiWallet extends LitElement {
 		setInterval(() => {
 			this.paymentFee()
 		}, 600000)
+	}
+
+	async myTabChanged(value) {
+		this.pageButtonsHidden = false
+		this.visitedTab = value
+		this.searchOffset = 0
+		this.searchLimit = 10
+		this.counter = 1
+		await this.renderNewDom()
+	}
+
+	renderTabTransactions() {
+		if (this._selectedWallet == 'qort') {
+			return html`
+				<div style="margin-top: 10px;">
+					<vaadin-tabs>
+						<vaadin-tab id="type" disabled><span style="color: var(--black);">${translate("walletpage.wchange6")} :</span></vaadin-tab>
+						<vaadin-tab id="payment-tab" style="cursor: pointer;" @click=${(e) => this.myTabChanged(0)}>PAYMENT</vaadin-tab>
+						<vaadin-tab id="arbitary-tab" style="cursor: pointer;" @click=${(e) => this.myTabChanged(1)}>ARBITARY</vaadin-tab>
+						<vaadin-tab id="at-tab" style="cursor: pointer;" @click=${(e) => this.myTabChanged(2)}>AT</vaadin-tab>
+						<vaadin-tab id="group-tab" style="cursor: pointer;" @click=${(e) => this.myTabChanged(3)}>GROUP</vaadin-tab>
+						<vaadin-tab id="name-tab" style="cursor: pointer;" @click=${(e) => this.myTabChanged(4)}>NAME</vaadin-tab>
+						<vaadin-tab id="asset-tab" style="cursor: pointer;" @click=${(e) => this.myTabChanged(5)}>ASSET</vaadin-tab>
+						<vaadin-tab id="poll-tab" style="cursor: pointer;" @click=${(e) => this.myTabChanged(6)}>POLL</vaadin-tab>
+						<vaadin-tab id="rewarshare-tab" style="cursor: pointer;" @click=${(e) => this.myTabChanged(7)}>REWARDSHARE</vaadin-tab>
+						<vaadin-tab id="misc-tab" style="cursor: pointer;" @click=${(e) => this.myTabChanged(8)}>MISC</vaadin-tab>
+					</vaadin-tabs>
+				</div>
+			`
+		} else {
+			return html``
+		}
 	}
 
 	async paymentFee() {
@@ -2499,7 +2544,11 @@ class MultiWallet extends LitElement {
 
 	tabWalletQort() {
 		this._selectedWallet = 'qort'
-		this.showWallet()
+		this.visitedTab = 0
+		this.searchOffset = 0
+		this.searchLimit = 10
+		this.pageButtonsHidden = false
+		this.showNewQortWallet()
 	}
 
 	tabWalletBtc() {
@@ -3538,19 +3587,18 @@ class MultiWallet extends LitElement {
 
 	renderCAB() {
 		return html`
-            <span>${this.selectedTransaction.aTAddress}</span>
-            <button-icon-copy
-                title="${translate("blockpage.bcchange8")}"
-                onSuccessMessage="${translate("walletpage.wchange4")}"
-                onErrorMessage="${translate("walletpage.wchange39")}"
-                textToCopy=${this.selectedTransaction.aTAddress}
-                buttonSize="24px"
-                iconSize="16px"
-                color="var(--copybutton)"
-                offsetLeft="4px"
-            >
-            </button-icon-copy>
-        `
+			<span>${this.selectedTransaction.aTAddress}</span>
+			<button-icon-copy
+				title="${translate("blockpage.bcchange8")}"
+				onSuccessMessage="${translate("walletpage.wchange4")}"
+				onErrorMessage="${translate("walletpage.wchange39")}"
+				textToCopy=${this.selectedTransaction.aTAddress}
+				buttonSize="24px"
+				iconSize="16px"
+				color="var(--copybutton)"
+				offsetLeft="4px"
+			></button-icon-copy>
+		`
 	}
 
 	renderFetchText() {
@@ -3857,7 +3905,7 @@ class MultiWallet extends LitElement {
 			}
 		}
 		await validateReceiver(recipient)
-		await this.showWallet()
+		await this.showNewQortWallet()
 	}
 
 	async sendBtc() {
@@ -4139,15 +4187,21 @@ class MultiWallet extends LitElement {
 
 		if (this._selectedWallet == 'qort') {
 			if (!window.parent.reduxStore.getState().app.blockInfo.height) {
-				await parentEpml.request('apiCall', { url: `/blocks/height`, type: 'api' })
-					.then(height => parentEpml.request('updateBlockInfo', { height }))
+				await parentEpml.request('apiCall', {
+					url: `/blocks/height`,
+					type: 'api'
+				}).then(height => parentEpml.request('updateBlockInfo', {
+					height
+				}))
 			}
 		}
+
 		const coin = this._selectedWallet
+
 		await this.fetchWalletAddress(this._selectedWallet)
-		await this.fetchWalletServer(this._selectedWallet)
 		await this.fetchWalletDetails(this._selectedWallet)
 		await this.fetchWalletServer(this._selectedWallet)
+
 		if (this._selectedWallet == coin) {
 			await this.renderTransactions()
 			await this.getTransactionGrid(this._selectedWallet)
@@ -4157,32 +4211,314 @@ class MultiWallet extends LitElement {
 		}
 	}
 
+
+	async showNewQortWallet() {
+		this.pageButtonsHidden = false
+		this.transactionsDOM.hidden = true
+		this.loading = true
+
+		if (!window.parent.reduxStore.getState().app.blockInfo.height) {
+			await parentEpml.request('apiCall', {
+				url: `/blocks/height`,
+				type: 'api'
+			}).then(height => parentEpml.request('updateBlockInfo', {
+				height
+			}))
+		}
+
+		const coin = this._selectedWallet
+
+		this.balanceString = this.renderFetchText()
+
+		parentEpml.request('apiCall', {
+			url: `/addresses/balance/${this.wallets.get('qort').wallet.address}`
+		}).then((res) => {
+			if (isNaN(Number(res))) {
+				let snack4string = get("walletpage.wchange32")
+				parentEpml.request('showSnackBar', `${snack4string}`)
+			} else {
+				if (this._selectedWallet == coin) {
+					this.wallets.get(coin).balance = Number(res).toFixed(8)
+					this.balanceString = this.wallets.get(this._selectedWallet).balance + " " + this._selectedWallet.toLocaleUpperCase()
+					this.balance = this.wallets.get(this._selectedWallet).balance
+				}
+			}
+		})
+
+		await this.fetchWalletDetails(this._selectedWallet)
+		await this.fetchWalletServer(this._selectedWallet)
+
+		this.shadowRoot.getElementById('type').selected = false
+		this.shadowRoot.getElementById('payment-tab').selected = true
+		this.shadowRoot.getElementById('arbitary-tab').selected = false
+		this.shadowRoot.getElementById('at-tab').selected = false
+		this.shadowRoot.getElementById('group-tab').selected = false
+		this.shadowRoot.getElementById('name-tab').selected = false
+		this.shadowRoot.getElementById('asset-tab').selected = false
+		this.shadowRoot.getElementById('poll-tab').selected = false
+		this.shadowRoot.getElementById('rewarshare-tab').selected = false
+		this.shadowRoot.getElementById('misc-tab').selected = false
+
+		if (this._selectedWallet == coin) {
+			await this.renderTransactions()
+			await this.getTransactionGrid(this._selectedWallet)
+			this.loading = false
+			this.transactionsDOM.hidden = false
+		}
+	}
+
+	async renderNewDom() {
+		this.transactionsDOM.hidden = true
+		this.loading = true
+
+		if (!window.parent.reduxStore.getState().app.blockInfo.height) {
+			await parentEpml.request('apiCall', {
+				url: `/blocks/height`,
+				type: 'api'
+			}).then(height => parentEpml.request('updateBlockInfo', {
+				height
+			}))
+		}
+
+		const coin = this._selectedWallet
+
+		await this.fetchWalletDetails(this._selectedWallet)
+
+		if (this._selectedWallet == coin) {
+			await this.renderTransactions()
+			await this.getTransactionGrid(this._selectedWallet)
+			this.loading = false
+			this.transactionsDOM.hidden = false
+		}
+	}
+
+	goBackwardTX() {
+		if (this.searchOffset === 0) {
+			this.pageButtonsHidden = false
+			this.searchLimit = 10
+			this.counter = 1
+		} else {
+			this.pageButtonsHidden = false
+			this.searchLimit = 10
+			this.counter = this.searchOffset / 10
+			this.searchOffset = this.searchOffset - 10
+			this.renderNewDom()
+		}
+	}
+
+	goForwardTX() {
+		this.pageButtonsHidden = false
+		this.searchLimit = 10
+		this.searchOffset = this.searchOffset + 10
+		this.counter = (this.searchOffset / 10) + 1
+		this.renderNewDom()
+	}
+
+	showAllTX() {
+		this.pageButtonsHidden = true
+		this.searchLimit = 0
+		this.searchOffset = 0
+		this.counter = 1
+		this.renderNewDom()
+	}
+
 	async fetchWalletDetails(coin) {
 		switch (coin) {
 			case 'qort':
-				this.balanceString = this.renderFetchText()
-				parentEpml.request('apiCall', {
-					url: `/addresses/balance/${this.wallets.get('qort').wallet.address}?apiKey=${this.getApiKey()}`
-				}).then((res) => {
-					if (isNaN(Number(res))) {
-						let snack4string = get("walletpage.wchange32")
-						parentEpml.request('showSnackBar', `${snack4string}`)
-					} else {
-						if (this._selectedWallet == coin) {
-							this.wallets.get(coin).balance = Number(res).toFixed(8)
-							this.balanceString = this.wallets.get(this._selectedWallet).balance + " " + this._selectedWallet.toLocaleUpperCase()
-							this.balance = this.wallets.get(this._selectedWallet).balance
-						}
-					}
+				const paymentTxsQort = await parentEpml.request('apiCall', {
+					url: `/transactions/search?address=${this.wallets.get('qort').wallet.address}&confirmationStatus=CONFIRMED&reverse=true
+						&limit=${this.searchLimit}
+						&offset=${this.searchOffset}
+						&txType=PAYMENT
+					`
 				})
-				const txsQort = await parentEpml.request('apiCall', {
-					url: `/transactions/search?address=${this.wallets.get('qort').wallet.address}&confirmationStatus=CONFIRMED&reverse=true&txType=PAYMENT&txType=REGISTER_NAME&txType=UPDATE_NAME&txType=SELL_NAME&txType=CANCEL_SELL_NAME&txType=BUY_NAME&txType=CREATE_POLL&txType=VOTE_ON_POLL&txType=ARBITRARY&txType=ISSUE_ASSET&txType=TRANSFER_ASSET&txType=CREATE_ASSET_ORDER&txType=CANCEL_ASSET_ORDER&txType=MULTI_PAYMENT&txType=DEPLOY_AT&txType=MESSAGE&txType=AIRDROP&txType=AT&txType=CREATE_GROUP&txType=UPDATE_GROUP&txType=ADD_GROUP_ADMIN&txType=REMOVE_GROUP_ADMIN&txType=GROUP_BAN&txType=CANCEL_GROUP_BAN&txType=GROUP_KICK&txType=GROUP_INVITE&txType=CANCEL_GROUP_INVITE&txType=JOIN_GROUP&txType=LEAVE_GROUP&txType=GROUP_APPROVAL&txType=SET_GROUP&txType=UPDATE_ASSET&txType=ACCOUNT_FLAGS&txType=ENABLE_FORGING&txType=REWARD_SHARE&txType=ACCOUNT_LEVEL&txType=TRANSFER_PRIVS&txType=PRESENCE`,
+				const pendingPaymentTxsQort = await parentEpml.request('apiCall', {
+					url: `/transactions/unconfirmed?creator=${this.wallets.get('qort').wallet.base58PublicKey}&reverse=true
+						&limit=${this.searchLimit}
+						&offset=${this.searchOffset}
+						&txType=PAYMENT
+					`
 				})
-				const pendingTxsQort = await parentEpml.request('apiCall', {
-					url: `/transactions/unconfirmed?creator=${this.wallets.get('qort').wallet.base58PublicKey}&reverse=true&txType=PAYMENT&txType=REGISTER_NAME&txType=UPDATE_NAME&txType=SELL_NAME&txType=CANCEL_SELL_NAME&txType=BUY_NAME&txType=CREATE_POLL&txType=VOTE_ON_POLL&txType=ARBITRARY&txType=ISSUE_ASSET&txType=TRANSFER_ASSET&txType=CREATE_ASSET_ORDER&txType=CANCEL_ASSET_ORDER&txType=MULTI_PAYMENT&txType=DEPLOY_AT&txType=MESSAGE&txType=AIRDROP&txType=AT&txType=CREATE_GROUP&txType=UPDATE_GROUP&txType=ADD_GROUP_ADMIN&txType=REMOVE_GROUP_ADMIN&txType=GROUP_BAN&txType=CANCEL_GROUP_BAN&txType=GROUP_KICK&txType=GROUP_INVITE&txType=CANCEL_GROUP_INVITE&txType=JOIN_GROUP&txType=LEAVE_GROUP&txType=GROUP_APPROVAL&txType=SET_GROUP&txType=UPDATE_ASSET&txType=ACCOUNT_FLAGS&txType=ENABLE_FORGING&txType=REWARD_SHARE&txType=ACCOUNT_LEVEL&txType=TRANSFER_PRIVS&txType=PRESENCE`,
+				const arbitaryTxsQort = await parentEpml.request('apiCall', {
+					url: `/transactions/search?address=${this.wallets.get('qort').wallet.address}&confirmationStatus=CONFIRMED&reverse=true
+						&limit=${this.searchLimit}
+						&offset=${this.searchOffset}
+						&txType=ARBITRARY
+					`
+				})
+				const pendingArbitaryTxsQort = await parentEpml.request('apiCall', {
+					url: `/transactions/unconfirmed?creator=${this.wallets.get('qort').wallet.base58PublicKey}&reverse=true
+						&limit=${this.searchLimit}
+						&offset=${this.searchOffset}
+						&txType=ARBITRARY
+					`
+				})
+				const atTxsQort = await parentEpml.request('apiCall', {
+					url: `/transactions/search?address=${this.wallets.get('qort').wallet.address}&confirmationStatus=CONFIRMED&reverse=true
+						&limit=${this.searchLimit}
+						&offset=${this.searchOffset}
+						&txType=AT
+						&txType=DEPLOY_AT
+						&txType=MESSAGE
+					`
+				})
+				const pendingAtTxsQort = await parentEpml.request('apiCall', {
+					url: `/transactions/unconfirmed?creator=${this.wallets.get('qort').wallet.base58PublicKey}&reverse=true
+						&limit=${this.searchLimit}
+						&offset=${this.searchOffset}
+						&txType=AT
+						&txType=DEPLOY_AT
+						&txType=MESSAGE
+					`
+				})
+				const groupTxsQort = await parentEpml.request('apiCall', {
+					url: `/transactions/search?address=${this.wallets.get('qort').wallet.address}&confirmationStatus=CONFIRMED&reverse=true
+						&limit=${this.searchLimit}
+						&offset=${this.searchOffset}
+						&txType=CREATE_GROUP
+						&txType=UPDATE_GROUP
+						&txType=ADD_GROUP_ADMIN
+						&txType=REMOVE_GROUP_ADMIN
+						&txType=GROUP_BAN
+						&txType=CANCEL_GROUP_BAN
+						&txType=GROUP_KICK
+						&txType=GROUP_INVITE
+						&txType=CANCEL_GROUP_INVITE
+						&txType=JOIN_GROUP
+						&txType=LEAVE_GROUP
+						&txType=GROUP_APPROVAL
+						&txType=SET_GROUP
+					`
+				})
+				const pendingGroupTxsQort = await parentEpml.request('apiCall', {
+					url: `/transactions/unconfirmed?creator=${this.wallets.get('qort').wallet.base58PublicKey}&reverse=true
+						&limit=${this.searchLimit}
+						&offset=${this.searchOffset}
+						&txType=CREATE_GROUP
+						&txType=UPDATE_GROUP
+						&txType=ADD_GROUP_ADMIN
+						&txType=REMOVE_GROUP_ADMIN
+						&txType=GROUP_BAN
+						&txType=CANCEL_GROUP_BAN
+						&txType=GROUP_KICK
+						&txType=GROUP_INVITE
+						&txType=CANCEL_GROUP_INVITE
+						&txType=JOIN_GROUP
+						&txType=LEAVE_GROUP
+						&txType=GROUP_APPROVAL
+						&txType=SET_GROUP
+					`
+				})
+				const nameTxsQort = await parentEpml.request('apiCall', {
+					url: `/transactions/search?address=${this.wallets.get('qort').wallet.address}&confirmationStatus=CONFIRMED&reverse=true
+						&limit=${this.searchLimit}
+						&offset=${this.searchOffset}
+						&txType=REGISTER_NAME
+						&txType=UPDATE_NAME
+						&txType=SELL_NAME
+						&txType=CANCEL_SELL_NAME
+						&txType=BUY_NAME
+					`
+				})
+				const pendingNameTxsQort = await parentEpml.request('apiCall', {
+					url: `/transactions/unconfirmed?creator=${this.wallets.get('qort').wallet.base58PublicKey}&reverse=true
+						&limit=${this.searchLimit}
+						&offset=${this.searchOffset}
+						&txType=REGISTER_NAME
+						&txType=UPDATE_NAME
+						&txType=SELL_NAME
+						&txType=CANCEL_SELL_NAME
+						&txType=BUY_NAME
+					`
+				})
+				const assetTxsQort = await parentEpml.request('apiCall', {
+					url: `/transactions/search?address=${this.wallets.get('qort').wallet.address}&confirmationStatus=CONFIRMED&reverse=true
+						&limit=${this.searchLimit}
+						&offset=${this.searchOffset}
+						&txType=ISSUE_ASSET
+						&txType=TRANSFER_ASSET
+						&txType=CREATE_ASSET_ORDER
+						&txType=CANCEL_ASSET_ORDER
+						&txType=UPDATE_ASSET
+					`
+				})
+				const pendingAssetTxsQort = await parentEpml.request('apiCall', {
+					url: `/transactions/unconfirmed?creator=${this.wallets.get('qort').wallet.base58PublicKey}&reverse=true
+						&limit=${this.searchLimit}
+						&offset=${this.searchOffset}
+						&txType=ISSUE_ASSET
+						&txType=TRANSFER_ASSET
+						&txType=CREATE_ASSET_ORDER
+						&txType=CANCEL_ASSET_ORDER
+						&txType=UPDATE_ASSET
+					`
+				})
+				const pollTxsQort = await parentEpml.request('apiCall', {
+					url: `/transactions/search?address=${this.wallets.get('qort').wallet.address}&confirmationStatus=CONFIRMED&reverse=true
+						&limit=${this.searchLimit}
+						&offset=${this.searchOffset}
+						&txType=CREATE_POLL
+						&txType=VOTE_ON_POLL
+					`
+				})
+				const pendingPollTxsQort = await parentEpml.request('apiCall', {
+					url: `/transactions/unconfirmed?creator=${this.wallets.get('qort').wallet.base58PublicKey}&reverse=true
+						&limit=${this.searchLimit}
+						&offset=${this.searchOffset}
+						&txType=CREATE_POLL
+						&txType=VOTE_ON_POLL
+					`
+				})
+				const rewardshareTxsQort = await parentEpml.request('apiCall', {
+					url: `/transactions/search?address=${this.wallets.get('qort').wallet.address}&confirmationStatus=CONFIRMED&reverse=true
+						&limit=${this.searchLimit}
+						&offset=${this.searchOffset}
+						&txType=REWARD_SHARE
+					`
+				})
+				const pendingRewardshareTxsQort = await parentEpml.request('apiCall', {
+					url: `/transactions/unconfirmed?creator=${this.wallets.get('qort').wallet.base58PublicKey}&reverse=true
+						&limit=${this.searchLimit}
+						&offset=${this.searchOffset}
+						&txType=REWARD_SHARE
+					`
+				})
+				const miscTxsQort = await parentEpml.request('apiCall', {
+					url: `/transactions/search?address=${this.wallets.get('qort').wallet.address}&confirmationStatus=CONFIRMED&reverse=true
+						&limit=${this.searchLimit}
+						&offset=${this.searchOffset}
+						&txType=TRANSFER_PRIVS
+						&txType=PRESENCE
+					`
+				})
+				const pendingMiscTxsQort = await parentEpml.request('apiCall', {
+					url: `/transactions/unconfirmed?creator=${this.wallets.get('qort').wallet.base58PublicKey}&reverse=true
+						&limit=${this.searchLimit}
+						&offset=${this.searchOffset}
+						&txType=TRANSFER_PRIVS
+						&txType=PRESENCE
+					`
 				})
 				if (this._selectedWallet == coin) {
-					this.wallets.get(coin).transactions = pendingTxsQort.concat(txsQort)
+					if (this.visitedTab === 0) {
+						this.wallets.get(coin).transactions = pendingPaymentTxsQort.concat(paymentTxsQort)
+					} else if (this.visitedTab === 1) {
+						this.wallets.get(coin).transactions = pendingArbitaryTxsQort.concat(arbitaryTxsQort)
+					} else if (this.visitedTab === 2) {
+						this.wallets.get(coin).transactions = pendingAtTxsQort.concat(atTxsQort)
+					} else if (this.visitedTab === 3) {
+						this.wallets.get(coin).transactions = pendingGroupTxsQort.concat(groupTxsQort)
+					} else if (this.visitedTab === 4) {
+						this.wallets.get(coin).transactions = pendingNameTxsQort.concat(nameTxsQort)
+					} else if (this.visitedTab === 5) {
+						this.wallets.get(coin).transactions = pendingAssetTxsQort.concat(assetTxsQort)
+					} else if (this.visitedTab === 6) {
+						this.wallets.get(coin).transactions = pendingPollTxsQort.concat(pollTxsQort)
+					} else if (this.visitedTab === 7) {
+						this.wallets.get(coin).transactions = pendingRewardshareTxsQort.concat(rewardshareTxsQort)
+					} else if (this.visitedTab === 8) {
+						this.wallets.get(coin).transactions = pendingMiscTxsQort.concat(miscTxsQort)
+					}
 				}
 				break
 			case 'btc':
@@ -4643,7 +4979,7 @@ class MultiWallet extends LitElement {
 		}
 		return html`
 			<div style="padding-left:12px;" ?hidden="${!this.isEmptyArray(transactions)}"><span style="color: var(--black);">${translate("walletpage.wchange38")}</span></div>
-			<vaadin-grid theme="large" id="${coin}TransactionsGrid" ?hidden="${this.isEmptyArray(this.wallets.get(this._selectedWallet).transactions)}" page-size="25" all-rows-visible>
+			<vaadin-grid theme="large" id="${coin}TransactionsGrid" ?hidden="${this.isEmptyArray(this.wallets.get(this._selectedWallet).transactions)}" .items="${this.wallets.get(this._selectedWallet).transactions}" all-rows-visible>
 				<vaadin-grid-column
 					auto-width
 					header="${translate("walletpage.wchange41")}"
@@ -4709,7 +5045,20 @@ class MultiWallet extends LitElement {
 				>
 				</vaadin-grid-column>
 			</vaadin-grid>
-			<div id="pages"></div>
+			<div style="margin-top: 10px;">
+				<vaadin-button theme="primary small" style="cursor: pointer;" ?hidden="${this.pageButtonsHidden}" @click=${() => this.goBackwardTX()}>
+					<< <span style="text-transform: uppercase; font-size: 14px;">${translate("general.back")}</span>
+				</vaadin-button>
+				<span style="color: var(--black); font-size: 16px; font-weight: 600;">&nbsp;${translate("general.page")} ${this.counter}&nbsp;</span>
+				<vaadin-button theme="primary small" style="cursor: pointer;" ?hidden="${this.wallets.get(this._selectedWallet).transactions.length < 10 || this.pageButtonsHidden}" @click=${() => this.goForwardTX()}>
+					<span style="text-transform: uppercase; font-size: 14px;">${translate("general.next")}</span> >>
+				</vaadin-button>
+				<div style="float: right;">
+					<vaadin-button theme="primary small" style="cursor: pointer;" @click=${() => this.showAllTX()}>
+						<span style="text-transform: uppercase; font-size: 14px;">${translate("general.view")} ${translate("general.all")}</span>
+					</vaadin-button>
+				</div>
+			</div>
 		`
 	}
 

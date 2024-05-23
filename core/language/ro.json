@@ -248,7 +248,9 @@
 		"balance": "Credit",
 		"balances": "SOLDELE PORTOTELULUI DVS",
 		"update": "ACTUALIZAȚI SOLDELE PORTOTELULUI",
-		"view": "Vedere"
+		"view": "Vedere",
+		"all": "Toate",
+		"page": "Pagină"
 	},
 	"gifs": {
 		"gchange1": "Explorator GIF",

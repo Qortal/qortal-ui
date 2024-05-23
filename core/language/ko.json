@@ -248,7 +248,9 @@
 		"balance": "균형",
 		"balances": "지갑 잔액",
 		"update": "월렛 잔액 업데이트",
-		"view": "보다"
+		"view": "보다",
+		"all": "모두",
+		"page": "페이지"
 	},
 	"gifs": {
 		"gchange1": "Gif 탐색기",
