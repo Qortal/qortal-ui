@@ -21,6 +21,9 @@ import './ChatImage'
 import '@material/mwc-button'
 import '@material/mwc-dialog'
 import '@material/mwc-icon'
+import '@polymer/paper-dialog/paper-dialog.js'
+import '@polymer/paper-icon-button/paper-icon-button.js'
+import '@polymer/iron-icons/iron-icons.js'
 import '@vaadin/icon'
 import '@vaadin/icons'
 import '@vaadin/tooltip'
@@ -96,6 +99,7 @@ function processText(input) {
 				parts.forEach((part) => {
 					if (part.startsWith('qortal://')) {
 						const link = document.createElement('span')
+
 						// Store the URL in a data attribute
 						link.setAttribute('data-url', part)
 						link.textContent = part
@@ -107,7 +111,9 @@ function processText(input) {
 							e.preventDefault()
 							try {
 								const res = await extractComponents(part)
+
 								if (!res) return
+
 								if (res.type && res.groupid && res.action === 'join') {
 									window.parent.reduxStore.dispatch(
 										window.parent.reduxAction.setNewTab({
@@ -130,7 +136,7 @@ function processText(input) {
 									window.parent.reduxStore.dispatch(
 										window.parent.reduxAction.setSideEffectAction({
 											type: 'openJoinGroupModal',
-											data: +res.groupid
+											data: res.groupid
 										})
 									)
 									return
@@ -987,7 +993,9 @@ class MessageTemplate extends LitElement {
 			openDialogImage: { type: Boolean },
 			openDialogGif: { type: Boolean },
 			openDeleteImage: { type: Boolean },
+			openDeleteGif: { type: Boolean },
 			openDeleteAttachment: { type: Boolean },
+			openDeleteFile: { type: Boolean },
 			isImageLoaded: { type: Boolean },
 			isGifLoaded: { type: Boolean },
 			isFirstMessage: { type: Boolean },
@@ -1032,6 +1040,10 @@ class MessageTemplate extends LitElement {
 		this.isLastMessageInGroup = false
 		this.viewImage = false
 		this.isInProgress = false
+		this.openDeleteImage = false
+		this.openDeleteGif = false
+		this.openDeleteAttachment = false
+		this.openDeleteFile = false
 	}
 
 	render() {
@@ -1044,35 +1056,49 @@ class MessageTemplate extends LitElement {
 		let repliedToData = null
 		let image = null
 		let gif = null
+		let attachment = null
+		let file = null
 		let isImageDeleted = false
+		let isGifDeleted = false
 		let isAttachmentDeleted = false
+		let isFileDeleted = false
 		let version = 0
 		let isForwarded = false
 		let isEdited = false
-		let attachment = null
 
 		try {
 			const parsedMessageObj = JSON.parse(this.messageObj.decodedMessage)
+
 			if (+parsedMessageObj.version > 1 && parsedMessageObj.messageText) {
 				messageVersion2 = generateHTML(parsedMessageObj.messageText, [StarterKit, Underline, Highlight])
 				messageVersion2WithLink = processText(messageVersion2)
 			}
+
 			message = parsedMessageObj.messageText
 			repliedToData = this.messageObj.repliedToData
 			isImageDeleted = parsedMessageObj.isImageDeleted
+			isGifDeleted = parsedMessageObj.isGifDeleted
 			isAttachmentDeleted = parsedMessageObj.isAttachmentDeleted
+			isFileDeleted = parsedMessageObj.isFileDeleted
 			// reactions = parsedMessageObj.reactions || []
 			version = parsedMessageObj.version
 			isForwarded = parsedMessageObj.type === 'forward'
 			isEdited = parsedMessageObj.isEdited && true
-			if (parsedMessageObj.attachments && Array.isArray(parsedMessageObj.attachments) && parsedMessageObj.attachments.length > 0) {
-				attachment = parsedMessageObj.attachments[0]
-			}
+
 			if (parsedMessageObj.images && Array.isArray(parsedMessageObj.images) && parsedMessageObj.images.length > 0) {
 				image = parsedMessageObj.images[0]
 			}
+
 			if (parsedMessageObj.gifs && Array.isArray(parsedMessageObj.gifs) && parsedMessageObj.gifs.length > 0) {
 				gif = parsedMessageObj.gifs[0]
+			}
+
+			if (parsedMessageObj.attachments && Array.isArray(parsedMessageObj.attachments) && parsedMessageObj.attachments.length > 0) {
+				attachment = parsedMessageObj.attachments[0]
+			}
+
+			if (parsedMessageObj.files && Array.isArray(parsedMessageObj.files) && parsedMessageObj.files.length > 0) {
+				file = parsedMessageObj.files[0]
 			}
 		} catch (error) {
 			message = this.messageObj.decodedMessage
@@ -1141,7 +1167,7 @@ class MessageTemplate extends LitElement {
 		if (gif) {
 			const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 			const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-			gifUrl = `${nodeUrl}/arbitrary/${gif.service}/${gif.name}/${gif.identifier}?filepath=${gif.filePath}`
+			gifUrl = `${nodeUrl}/arbitrary/${gif.service}/${gif.name}/${gif.identifier}?async=true`
 			if (this.viewImage || this.myAddress === this.messageObj.sender) {
 				gifHTML = createGif(gifUrl)
 				gifHTMLDialog = createGif(gifUrl)
@@ -1280,7 +1306,7 @@ class MessageTemplate extends LitElement {
 											class=${[`image-container`, !this.isImageLoaded ? 'defaultSize' : '',].join(' ')}
 											style=${this.isFirstMessage && 'margin-top: 10px;'}
 										>
-											<div style="display:flex;width:100%;height:100%;justify-content:center;align-items:center;cursor:pointer;color:var(--black);">
+											<div style="display: flex; width: 100%; height: 100%; justify-content: center; align-items: center; cursor: pointer; color: var(--black);">
 												${translate('chatpage.cchange40')}
 											</div>
 										</div>
@@ -1293,7 +1319,12 @@ class MessageTemplate extends LitElement {
 											${imageHTML}
 											${this.myAddress === this.messageObj.sender ?
 												html`
-													<vaadin-icon @click=${() => {this.openDeleteImage = true;}} class="image-delete-icon" icon="vaadin:close" slot="icon"></vaadin-icon>
+													<vaadin-icon
+														@click=${() => this.openDeleteImageDialog()}
+														icon="vaadin:close"
+														slot="icon"
+														class="image-delete-icon"
+													></vaadin-icon>
 												`
 												: ''
 											}
@@ -1301,35 +1332,62 @@ class MessageTemplate extends LitElement {
 									`
 									: image && isImageDeleted ?
 										html`
-											<p class="image-deleted-msg">${translate('chatpage.cchange80')}</p>
+											<div class="attachment-container">
+												<div class="attachment-info">
+													<p style=${'font-style: italic;'} class="attachment-name">
+														${translate('chatpage.cchange80')}
+													</p>
+												</div>
+											</div>
 										`
 									: html``
 								}
-								${gif && !this.viewImage && this.myAddress !== this.messageObj.sender ?
+								${gif && !isGifDeleted && !this.viewImage && this.myAddress !== this.messageObj.sender ?
 									html`
 										<div
 											@click=${() => {this.viewImage = true;}}
-											class=${[`image-container`, !this.isImageLoaded ? 'defaultSize' : '', ].join(' ')}
+											class=${[`image-container`, !this.isGifoaded ? 'defaultSize' : '', ].join(' ')}
 											style=${this.isFirstMessage && 'margin-top: 10px;'}
 										>
-											<div style="display:flex;width:100%;height:100%;justify-content:center;align-items:center;cursor:pointer;color:var(--black);">
+											<div style="display: flex; width: 100%; height: 100%; justify-content: center; align-items: center; cursor: pointer; color: var(--black);">
 												${translate('gifs.gchange25')}
 											</div>
 										</div>
 									`
 									: html``
 								}
-								${gif && (this.viewImage || this.myAddress === this.messageObj.sender) ?
+								${gif && !isGifDeleted && (this.viewImage || this.myAddress === this.messageObj.sender) ?
 									html`
 										<div class=${[`image-container`, !this.isGifLoaded ? 'defaultSize' : '',].join(' ')} style=${this.isFirstMessage && 'margin-top: 10px;'}>
 											${gifHTML}
+											${this.myAddress === this.messageObj.sender ?
+												html`
+													<vaadin-icon
+														@click=${() => this.openDeleteGifDialog()}
+														icon="vaadin:close"
+														slot="icon"
+														class="image-delete-icon"
+													></vaadin-icon>
+												`
+												: ''
+											}
 										</div>
 									`
+									: gif && isGifDeleted ?
+										html`
+											<div class="attachment-container">
+												<div class="attachment-info">
+													<p style=${'font-style: italic;'} class="attachment-name">
+														${translate('chatpage.cchange107')}
+													</p>
+												</div>
+											</div>
+										`
 									: html``
 								}
 								${attachment && !isAttachmentDeleted ?
 									html`
-										<div @click=${async () => await this.downloadAttachment(attachment)} class="attachment-container">
+										<div class="attachment-container">
 											<div class="attachment-icon-container">
 												<img src="/img/attachment-icon.png" alt="attachment-icon" class="attachment-icon" />
 											</div>
@@ -1341,11 +1399,16 @@ class MessageTemplate extends LitElement {
 													${roundToNearestDecimal(attachment.attachmentSize)} mb
 												</p>
 											</div>
-											<vaadin-icon icon="vaadin:download-alt" slot="icon" class="download-icon"></vaadin-icon>
+											<vaadin-icon
+												@click=${async () => await this.downloadAttachment(attachment)}
+												icon="vaadin:download-alt"
+												slot="icon"
+												class="download-icon"
+											></vaadin-icon>
 											${this.myAddress === this.messageObj.sender ?
 												html`
 													<vaadin-icon
-														@click=${(e) => {e.stopPropagation(); this.openDeleteAttachment = true;}}
+														@click=${() => this.openDeleteAttachmentDialog()}
 														class="image-delete-icon"
 														icon="vaadin:close"
 														slot="icon"
@@ -1362,6 +1425,51 @@ class MessageTemplate extends LitElement {
 												<div class="attachment-info">
 													<p style=${'font-style: italic;'} class="attachment-name">
 														${translate('chatpage.cchange82')}
+													</p>
+												</div>
+											</div>
+										`
+									: html``
+								}
+								${file && !isFileDeleted ?
+									html`
+										<div class="file-container">
+											<div class="file-icon-container">
+												<img src="/img/file-icon.png" alt="file-icon" class="file-icon" />
+											</div>
+											<div class="attachment-info">
+												<p class="attachment-name">
+													${file && file.appFileName}
+												</p>
+												<p class="attachment-size">
+													${roundToNearestDecimal(file.appFileSize)} mb
+												</p>
+											</div>
+											<vaadin-icon
+												@click=${async () => await this.downloadFile(file)}
+												icon="vaadin:download-alt"
+												slot="icon"
+												class="download-icon"
+											></vaadin-icon>
+											${this.myAddress === this.messageObj.sender ?
+												html`
+													<vaadin-icon
+														@click=${() => this.openDeleteFileDialog()}
+														class="image-delete-icon"
+														icon="vaadin:close"
+														slot="icon"
+													></vaadin-icon>
+												`
+												: html``
+											}
+										</div>
+									`
+									: file && isFileDeleted ?
+										html`
+											<div class="attachment-container">
+												<div class="attachment-info">
+													<p style=${'font-style: italic;'} class="attachment-name">
+														${translate('chatpage.cchange102')}
 													</p>
 												</div>
 											</div>
@@ -1511,7 +1619,6 @@ class MessageTemplate extends LitElement {
 				</mwc-button>
 			</mwc-dialog>
 			<mwc-dialog id="showDialogPublicKey" ?open=${this.openDialogGif} @closed=${() => {this.openDialogGif = false;}}>
-				MessageTemplate
 				<div class="dialog-header"></div>
 				<div class="dialog-container imageContainer">
 					${gifHTMLDialog}
@@ -1519,34 +1626,88 @@ class MessageTemplate extends LitElement {
 				<mwc-button slot="primaryAction" dialogAction="cancel" class="red" @click=${() => {this.openDialogGif = false;}}>
 					${translate('general.close')}
 				</mwc-button>
-				MessageTemplate
 			</mwc-dialog>
-			<mwc-dialog hideActions ?open=${this.openDeleteImage} @closed=${() => {this.openDeleteImage = false;}}>
+			<mwc-dialog hideActions id="deleteImageDialog" scrimClickAction="" escapeKeyAction="">
 				<div class="delete-image-msg">
 					<p>${translate('chatpage.cchange78')}</p>
 				</div>
-				<div class="modal-button-row" @click=${() => (this.openDeleteImage = false)}>
-					<button class="modal-button-red">
-						Cancel
+				<div class="modal-button-row">
+					<button class="modal-button-red" @click=${() => this.closeDeleteImageDialog()}>
+						${translate('login.lp4')}
 					</button>
-					<button class="modal-button" @click=${() => this.sendMessage({type: 'delete', name: image.name, identifier: image.identifier, editedMessageObj: this.messageObj,})}>
-						Yes
+					<button class="modal-button" @click=${() => {
+						this.sendMessage({type: 'delete', name: image.name, identifier: image.identifier, editedMessageObj: this.messageObj});
+						this.closeDeleteImageDialog();
+					}}>
+						${translate('general.yes')}
 					</button>
 				</div>
 			</mwc-dialog>
-			<mwc-dialog hideActions ?open=${this.openDeleteAttachment} @closed=${() => {this.openDeleteAttachment = false;}}>
+			<mwc-dialog hideActions id="deleteGifDialog" scrimClickAction="" escapeKeyAction="">
+				<div class="delete-image-msg">
+					<p>${translate('chatpage.cchange106')}</p>
+				</div>
+				<div class="modal-button-row">
+					<button class="modal-button-red" @click=${() => this.closeDeleteGifDialog()}>
+						${translate('login.lp4')}
+					</button>
+					<button class="modal-button" @click=${() => {
+						this.sendMessage({type: 'deleteGif', gif: gif, name: gif.name, identifier: gif.identifier, editedMessageObj: this.messageObj});
+						this.closeDeleteGifDialog();
+					}}>
+						${translate('general.yes')}
+					</button>
+				</div>
+			</mwc-dialog>
+			<mwc-dialog hideActions id="deleteAttachmentDialog" scrimClickAction="" escapeKeyAction="">
 				<div class="delete-image-msg">
 					<p>${translate('chatpage.cchange79')}</p>
 				</div>
-				<div class="modal-button-row" @click=${() => (this.openDeleteAttachment = false)}>
-					<button class="modal-button-red">
-						Cancel
+				<div class="modal-button-row">
+					<button class="modal-button-red" @click=${() => this.closeDeleteAttachmentDialog()}>
+						${translate('login.lp4')}
 					</button>
-					<button class="modal-button" @click=${() => {this.sendMessage({type: 'deleteAttachment', attachment: attachment, name: attachment.name, identifier: attachment.identifier, editedMessageObj: this.messageObj,});}}>
-						Yes
+					<button class="modal-button" @click=${() => {
+						this.sendMessage({type: 'deleteAttachment', attachment: attachment, name: attachment.name, identifier: attachment.identifier, editedMessageObj: this.messageObj});
+						this.closeDeleteAttachmentDialog();
+					}}>
+						${translate('general.yes')}
 					</button>
 				</div>
 			</mwc-dialog>
+			<mwc-dialog hideActions id="deleteFileDialog" scrimClickAction="" escapeKeyAction="">
+				<div class="delete-image-msg">
+					<p>${translate('chatpage.cchange101')}</p>
+				</div>
+				<div class="modal-button-row">
+					<button class="modal-button-red" @click=${() => this.closeDeleteFileDialog()}>
+						${translate('login.lp4')}
+					</button>
+					<button class="modal-button" @click=${() => {
+						this.sendMessage({type: 'deleteFile', file: file, name: file.name, identifier: file.identifier, editedMessageObj: this.messageObj});
+						this.closeDeleteFileDialog();
+					}}>
+						${translate('general.yes')}
+					</button>
+				</div>
+			</mwc-dialog>
+			<paper-dialog id="downloadProgressDialog" class="progress" modal>
+				<span class="close-download"><paper-icon-button icon="icons:close" @click="${() => this.closeDownloadProgressDialog()}" title="${translate("general.close")}"></paper-icon-button></span>
+				<div class="lds-roller">
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+				</div>
+				<h2>${translate('appspage.schange41')}</h2>
+			</paper-dialog>
+			<paper-dialog id="closeProgressDialog" class="close-progress" modal>
+				${translate('chatpage.cchange108')}
+			</paper-dialog>
 		`
 	}
 
@@ -1572,6 +1733,14 @@ class MessageTemplate extends LitElement {
 		setInterval(() => {
 			this.clearConsole()
 		}, 60000)
+	}
+
+	async closeDownloadProgressDialog() {
+		const closeDelay = ms => new Promise(res => setTimeout(res, ms))
+		this.shadowRoot.getElementById('downloadProgressDialog').close()
+		this.shadowRoot.getElementById('closeProgressDialog').open()
+		await closeDelay(3000)
+		this.shadowRoot.getElementById('closeProgressDialog').close()
 	}
 
 	// Open & Close Private Message Chat Modal
@@ -1600,16 +1769,81 @@ class MessageTemplate extends LitElement {
 		}
 	}
 
-	async downloadAttachment(attachment) {
+	openDeleteImageDialog() {
+		this.openDeleteImage = true
+		this.shadowRoot.querySelector('#deleteImageDialog').show()
+	}
+
+	closeDeleteImageDialog() {
+		this.shadowRoot.querySelector('#deleteImageDialog').close()
+		this.openDeleteImage = false
+	}
+
+	openDeleteGifDialog() {
+		this.openDeleteGif = true
+		this.shadowRoot.querySelector('#deleteGifDialog').show()
+	}
+
+	closeDeleteGifDialog() {
+		this.shadowRoot.querySelector('#deleteGifDialog').close()
+		this.openDeleteGif = false
+	}
+
+	openDeleteAttachmentDialog() {
+		this.openDeleteAttachment = true
+		this.shadowRoot.querySelector('#deleteAttachmentDialog').show()
+	}
+
+	closeDeleteAttachmentDialog() {
+		this.shadowRoot.querySelector('#deleteAttachmentDialog').close()
+		this.openDeleteAttachment = false
+	}
+
+	openDeleteFileDialog() {
+		this.openDeleteFile = true
+		this.shadowRoot.querySelector('#deleteFileDialog').show()
+	}
+
+	closeDeleteFileDialog() {
+		this.shadowRoot.querySelector('#deleteFileDialog').close()
+		this.openDeleteFile = false
+	}
+
+	downloadAttachment(attachment) {
 		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
 
+		this.shadowRoot.getElementById('downloadProgressDialog').open()
+
 		try {
 			axios.get(
-				`${nodeUrl}/arbitrary/QCHAT_ATTACHMENT/${attachment.name}/${attachment.identifier}`,
+				`${nodeUrl}/arbitrary/ATTACHMENT/${attachment.name}/${attachment.identifier}`,
 				{ responseType: 'blob' }
 			).then((response) => {
+				this.shadowRoot.getElementById('downloadProgressDialog').close()
 				let filename = attachment.attachmentName
+				let blob = new Blob([response.data], { type: 'application/octet-stream' })
+				this.shadowRoot.getElementById('downloadProgressDialog').close()
+				this.saveFileToDisk(blob, filename)
+			})
+		} catch (error) {
+			console.error(error)
+		}
+	}
+
+	downloadFile(file) {
+		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+
+		this.shadowRoot.getElementById('downloadProgressDialog').open()
+
+		try {
+			axios.get(
+				`${nodeUrl}/arbitrary/FILE/${file.name}/${file.identifier}`,
+				{ responseType: 'blob' }
+			).then((response) => {
+				this.shadowRoot.getElementById('downloadProgressDialog').close()
+				let filename = file.appFileName
 				let blob = new Blob([response.data], { type: 'application/octet-stream' })
 				this.saveFileToDisk(blob, filename)
 			})
@@ -1630,7 +1864,8 @@ class MessageTemplate extends LitElement {
 				await writable.write(contents)
 				await writable.close()
 			}
-			writeFile(fileHandle, blob).then(() => console.log('FILE SAVED'))
+
+			await writeFile(fileHandle, blob).then(() => console.log('FILE SAVED'))
 		} catch (error) {
 			console.log(error)
 		}
