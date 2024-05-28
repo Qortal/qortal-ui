@@ -2702,6 +2702,46 @@ class WebBrowser extends LitElement {
 					}
 				}
 
+				case actions.GET_SERVER_CONNECTION_HISTORY: {
+					const requiredFields = ['coin']
+					const missingFields = []
+
+					requiredFields.forEach((field) => {
+						if (!data[field]) {
+							missingFields.push(field)
+						}
+					})
+
+					if (missingFields.length > 0) {
+						const missingFieldsString = missingFields.join(', ')
+						const errorMsg = `Missing fields: ${missingFieldsString}`
+						let data = {}
+						data['error'] = errorMsg
+						response = JSON.stringify(data)
+						break
+					}
+
+					try {
+						let coin = data.coin.toLowerCase();
+
+						response = await parentEpml.request('apiCall', {
+							type: 'api',
+							method: 'GET',
+							url: `/crosschain/${coin}/serverconnectionhistory`,
+							headers: {
+								'Accept': '*/*',
+								'Content-Type': 'application/json'
+							},
+						})
+					} catch (error) {
+						const data = {}
+						data['error'] = "Error in get server connection history"
+						response = JSON.stringify(data)
+					} finally {
+						break
+					}
+				}
+
 				case actions.GET_DAY_SUMMARY: {
 					try {
 						response = await parentEpml.request('apiCall', {
