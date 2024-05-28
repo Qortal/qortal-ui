@@ -1,10 +1,8 @@
-'use strict'
-import ChatBase from "./ChatBase.js"
-import nacl from '../../deps/nacl-fast.js'
-import ed2curve from '../../deps/ed2curve.js'
-import {Sha256} from 'asmcrypto.js'
-import {CHAT_REFERENCE_FEATURE_TRIGGER_TIMESTAMP} from '../../constants.js'
-
+import ChatBase from './ChatBase'
+import nacl from '../../deps/nacl-fast'
+import ed2curve from '../../deps/ed2curve'
+import { Sha256 } from 'asmcrypto.js'
+import { CHAT_REFERENCE_FEATURE_TRIGGER_TIMESTAMP } from '../../constants'
 
 export default class ChatTransaction extends ChatBase {
 	constructor() {

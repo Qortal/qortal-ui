@@ -1,6 +1,5 @@
-'use strict'
-import TransactionBase from '../TransactionBase.js'
-import {QORT_DECIMALS} from '../../constants.js'
+import TransactionBase from '../TransactionBase'
+import { QORT_DECIMALS } from '../../constants'
 
 export default class VoteOnPollTransaction extends TransactionBase {
 	constructor() {
@@ -16,12 +15,12 @@ export default class VoteOnPollTransaction extends TransactionBase {
 			</div>
 			${this._votedialog2}
 			<div style="margin-top: 10px; font-weight: bold">
-			${this._feeDialog}: ${this._feeDisplay}
+				${this._feeDialog}: ${this._feeDisplay}
 			</div>
 		`
 	}
 
-	set feeDialog(feeDialog){
+	set feeDialog(feeDialog) {
 		this._feeDialog = feeDialog
 	}
 
@@ -39,13 +38,11 @@ export default class VoteOnPollTransaction extends TransactionBase {
 		this._feeBytes = this.constructor.utils.int64ToBytes(this._fee)
 	}
 
-
 	set rPollName(rPollName) {
 		this._rPollName = rPollName
 		this._rPollNameBytes = this.constructor.utils.stringtoUTF8Array(this._rPollName)
-        this._rPollNameLength = this.constructor.utils.int32ToBytes(this._rPollNameBytes.length)
+		this._rPollNameLength = this.constructor.utils.int32ToBytes(this._rPollNameBytes.length)
 	}
-
 
 	set rOptionIndex(rOptionIndex) {
 		this._rOptionIndex = rOptionIndex
@@ -55,7 +52,7 @@ export default class VoteOnPollTransaction extends TransactionBase {
 	get params() {
 		const params = super.params
 		params.push(
-            this._rPollNameLength,
+			this._rPollNameLength,
 			this._rPollNameBytes,
 			this._rOptionIndexBytes,
 			this._feeBytes

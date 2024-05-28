@@ -1,9 +1,9 @@
 // Trade Bot
-import TradeBotCreateRequest from './transactions/trade-portal/tradebot/TradeBotCreateRequest.js'
-import TradeBotRespondRequest from './transactions/trade-portal/tradebot/TradeBotRespondRequest.js'
-import signTradeBotTransaction from './transactions/trade-portal/tradebot/signTradeBotTransaction.js'
-import DeleteTradeOffer from './transactions/trade-portal/tradeoffer/DeleteTradeOffer.js'
-import {request} from './fetch-request'
+import TradeBotCreateRequest from './transactions/trade-portal/tradebot/TradeBotCreateRequest'
+import TradeBotRespondRequest from './transactions/trade-portal/tradebot/TradeBotRespondRequest'
+import signTradeBotTransaction from './transactions/trade-portal/tradebot/signTradeBotTransaction'
+import DeleteTradeOffer from './transactions/trade-portal/tradeoffer/DeleteTradeOffer'
+import { request } from './fetch-request'
 
 // TradeBotCreateRequest
 export const tradeBotCreateRequest = (requestObject) => {
@@ -55,11 +55,10 @@ export const deleteTradeOffer = (requestObject) => {
 	})
 }
 
-// Send BTC
-export const sendBtc = (requestObject) => {
+// Send Coin
+const sendCoin = (coin, requestObject) => {
 	const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-
-	return request(`/crosschain/btc/send?apiKey=${myNode.apiKey}`, {
+	return request(`/crosschain/${coin}/send?apiKey=${myNode.apiKey}`, {
 		method: 'POST',
 		headers: {
 			'Accept': 'application/json',
@@ -68,73 +67,21 @@ export const sendBtc = (requestObject) => {
 		body: JSON.stringify(requestObject)
 	})
 }
+
+// Send BTC
+export const sendBtc = (requestObject) => sendCoin('btc', requestObject)
 
 // Send LTC
-export const sendLtc = (requestObject) => {
-	const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-
-	return request(`/crosschain/ltc/send?apiKey=${myNode.apiKey}`, {
-		method: 'POST',
-		headers: {
-			'Accept': 'application/json',
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify(requestObject)
-	})
-}
+export const sendLtc = (requestObject) => sendCoin('ltc', requestObject)
 
 // Send DOGE
-export const sendDoge = (requestObject) => {
-	const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-
-	return request(`/crosschain/doge/send?apiKey=${myNode.apiKey}`, {
-		method: 'POST',
-		headers: {
-			'Accept': 'application/json',
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify(requestObject)
-	})
-}
+export const sendDoge = (requestObject) => sendCoin('doge', requestObject)
 
 // Send DGB
-export const sendDgb = (requestObject) => {
-	const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-
-	return request(`/crosschain/dgb/send?apiKey=${myNode.apiKey}`, {
-		method: 'POST',
-		headers: {
-			'Accept': 'application/json',
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify(requestObject)
-	})
-}
+export const sendDgb = (requestObject) => sendCoin('dgb', requestObject)
 
 // Send RVN
-export const sendRvn = (requestObject) => {
-	const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-
-	return request(`/crosschain/rvn/send?apiKey=${myNode.apiKey}`, {
-		method: 'POST',
-		headers: {
-			'Accept': 'application/json',
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify(requestObject)
-	})
-}
+export const sendRvn = (requestObject) => sendCoin('rvn', requestObject)
 
 // Send ARRR
-export const sendArrr = (requestObject) => {
-	const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-
-	return request(`/crosschain/arrr/send?apiKey=${myNode.apiKey}`, {
-		method: 'POST',
-		headers: {
-			'Accept': 'application/json',
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify(requestObject)
-	})
-}
+export const sendArrr = (requestObject) => sendCoin('arrr', requestObject)

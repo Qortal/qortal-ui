@@ -1,19 +1,8 @@
-import {css, html, LitElement} from 'lit'
-import {Epml} from '../../../../epml'
-import isElectron from 'is-electron'
-import {get, registerTranslateConfig, translate, use} from '../../../../../core/translate'
-import ShortUniqueId from 'short-unique-id';
-import FileSaver from 'file-saver'
-import * as actions from '../../components/qdn-action-types'
-import '@material/mwc-button'
-import '@material/mwc-icon'
-import '@material/mwc-checkbox'
-import WebWorker from 'web-worker:./computePowWorkerFile.src.js'
-import WebWorkerChat from 'web-worker:./computePowWorker.src.js'
-import {publishData} from '../../../utils/publish-image.js'
-import {Loader} from '../../../utils/loader.js';
-import {QORT_DECIMALS} from '../../../../../crypto/api/constants'
-import {mimeToExtensionMap} from '../../components/qdn-action-constants';
+import { html, LitElement } from 'lit'
+import { Epml } from '../../../../epml'
+import { Loader, publishData } from '../../../utils/classes'
+import { QORT_DECIMALS } from '../../../../../crypto/api/constants'
+import { mimeToExtensionMap } from '../../components/qdn-action-constants'
 import {
 	base64ToUint8Array,
 	decryptDeprecatedSingle,
@@ -22,13 +11,25 @@ import {
 	fileToBase64,
 	uint8ArrayStartsWith,
 	uint8ArrayToBase64
-} from '../../components/qdn-action-encryption';
+} from '../../components/qdn-action-encryption'
+import { webBrowserStyles, webBrowserModalStyles } from '../../components/plugins-css'
+import * as actions from '../../components/qdn-action-types'
+import isElectron from 'is-electron'
+import ShortUniqueId from 'short-unique-id'
+import FileSaver from 'file-saver'
+import WebWorker from 'web-worker:./computePowWorkerFile.js'
+import WebWorkerChat from 'web-worker:./computePowWorker.js'
+import '@material/mwc-button'
+import '@material/mwc-icon'
+import '@material/mwc-checkbox'
 
+// Multi language support
+import { get, registerTranslateConfig, translate, use } from '../../../../../core/translate'
 registerTranslateConfig({
-	loader: (lang) => fetch(`/language/${lang}.json`).then((res) => res.json())
+	loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
 })
 
-const parentEpml = new Epml({ type: 'WINDOW', source: window.parent });
+const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 class WebBrowser extends LitElement {
 	static get properties() {
@@ -60,77 +61,7 @@ class WebBrowser extends LitElement {
 	}
 
 	static get styles() {
-		return css`
-			* {
-				--mdc-theme-primary: rgb(3, 169, 244);
-				--mdc-theme-secondary: var(--mdc-theme-primary);
-				--paper-input-container-focus-color: var(--mdc-theme-primary);
-				--mdc-checkbox-unchecked-color: var(--black);
-				--mdc-theme-on-surface: var(--black);
-				--mdc-checkbox-disabled-color: var(--black);
-				--mdc-checkbox-ink-color: var(--black);
-			}
-
-			#websitesWrapper paper-button {
-				float: right;
-			}
-
-			#websitesWrapper .buttons {
-				width: auto !important;
-			}
-
-			.address-bar {
-				position: absolute;
-				top: 0;
-				left: 0;
-				right: 0;
-				height: 100px;
-				background-color: var(--white);
-				height: 36px;
-			}
-
-			.address-bar-button mwc-icon {
-				width: 20px;
-			}
-
-			.iframe-container {
-				position: absolute;
-				top: 36px;
-				left: 0;
-				right: 0;
-				bottom: 0;
-				border-top: 1px solid var(--black);
-			}
-
-			.iframe-container iframe {
-				display: block;
-				width: 100%;
-				height: 100%;
-				border: none;
-				background-color: var(--white);
-			}
-
-			input[type='text'] {
-				margin: 0;
-				padding: 2px 0 0 20px;
-				border: 0;
-				height: 34px;
-				font-size: 16px;
-				background-color: var(--white);
-			}
-			input {
-    			outline: none
-			}
-
-
-			paper-progress {
-				--paper-progress-active-color: var(--mdc-theme-primary);
-			}
-
-			.float-right {
-				float: right;
-			}
-		`;
+		return [webBrowserStyles]
 	}
 
 	constructor() {
@@ -142,15 +73,8 @@ class WebBrowser extends LitElement {
 		const urlParams = new URLSearchParams(window.location.search)
 		this.name = urlParams.get('name')
 		this.service = urlParams.get('service')
-		this.identifier =
-			urlParams.get('identifier') != null
-				? urlParams.get('identifier')
-				: null
-		this.path =
-			urlParams.get('path') != null
-				? (urlParams.get('path').startsWith('/') ? '' : '/') +
-				urlParams.get('path')
-				: ''
+		this.identifier = urlParams.get('identifier') != null ? urlParams.get('identifier') : null
+		this.path = urlParams.get('path') != null ? (urlParams.get('path').startsWith('/') ? '' : '/') + urlParams.get('path') : ''
 		this.preview = urlParams.get('preview')
 		this.link = urlParams.get('link')
 		this.dev = urlParams.get('dev')
@@ -166,9 +90,11 @@ class WebBrowser extends LitElement {
 			displayUrl = 'qortal://app/development'
 		} else {
 			displayUrl = 'qortal://' + this.service + '/' + this.name
+
 			if (this.identifier && this.identifier != 'null' && this.identifier != 'default') {
 				displayUrl = displayUrl.concat('/' + this.identifier)
 			}
+
 			if (this.path != null && this.path != '/') {
 				displayUrl = displayUrl.concat(this.path)
 			}
@@ -178,8 +104,9 @@ class WebBrowser extends LitElement {
 
 		const getFollowedNames = async () => {
 			this.followedNames = await parentEpml.request('apiCall', {
-				url: `/lists/followedNames?apiKey=${this.getApiKey()}`,
+				url: `/lists/followedNames?apiKey=${this.getApiKey()}`
 			})
+
 			setTimeout(
 				getFollowedNames,
 				this.config.user.nodeSettings.pingInterval
@@ -188,8 +115,9 @@ class WebBrowser extends LitElement {
 
 		const getBlockedNames = async () => {
 			this.blockedNames = await parentEpml.request('apiCall', {
-				url: `/lists/blockedNames?apiKey=${this.getApiKey()}`,
+				url: `/lists/blockedNames?apiKey=${this.getApiKey()}`
 			})
+
 			setTimeout(
 				getBlockedNames,
 				this.config.user.nodeSettings.pingInterval
@@ -197,12 +125,8 @@ class WebBrowser extends LitElement {
 		}
 
 		const render = () => {
-			const myNode =
-				window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
-				window.parent.reduxStore.getState().app.nodeConfig.node
-				]
-			const nodeUrl =
-				myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+			const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+			const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
 
 			if (this.preview != null && this.preview.length > 0) {
 				// In preview mode we access the preview URL path directly
@@ -211,10 +135,7 @@ class WebBrowser extends LitElement {
 				this.url = `${this.link}`
 			} else {
 				// Normal mode
-
-				this.url = `${nodeUrl}/render/${this.service}/${this.name}${this.path != null ? this.path : ''
-					}?theme=${this.theme}&identifier=${(this.identifier != null && this.identifier != 'null') ? this.identifier : ''
-					}`
+				this.url = `${nodeUrl}/render/${this.service}/${this.name}${this.path != null ? this.path : ''}?theme=${this.theme}&identifier=${(this.identifier != null && this.identifier != 'null') ? this.identifier : ''}`
 			}
 		}
 
@@ -231,7 +152,10 @@ class WebBrowser extends LitElement {
 		parentEpml.ready().then(() => {
 			parentEpml.subscribe('selected_address', async (selectedAddress) => {
 				selectedAddress = JSON.parse(selectedAddress)
-				if (!selectedAddress || Object.entries(selectedAddress).length === 0) return
+
+				if (!selectedAddress || Object.entries(selectedAddress).length === 0) {
+					return
+				}
 
 				this.selectedAddress = selectedAddress
 				this.btcWallet = window.parent.reduxStore.getState().app.selectedAddress.btcWallet
@@ -241,6 +165,7 @@ class WebBrowser extends LitElement {
 				this.rvnWallet = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet
 				this.arrrWallet = window.parent.reduxStore.getState().app.selectedAddress.arrrWallet
 			})
+
 			parentEpml.subscribe('config', (c) => {
 				this.config = JSON.parse(c)
 				if (!configLoaded) {
@@ -253,119 +178,28 @@ class WebBrowser extends LitElement {
 		})
 	}
 
-	async extractComponents(url) {
-		if (!url.startsWith("qortal://")) {
-			return null
-		}
-
-		url = url.replace(/^(qortal\:\/\/)/, "")
-		if (url.includes("/")) {
-			let parts = url.split("/")
-			const service = parts[0].toUpperCase()
-			parts.shift()
-			const name = parts[0]
-			parts.shift()
-			let identifier
-			if (parts.length > 0) {
-				identifier = parts[0] // Do not shift yet
-				// Check if a resource exists with this service, name and identifier combination
-				let responseObj = await parentEpml.request('apiCall', {
-					url: `/arbitrary/resource/status/${service}/${name}/${identifier}?apiKey=${this.getApiKey()}`
-				})
-
-				if (responseObj.totalChunkCount > 0) {
-					// Identifier exists, so don't include it in the path
-					parts.shift()
-				}
-				else {
-					identifier = null
-				}
-			}
-			const path = parts.join("/")
-			const components = {}
-			components["service"] = service
-			components["name"] = name
-			components["identifier"] = identifier
-			components["path"] = path
-			return components
-		}
-
-		return null
-	}
-
-	async _handleKeyDown(e) {
-		if (e.key === 'Enter') {
-			let newQuery = e.target.value
-			if (newQuery.endsWith('/')) {
-				newQuery = newQuery.slice(0, -1)
-			}
-			const res = await this.extractComponents(newQuery)
-			if (!res) return
-			const { service, name, identifier, path } = res
-			let query = `?service=${service}`
-			if (name) {
-				query = query + `&name=${name}`
-			}
-			if (identifier) {
-				query = query + `&identifier=${identifier}`
-			}
-			if (path) {
-				query = query + `&path=${path}`
-			}
-			window.location = window.location.origin + window.location.pathname + query
-		}
-	}
-
-	async linkOpenNewTab(link) {
-
-		let newQuery = link
-		if (newQuery.endsWith('/')) {
-			newQuery = newQuery.slice(0, -1)
-		}
-		const res = await this.extractComponents(newQuery)
-		if (!res) return
-		const { service, name, identifier, path } = res
-		let query = `?service=${service}`
-		if (name) {
-			query = query + `&name=${name}`
-		}
-		if (identifier) {
-			query = query + `&identifier=${identifier}`
-		}
-		if (path) {
-			query = query + `&path=${path}`
-		}
-
-		window.parent.reduxStore.dispatch(window.parent.reduxAction.setNewTab({
-			url: `qdn/browser/index.html${query}`,
-			id: this.uid.rnd(),
-			myPlugObj: {
-				"url": service === 'WEBSITE' ? "websites" : "qapps",
-				"domain": "core",
-				"page": `qdn/browser/index.html${query}`,
-				"title": name,
-				"icon": service === 'WEBSITE' ? 'vaadin:desktop' : 'vaadin:external-browser',
-				"mwcicon": service === 'WEBSITE' ? 'desktop_mac' : 'open_in_browser',
-				"menus": [],
-				"parent": false
-			}
-		}))
-
-	}
-
 	render() {
-
 		return html`
     			<div id="websitesWrapper" style="width:auto; padding:10px; background: var(--white);">
     				<div class="layout horizontal center">
     					<div class="address-bar">
-    						<mwc-button @click=${() => this.goBack()} title="${translate('general.back')}" class="address-bar-button"><mwc-icon>arrow_back_ios</mwc-icon></mwc-button>
-    						<mwc-button @click=${() => this.goForward()} title="${translate('browserpage.bchange1')}" class="address-bar-button"><mwc-icon>arrow_forward_ios</mwc-icon></mwc-button>
-    						<mwc-button @click=${() => this.refresh()} title="${translate('browserpage.bchange2')}" class="address-bar-button"><mwc-icon>refresh</mwc-icon></mwc-button>
-    						<mwc-button @click=${() => this.goBackToList()} title="${translate('browserpage.bchange3')}" class="address-bar-button"><mwc-icon>home</mwc-icon></mwc-button>
+    						<mwc-button @click=${() => this.goBack()} title="${translate('general.back')}" class="address-bar-button">
+							<mwc-icon>arrow_back_ios</mwc-icon>
+						</mwc-button>
+    						<mwc-button @click=${() => this.goForward()} title="${translate('browserpage.bchange1')}" class="address-bar-button">
+							<mwc-icon>arrow_forward_ios</mwc-icon>
+						</mwc-button>
+    						<mwc-button @click=${() => this.refresh()} title="${translate('browserpage.bchange2')}" class="address-bar-button">
+							<mwc-icon>refresh</mwc-icon>
+						</mwc-button>
+    						<mwc-button @click=${() => this.goBackToList()} title="${translate('browserpage.bchange3')}" class="address-bar-button">
+							<mwc-icon>home</mwc-icon>
+						</mwc-button>
     						<input @keydown=${this._handleKeyDown} style="width: 550px; color: var(--black);" id="address" type="text" value="${this.displayUrl}"></input>
     						${this.renderFullScreen()}
-    						<mwc-button @click=${() => this.delete()} title="${translate('browserpage.bchange4')} ${this.service} ${this.name} ${translate('browserpage.bchange5')}" class="address-bar-button float-right"><mwc-icon>delete</mwc-icon></mwc-button>
+    						<mwc-button @click=${() => this.delete()} title="${translate('browserpage.bchange4')} ${this.service} ${this.name} ${translate('browserpage.bchange5')}" class="address-bar-button float-right">
+							<mwc-icon>delete</mwc-icon>
+						</mwc-button>
     						${this.renderBlockUnblockButton()}
     						${this.renderFollowUnfollowButton()}
     					</div>
@@ -376,358 +210,7 @@ class WebBrowser extends LitElement {
     					</div>
     				</div>
     			</div>
-		`;
-	}
-
-	renderFullScreen() {
-		if (window.innerHeight == screen.height) {
-			return html`
-				<mwc-button
-					@click=${() => this.exitFullScreen()}
-					title="${translate('browserpage.bchange38')}"
-					class="address-bar-button float-right"
-				>
-					<mwc-icon>fullscreen_exit</mwc-icon>
-				</mwc-button>
-			`
-		} else {
-			return html`
-				<mwc-button
-					@click=${() => this.goFullScreen()}
-					title="${translate('browserpage.bchange37')}"
-					class="address-bar-button float-right"
-				>
-					<mwc-icon>fullscreen</mwc-icon>
-				</mwc-button>
-			`
-		}
-	}
-
-	goFullScreen() {
-		var elem = this.shadowRoot.getElementById('websitesWrapper')
-
-		if (elem.requestFullscreen) {
-			elem.requestFullscreen()
-		} else if (elem.mozRequestFullScreen) {
-			elem.mozRequestFullScreen()
-		} else if (elem.webkitRequestFullscreen) {
-			elem.webkitRequestFullscreen()
-		} else if (elem.msRequestFullscreen) {
-			elem.msRequestFullscreen()
-		}
-
-		this.renderFullScreen()
-	}
-
-	exitFullScreen() {
-		if (document.exitFullscreen) {
-			document.exitFullscreen()
-		} else if (document.mozCancelFullScreen) {
-			document.mozCancelFullScreen()
-		} else if (document.webkitExitFullscreen) {
-			document.webkitExitFullscreen()
-		} else if (document.msExitFullscreen) {
-			document.msExitFullscreen()
-		}
-
-		this.renderFullScreen()
-	}
-
-	async unitJoinFee() {
-		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-		const url = `${nodeUrl}/transactions/unitfee?txType=JOIN_GROUP`
-		const response = await fetch(url)
-		if (!response.ok) {
-			throw new Error('Error when fetching join fee')
-		}
-
-		const data = await response.json()
-		return (Number(data) / 1e8).toFixed(8)
-	}
-
-	async deployAtFee() {
-		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-		const url = `${nodeUrl}/transactions/unitfee?txType=DEPLOY_AT`
-		const response = await fetch(url)
-		if (!response.ok) {
-			throw new Error('Error when fetching join fee')
-		}
-
-		const data = await response.json()
-		return (Number(data) / 1e8).toFixed(8)
-	}
-
-	async getArbitraryFee() {
-		const timestamp = Date.now()
-		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-		const url = `${nodeUrl}/transactions/unitfee?txType=ARBITRARY&timestamp=${timestamp}`
-		const response = await fetch(url)
-		if (!response.ok) {
-			throw new Error('Error when fetching arbitrary fee')
-		}
-		const data = await response.json()
-		const arbitraryFee = (Number(data) / 1e8).toFixed(8)
-		return {
-			timestamp,
-			fee: Number(data),
-			feeToShow: arbitraryFee
-		}
-	}
-	async sendQortFee() {
-		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-		const url = `${nodeUrl}/transactions/unitfee?txType=PAYMENT`
-		const response = await fetch(url)
-		if (!response.ok) {
-			throw new Error('Error when fetching join fee')
-		}
-
-		const data = await response.json()
-		return (Number(data) / 1e8).toFixed(8)
-	}
-
-	async unitVoteFee() {
-		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-		const url = `${nodeUrl}/transactions/unitfee?txType=VOTE_ON_POLL`
-		const response = await fetch(url)
-		if (!response.ok) {
-			throw new Error('Error when fetching vote fee')
-		}
-
-		const data = await response.json()
-		return (Number(data) / 1e8).toFixed(8)
-	}
-
-	async unitCreatePollFee() {
-		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-		const url = `${nodeUrl}/transactions/unitfee?txType=CREATE_POLL`
-		const response = await fetch(url)
-		if (!response.ok) {
-			throw new Error('Error when fetching vote fee')
-		}
-
-		const data = await response.json()
-		return (Number(data) / 1e8).toFixed(8)
-	}
-
-	async _joinGroup(groupId, groupName) {
-		const joinFeeInput = await this.unitJoinFee()
-		const getLastRef = async () => {
-			return await parentEpml.request('apiCall', {
-				type: 'api',
-				url: `/addresses/lastreference/${this.selectedAddress.address}`
-			})
-		}
-
-		const validateReceiver = async () => {
-			let lastRef = await getLastRef()
-			let myTransaction = await makeTransactionRequest(lastRef)
-			return getTxnRequestResponse(myTransaction)
-		}
-
-		const makeTransactionRequest = async (lastRef) => {
-			let groupdialog1 = get("transactions.groupdialog1")
-			let groupdialog2 = get("transactions.groupdialog2")
-			return await parentEpml.request('transaction', {
-				type: 31,
-				nonce: this.selectedAddress.nonce,
-				params: {
-					fee: joinFeeInput,
-					registrantAddress: this.selectedAddress.address,
-					rGroupName: groupName,
-					rGroupId: groupId,
-					lastReference: lastRef,
-					groupdialog1: groupdialog1,
-					groupdialog2: groupdialog2
-				},
-				apiVersion: 2
-			})
-		}
-
-		const getTxnRequestResponse = (txnResponse) => {
-			if (txnResponse.success === false && txnResponse.message) {
-				throw new Error(txnResponse.message)
-			} else if (txnResponse.success === true && !txnResponse.data.error) {
-				return txnResponse.data
-			} else if (txnResponse.data && txnResponse.data.message) {
-				throw new Error(txnResponse.data.message)
-			} else {
-				throw new Error('Server error. Could not perform action.')
-			}
-		}
-		return await validateReceiver()
-
-	}
-
-	async _deployAt(name, description, tags, creationBytes, amount, assetId, atType) {
-		const deployAtFee = await this.deployAtFee()
-		const getLastRef = async () => {
-			return await parentEpml.request('apiCall', {
-				type: 'api',
-				url: `/addresses/lastreference/${this.selectedAddress.address}`
-			})
-		}
-
-		const validateReceiver = async () => {
-			let lastRef = await getLastRef()
-			let myTransaction = await makeTransactionRequest(lastRef)
-			return getTxnRequestResponse(myTransaction)
-		}
-
-		const makeTransactionRequest = async (lastRef) => {
-			let deployAtdialog1 = get("transactions.deployAtdialog1")
-			let deployAtdialog2 = get("transactions.deployAtdialog2")
-			let deployAtdialog3 = get("transactions.deployAtdialog3")
-			let deployAtdialog4 = get("walletpage.wchange12")
-			return await parentEpml.request('transaction', {
-				type: 16,
-				nonce: this.selectedAddress.nonce,
-				params: {
-					fee: deployAtFee,
-					rName: name,
-					rDescription: description,
-					rTags: tags,
-					rAmount: amount,
-					rAssetId: assetId,
-					rCreationBytes: creationBytes,
-					atType: atType,
-					lastReference: lastRef,
-					atDeployDialog1: deployAtdialog1,
-					atDeployDialog2: deployAtdialog2,
-					atDeployDialog3: deployAtdialog3,
-					atDeployDialog4: deployAtdialog4
-				},
-				apiVersion: 2
-			})
-		}
-
-		const getTxnRequestResponse = (txnResponse) => {
-			if (txnResponse.success === false && txnResponse.message) {
-				throw new Error(txnResponse.message)
-			} else if (txnResponse.success === true && !txnResponse.data.error) {
-				return txnResponse.data
-			} else if (txnResponse.data && txnResponse.data.message) {
-				throw new Error(txnResponse.data.message)
-			} else {
-				throw new Error('Server error. Could not perform action.')
-			}
-		}
-		return await validateReceiver()
-
-	}
-
-	async _voteOnPoll(pollName, optionIndex) {
-		const voteFeeInput = await this.unitVoteFee()
-		const getLastRef = async () => {
-			return await parentEpml.request('apiCall', {
-				type: 'api',
-				url: `/addresses/lastreference/${this.selectedAddress.address}`
-			})
-		}
-
-		const validateReceiver = async () => {
-			let lastRef = await getLastRef()
-			let myTransaction = await makeTransactionRequest(lastRef)
-			return getTxnRequestResponse(myTransaction)
-		}
-
-		const makeTransactionRequest = async (lastRef) => {
-			let votedialog1 = get("transactions.votedialog1")
-			let votedialog2 = get("transactions.votedialog2")
-			let feeDialog = get("walletpage.wchange12")
-
-			return await parentEpml.request('transaction', {
-				type: 9,
-				nonce: this.selectedAddress.nonce,
-				params: {
-					fee: voteFeeInput,
-					voterAddress: this.selectedAddress.address,
-					rPollName: pollName,
-					rOptionIndex: optionIndex,
-					lastReference: lastRef,
-					votedialog1: votedialog1,
-					votedialog2: votedialog2,
-					feeDialog
-				},
-				apiVersion: 2
-			})
-		}
-
-		const getTxnRequestResponse = (txnResponse) => {
-			if (txnResponse.success === false && txnResponse.message) {
-				throw new Error(txnResponse.message)
-			} else if (txnResponse.success === true && !txnResponse.data.error) {
-				return txnResponse.data
-			} else if (txnResponse.data && txnResponse.data.message) {
-				throw new Error(txnResponse.data.message)
-			} else {
-				throw new Error('Server error. Could not perform action.')
-			}
-		}
-		return await validateReceiver()
-
-	}
-
-	async _createPoll(pollName, pollDescription, options, pollOwnerAddress) {
-		const voteFeeInput = await this.unitCreatePollFee()
-		const getLastRef = async () => {
-			return await parentEpml.request('apiCall', {
-				type: 'api',
-				url: `/addresses/lastreference/${this.selectedAddress.address}`
-			})
-		}
-
-		const validateReceiver = async () => {
-			let lastRef = await getLastRef()
-			let myTransaction = await makeTransactionRequest(lastRef)
-			return getTxnRequestResponse(myTransaction)
-		}
-
-		const makeTransactionRequest = async (lastRef) => {
-			let votedialog3 = get("transactions.votedialog3")
-			let votedialog4 = get("transactions.votedialog4")
-			let votedialog5 = get("transactions.votedialog5")
-			let votedialog6 = get("transactions.votedialog6")
-			let feeDialog = get("walletpage.wchange12")
-
-			return await parentEpml.request('transaction', {
-				type: 8,
-				nonce: this.selectedAddress.nonce,
-				params: {
-					fee: voteFeeInput,
-					ownerAddress: pollOwnerAddress,
-					rPollName: pollName,
-					rPollDesc: pollDescription,
-					rOptions: options,
-					lastReference: lastRef,
-					votedialog3: votedialog3,
-					votedialog4: votedialog4,
-					votedialog5: votedialog5,
-					votedialog6: votedialog6,
-					feeDialog
-				},
-				apiVersion: 2
-			})
-		}
-
-		const getTxnRequestResponse = (txnResponse) => {
-			if (txnResponse.success === false && txnResponse.message) {
-				throw new Error(txnResponse.message)
-			} else if (txnResponse.success === true && !txnResponse.data.error) {
-				return txnResponse.data
-			} else if (txnResponse.data && txnResponse.data.message) {
-				throw new Error(txnResponse.data.message)
-			} else {
-				throw new Error('Server error. Could not perform action.')
-			}
-		}
-		return await validateReceiver()
-
+		`
 	}
 
 	firstUpdated() {
@@ -752,6 +235,7 @@ class WebBrowser extends LitElement {
 			} else {
 				this.theme = 'light'
 			}
+
 			document.querySelector('html').setAttribute('theme', this.theme)
 		})
 
@@ -764,12 +248,7 @@ class WebBrowser extends LitElement {
 		}
 
 		window.addEventListener('message', async (event) => {
-			if (
-				event == null ||
-				event.data == null ||
-				event.data.length == 0 ||
-				event.data.action == null
-			) {
+			if (event == null || event.data == null || event.data.length == 0 || event.data.action == null) {
 				return
 			}
 
@@ -778,7 +257,6 @@ class WebBrowser extends LitElement {
 
 			switch (data.action) {
 				case actions.GET_USER_ACCOUNT: {
-
 					let skip = false
 					if (window.parent.reduxStore.getState().app.qAPPAutoAuth) {
 						skip = true
@@ -829,16 +307,14 @@ class WebBrowser extends LitElement {
 						if (encryptDataResponse) {
 							data64 = encryptDataResponse
 							response = JSON.stringify(encryptDataResponse)
-							break;
+							break
 						} else {
 
 							dataSentBack['error'] = "Unable to encrypt"
 							response = JSON.stringify(dataSentBack)
 							break
 						}
-
 					} catch (error) {
-
 						const data = {}
 						data['error'] = error.message || "Error in encrypting data"
 						response = JSON.stringify(data)
@@ -847,9 +323,7 @@ class WebBrowser extends LitElement {
 				}
 
 				case actions.DECRYPT_DATA: {
-
 					const { encryptedData, publicKey } = data
-
 					try {
 						let data = {}
 						if (!encryptedData) {
@@ -861,19 +335,14 @@ class WebBrowser extends LitElement {
 						const uint8Array = base64ToUint8Array(encryptedData)
 						const startsWithQortalEncryptedData = uint8ArrayStartsWith(uint8Array, "qortalEncryptedData")
 						if (startsWithQortalEncryptedData) {
-
 							if (!publicKey) {
 								data['error'] = `Missing fields: publicKey`
 								response = JSON.stringify(data)
 								break
 							}
-
-
 							const decryptedDataToBase64 = decryptDeprecatedSingle(uint8Array, publicKey)
 							response = JSON.stringify(decryptedDataToBase64)
 							break
-
-
 						}
 						const startsWithQortalGroupEncryptedData = uint8ArrayStartsWith(uint8Array, "qortalGroupEncryptedData")
 						if (startsWithQortalGroupEncryptedData) {
@@ -884,12 +353,10 @@ class WebBrowser extends LitElement {
 							break
 
 						}
-
 						data['error'] = "Unable to decrypt"
 						response = JSON.stringify(data)
 						break
 					} catch (error) {
-
 						const data = {}
 						data['error'] = error.message || "Error in decrypting data"
 						response = JSON.stringify(data)
@@ -900,13 +367,11 @@ class WebBrowser extends LitElement {
 				case actions.GET_LIST_ITEMS: {
 					const requiredFields = ['list_name']
 					const missingFields = []
-
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
 						}
 					})
-
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
 						const errorMsg = `Missing fields: ${missingFieldsString}`
@@ -928,14 +393,11 @@ class WebBrowser extends LitElement {
 							}
 						)
 					}
-
-
 					if (res1 && res1.action === 'accept' || skip) {
-
 						try {
 							const list = await parentEpml.request('apiCall', {
 								type: 'api',
-								url: `/lists/${data.list_name}?apiKey=${this.getApiKey()}`,
+								url: `/lists/${data.list_name}?apiKey=${this.getApiKey()}`
 							})
 							response = JSON.stringify(list)
 
@@ -946,7 +408,6 @@ class WebBrowser extends LitElement {
 						} finally {
 							break
 						}
-
 					} else {
 						const data = {}
 						data['error'] = "User declined to share list"
@@ -958,13 +419,11 @@ class WebBrowser extends LitElement {
 				case actions.ADD_LIST_ITEMS: {
 					const requiredFields = ['list_name', 'items']
 					const missingFields = []
-
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
 						}
 					})
-
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
 						const errorMsg = `Missing fields: ${missingFieldsString}`
@@ -982,14 +441,11 @@ class WebBrowser extends LitElement {
 							items: items
 						}
 					)
-
 					if (res && res.action === 'accept') {
-
 						try {
 							const body = {
 								items: items,
 							}
-
 							const bodyToString = JSON.stringify(body)
 							response = await parentEpml.request('apiCall', {
 								type: 'api',
@@ -997,8 +453,8 @@ class WebBrowser extends LitElement {
 								url: `/lists/${list_name}?apiKey=${this.getApiKey()}`,
 								body: bodyToString,
 								headers: {
-									'Content-Type': 'application/json',
-								},
+									'Content-Type': 'application/json'
+								}
 							})
 						} catch (error) {
 							const data = {}
@@ -1007,7 +463,6 @@ class WebBrowser extends LitElement {
 						} finally {
 							break
 						}
-
 					} else {
 						const data = {}
 						data['error'] = "User declined add to list"
@@ -1019,13 +474,11 @@ class WebBrowser extends LitElement {
 				case actions.DELETE_LIST_ITEM: {
 					const requiredFields = ['list_name', 'item']
 					const missingFields = []
-
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
 						}
 					})
-
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
 						const errorMsg = `Missing fields: ${missingFieldsString}`
@@ -1043,24 +496,20 @@ class WebBrowser extends LitElement {
 							item: item
 						}
 					)
-
 					if (res && res.action === 'accept') {
-
 						try {
 							const body = {
-								items: [item],
+								items: [item]
 							}
-
 							const bodyToString = JSON.stringify(body)
-
 							response = await parentEpml.request('apiCall', {
 								type: 'api',
 								method: 'DELETE',
 								url: `/lists/${list_name}?apiKey=${this.getApiKey()}`,
 								body: bodyToString,
 								headers: {
-									'Content-Type': 'application/json',
-								},
+									'Content-Type': 'application/json'
+								}
 							})
 						} catch (error) {
 							const data = {}
@@ -1069,7 +518,6 @@ class WebBrowser extends LitElement {
 						} finally {
 							break
 						}
-
 					} else {
 						const data = {}
 						data['error'] = "User declined add to list"
@@ -1089,13 +537,9 @@ class WebBrowser extends LitElement {
 							actions.GET_FRIENDS_LIST
 						)
 					}
-
-
 					if (res1 && res1.action === 'accept' || skip) {
-
 						try {
 							let list = JSON.parse(localStorage.getItem('friends-my-friend-list') || "[]")
-
 							list = list.map((friend) => friend.name || "")
 							response = JSON.stringify(list)
 						} catch (error) {
@@ -1103,9 +547,7 @@ class WebBrowser extends LitElement {
 							data['error'] = "Error in retrieving friends list"
 							response = JSON.stringify(data)
 						}
-
 						break
-
 					} else {
 						const data = {}
 						data['error'] = "User declined to share friends list"
@@ -1122,39 +564,30 @@ class WebBrowser extends LitElement {
 						this.displayUrl = translate("appspage.schange40")
 						return
 					}
-
 					let url = 'qortal://' + data.service + '/' + data.name
-					this.path =
-						data.path != null
-							? (data.path.startsWith('/') ? '' : '/') + data.path
-							: null
-					if (
-						data.identifier != null &&
-						data.identifier != '' &&
-						data.identifier != 'default'
-					)
+					this.path = data.path != null ? (data.path.startsWith('/') ? '' : '/') + data.path : null
+					if (data.identifier != null && data.identifier != '' && data.identifier != 'default') {
 						url = url.concat('/' + data.identifier)
-					if (this.path != null && this.path != '/')
+					}
+					if (this.path != null && this.path != '/') {
 						url = url.concat(this.path)
+					}
 					this.name = data.name
 					this.service = data.service
 					this.identifier = data.identifier
 					this.displayUrl = url
-
 					const frame = window.frameElement
-					let tabId = ""
+					let tabId = ''
 					if (frame && frame.dataset.id) {
 						tabId = frame.dataset.id
 					}
-
 					if (data.name === 'Q-Mail') {
 						localStorage.setItem("Q-Mail-last-visited", Date.now())
-
 					}
 					window.parent.reduxStore.dispatch(window.parent.reduxAction.addTabInfo({
 						name: data.name,
 						service: data.service,
-						id: tabId ? tabId : ""
+						id: tabId ? tabId : ''
 					}))
 					return
 
@@ -1168,27 +601,23 @@ class WebBrowser extends LitElement {
 						response['error'] = 'missing count'
 						break
 					}
-
 					window.parent.reduxStore.dispatch(window.parent.reduxAction.setTabNotifications({
 						name: this.name,
 						count: count
 					}))
 					response = true
 					break
-
 				}
 
 				case actions.PUBLISH_QDN_RESOURCE: {
 					// optional fields: encrypt:boolean recipientPublicKey:string
 					const requiredFields = ['service', 'name']
 					const missingFields = []
-
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
 						}
 					})
-
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
 						const errorMsg = `Missing fields: ${missingFieldsString}`
@@ -1221,7 +650,6 @@ class WebBrowser extends LitElement {
 					if (data.identifier == null) {
 						identifier = 'default'
 					}
-
 					if (data.encrypt && (!data.publicKeys || (Array.isArray(data.publicKeys) && data.publicKeys.length === 0))) {
 						let data = {}
 						data['error'] = "Encrypting data requires public keys"
@@ -1239,7 +667,6 @@ class WebBrowser extends LitElement {
 					}
 					const getArbitraryFee = await this.getArbitraryFee()
 					feeAmount = getArbitraryFee.fee
-
 					if (data.encrypt) {
 						try {
 							const encryptDataResponse = encryptDataGroup({
@@ -1248,7 +675,6 @@ class WebBrowser extends LitElement {
 							if (encryptDataResponse) {
 								data64 = encryptDataResponse
 							}
-
 						} catch (error) {
 							const obj = {}
 							obj['error'] = error.message || 'Upload failed due to failed encryption'
@@ -1257,7 +683,6 @@ class WebBrowser extends LitElement {
 						}
 
 					}
-
 					const res2 = await showModalAndWait(
 						actions.PUBLISH_QDN_RESOURCE,
 						{
@@ -1298,7 +723,6 @@ class WebBrowser extends LitElement {
 								withFee: res2.userData.isWithFee === true,
 								feeAmount: feeAmount
 							})
-
 							response = JSON.stringify(resPublish)
 							worker.terminate()
 						} catch (error) {
@@ -1330,7 +754,6 @@ class WebBrowser extends LitElement {
 							missingFields.push(field)
 						}
 					})
-
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
 						const errorMsg = `Missing fields: ${missingFieldsString}`
@@ -1368,7 +791,6 @@ class WebBrowser extends LitElement {
 							feeAmount: getArbitraryFee.feeToShow
 						}
 					)
-
 					if (res2.action === 'reject') {
 						response = '{"error": "User declined request"}'
 						break
@@ -1380,13 +802,11 @@ class WebBrowser extends LitElement {
 						try {
 							const requiredFields = ['service', 'name']
 							const missingFields = []
-
 							requiredFields.forEach((field) => {
 								if (!resource[field]) {
 									missingFields.push(field)
 								}
 							})
-
 							if (missingFields.length > 0) {
 								const missingFieldsString = missingFields.join(', ')
 								const errorMsg = `Missing fields: ${missingFieldsString}`
@@ -1396,7 +816,6 @@ class WebBrowser extends LitElement {
 								})
 								continue
 							}
-
 							if (!resource.file && !resource.data64) {
 								const errorMsg = 'No data or file was submitted'
 								failedPublishesIdentifiers.push({
@@ -1405,7 +824,6 @@ class WebBrowser extends LitElement {
 								})
 								continue
 							}
-
 							const service = resource.service
 							const name = resource.name
 							let identifier = resource.identifier
@@ -1422,7 +840,6 @@ class WebBrowser extends LitElement {
 							if (resource.identifier == null) {
 								identifier = 'default'
 							}
-
 							if (!data.encrypt && service.endsWith("_PRIVATE")) {
 								const errorMsg = "Only encrypted data can go into private services"
 								failedPublishesIdentifiers.push({
@@ -1434,18 +851,14 @@ class WebBrowser extends LitElement {
 							if (data.file) {
 								data64 = await fileToBase64(data.file)
 							}
-
-
 							if (data.encrypt) {
 								try {
-
 									const encryptDataResponse = encryptDataGroup({
 										data64, publicKeys: data.publicKeys
 									})
 									if (encryptDataResponse) {
 										data64 = encryptDataResponse
 									}
-
 								} catch (error) {
 									const errorMsg = error.message || 'Upload failed due to failed encryption'
 									failedPublishesIdentifiers.push({
@@ -1454,15 +867,12 @@ class WebBrowser extends LitElement {
 									})
 									continue
 								}
-
 							}
 							if (resource.file && !data.encrypt) {
 								data64 = await fileToBase64(resource.file)
 							}
-
 							const worker = new WebWorker()
 							try {
-
 								await publishData({
 									registeredName: encodeURIComponent(name),
 									file: data64,
@@ -1486,12 +896,11 @@ class WebBrowser extends LitElement {
 									withFee: res2.userData.isWithFee === true,
 									feeAmount: feeAmount
 								})
-
 								worker.terminate()
 								await new Promise((res) => {
 									setTimeout(() => {
 										res()
-									}, 1000);
+									}, 1000)
 								})
 							} catch (error) {
 								worker.terminate()
@@ -1501,16 +910,12 @@ class WebBrowser extends LitElement {
 									identifier: resource.identifier
 								})
 							}
-
 						} catch (error) {
 							failedPublishesIdentifiers.push({
 								reason: "Unknown error",
 								identifier: resource.identifier
 							})
 						}
-
-
-
 					}
 					this.loader.hide()
 					if (failedPublishesIdentifiers.length > 0) {
@@ -1523,23 +928,18 @@ class WebBrowser extends LitElement {
 						this.loader.hide()
 						break
 					}
-
 					response = true
 					break
-
-
 				}
 
 				case actions.VOTE_ON_POLL: {
 					const requiredFields = ['pollName', 'optionIndex']
 					const missingFields = []
-
 					requiredFields.forEach((field) => {
 						if (!data[field] && data[field] !== 0) {
 							missingFields.push(field)
 						}
 					})
-
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
 						const errorMsg = `Missing fields: ${missingFieldsString}`
@@ -1548,15 +948,13 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(data)
 						break
 					}
-
 					const pollName = data.pollName
 					const optionIndex = data.optionIndex
-
 					let pollInfo = null
 					try {
 						pollInfo = await parentEpml.request("apiCall", {
 							type: "api",
-							url: `/polls/${encodeURIComponent(pollName)}`,
+							url: `/polls/${encodeURIComponent(pollName)}`
 						})
 					} catch (error) {
 						const errorMsg = (error && error.message) || 'Poll not found'
@@ -1565,7 +963,6 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(obj)
 						break
 					}
-
 					if (!pollInfo || pollInfo.error) {
 						const errorMsg = (pollInfo && pollInfo.message) || 'Poll not found'
 						let obj = {}
@@ -1573,7 +970,6 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(obj)
 						break
 					}
-
 					try {
 						this.loader.show()
 						const resVoteOnPoll = await this._voteOnPoll(pollName, optionIndex)
@@ -1585,20 +981,17 @@ class WebBrowser extends LitElement {
 					} finally {
 						this.loader.hide()
 					}
-
 					break
 				}
 
 				case actions.CREATE_POLL: {
 					const requiredFields = ['pollName', 'pollDescription', 'pollOptions', 'pollOwnerAddress']
 					const missingFields = []
-
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
 						}
 					})
-
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
 						const errorMsg = `Missing fields: ${missingFieldsString}`
@@ -1607,12 +1000,10 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(data)
 						break
 					}
-
 					const pollName = data.pollName
 					const pollDescription = data.pollDescription
 					const pollOptions = data.pollOptions
 					const pollOwnerAddress = data.pollOwnerAddress
-
 					try {
 						this.loader.show()
 						const resCreatePoll = await this._createPoll(pollName, pollDescription, pollOptions, pollOwnerAddress)
@@ -1624,7 +1015,6 @@ class WebBrowser extends LitElement {
 					} finally {
 						this.loader.hide()
 					}
-
 					break
 				}
 
@@ -1635,7 +1025,6 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(obj)
 						break
 					}
-
 					try {
 						await this.linkOpenNewTab(data.qortalLink)
 						response = true
@@ -1647,12 +1036,10 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(obj)
 						break
 					}
-
 				}
 
 				case actions.NOTIFICATIONS_PERMISSION: {
 					try {
-
 						const res = await showModalAndWait(
 							actions.NOTIFICATIONS_PERMISSION,
 							{
@@ -1667,11 +1054,9 @@ class WebBrowser extends LitElement {
 							response = false
 							break
 						}
-
 					} catch (error) {
 						break
 					}
-
 				}
 
 				case actions.SEND_LOCAL_NOTIFICATION: {
@@ -1685,7 +1070,6 @@ class WebBrowser extends LitElement {
 						const interval = appInfo.interval
 						if (lastNotification && interval) {
 							const timeDifference = Date.now() - lastNotification
-
 							if (timeDifference > interval) {
 								parentEpml.request('showNotification', {
 									title, type: "qapp-local-notification", sound: '', url, options: { body: message, icon, badge: icon }
@@ -1706,29 +1090,25 @@ class WebBrowser extends LitElement {
 						} else {
 							throw new Error(`invalid data`)
 						}
-
 					} catch (error) {
 						const obj = {}
 						obj['error'] = error.message || "error in pushing notification"
 						response = JSON.stringify(obj)
 						break
-
 					}
-
 				}
+
 				case actions.SEND_CHAT_MESSAGE: {
 					const message = data.message
 					const recipient = data.destinationAddress
 					const groupId = data.groupId
 					const isRecipient = !groupId
 					const sendMessage = async (messageText, chatReference) => {
-
 						let _reference = new Uint8Array(64)
 						window.crypto.getRandomValues(_reference)
 						let reference = window.parent.Base58.encode(_reference)
 						const sendMessageRequest = async () => {
 							let chatResponse
-
 							if (isRecipient) {
 								chatResponse = await parentEpml.request('chat', {
 									type: 18,
@@ -1746,10 +1126,7 @@ class WebBrowser extends LitElement {
 										isText: 1
 									}
 								})
-
-
 							}
-
 							if (!isRecipient) {
 								chatResponse = await parentEpml.request('chat', {
 									type: 181,
@@ -1767,20 +1144,15 @@ class WebBrowser extends LitElement {
 										isText: 1
 									}
 								})
-
-
 							}
-
 							return await _computePow(chatResponse)
 						}
-
 						const _computePow = async (chatBytes) => {
 							const difficulty = 8
 							const path = window.parent.location.origin + '/memory-pow/memory-pow.wasm.full'
 							const worker = new WebWorkerChat()
 							let nonce = null
 							let chatBytesArray = null
-
 							await new Promise((res) => {
 								worker.postMessage({ chatBytes, path, difficulty })
 								worker.onmessage = e => {
@@ -1789,17 +1161,14 @@ class WebBrowser extends LitElement {
 									res()
 								}
 							})
-
 							let _response = await parentEpml.request('sign_chat', {
 								nonce: this.selectedAddress.nonce,
 								chatBytesArray: chatBytesArray,
 								chatNonce: nonce,
 								apiVersion: 2
 							})
-
 							return getSendChatResponse(_response)
 						}
-
 						const getSendChatResponse = (res) => {
 							if (res.signature) {
 								return res
@@ -1809,22 +1178,18 @@ class WebBrowser extends LitElement {
 								throw new Error('ERROR: Could not send message')
 							}
 						}
-
 						return await sendMessageRequest()
 					}
-
 					const result = await showModalAndWait(
 						actions.SEND_CHAT_MESSAGE
 					)
 					if (result.action === "accept") {
 						let hasPublicKey = true
-
 						if (isRecipient) {
 							const res = await parentEpml.request('apiCall', {
 								type: 'api',
 								url: `/addresses/publickey/${recipient}`
 							})
-
 							if (res.error === 102) {
 								this._publicKey.key = ''
 								this._publicKey.hasPubKey = false
@@ -1838,46 +1203,27 @@ class WebBrowser extends LitElement {
 								hasPublicKey = false
 							}
 						}
-
-
 						if (!hasPublicKey && isRecipient) {
 							response = '{"error": "Cannot send an encrypted message to this user since they do not have their publickey on chain."}'
 							break
 						}
-
-
-
 						const tiptapJson = {
 							type: 'doc',
-							content: [
-								{
-									type: 'paragraph',
-									content: [
-										{
-											type: 'text',
-											text: message,
-										},
-
-									],
-								},
-							],
+							content: [{
+								type: 'paragraph',
+								content: [{
+									type: 'text',
+									text: message
+								}]
+							}]
 						}
-
 						const messageObject = {
 							messageText: tiptapJson,
 							images: [''],
 							repliedTo: '',
 							version: 3
 						}
-
 						const stringifyMessageObject = JSON.stringify(messageObject)
-						// if (this.balance < 4) {
-						// 		this.myTrimmedMeassage = ''
-						// 		this.myTrimmedMeassage = stringifyMessageObject
-						// 		this.shadowRoot.getElementById('confirmDialog').open()
-						// } else {
-						// this.sendMessage(stringifyMessageObject, typeMessage)
-						// }
 						try {
 							this.loader.show()
 							response = await sendMessage(stringifyMessageObject)
@@ -1892,9 +1238,7 @@ class WebBrowser extends LitElement {
 							response = '{"error": "Request could not be fulfilled"}'
 						} finally {
 							this.loader.hide()
-
 						}
-
 					} else {
 						response = '{"error": "User declined request"}'
 					}
@@ -1909,13 +1253,11 @@ class WebBrowser extends LitElement {
 				case actions.JOIN_GROUP: {
 					const requiredFields = ['groupId']
 					const missingFields = []
-
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
 						}
 					})
-
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
 						const errorMsg = `Missing fields: ${missingFieldsString}`
@@ -1925,13 +1267,11 @@ class WebBrowser extends LitElement {
 						break
 					}
 					const groupId = data.groupId
-
-
 					let groupInfo = null
 					try {
 						groupInfo = await parentEpml.request("apiCall", {
 							type: "api",
-							url: `/groups/${groupId}`,
+							url: `/groups/${groupId}`
 						})
 					} catch (error) {
 						const errorMsg = (error && error.message) || 'Group not found'
@@ -1940,7 +1280,6 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(obj)
 						break
 					}
-
 					if (!groupInfo || groupInfo.error) {
 						const errorMsg = (groupInfo && groupInfo.message) || 'Group not found'
 						let obj = {}
@@ -1948,7 +1287,6 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(obj)
 						break
 					}
-
 					try {
 						this.loader.show()
 						const resJoinGroup = await this._joinGroup(groupId, groupInfo.groupName)
@@ -1960,7 +1298,6 @@ class WebBrowser extends LitElement {
 					} finally {
 						this.loader.hide()
 					}
-
 					// Params: data.groupId
 					// TODO: prompt user to join group. If they confirm, sign+process a JOIN_GROUP transaction
 					// then set the response string from the core to the `response` variable (defined above)
@@ -1970,16 +1307,13 @@ class WebBrowser extends LitElement {
 
 				case actions.SAVE_FILE: {
 					try {
-
 						const requiredFields = ['filename', 'blob']
 						const missingFields = []
-
 						requiredFields.forEach((field) => {
 							if (!data[field]) {
 								missingFields.push(field)
 							}
 						})
-
 						if (missingFields.length > 0) {
 							const missingFieldsString = missingFields.join(', ')
 							const errorMsg = `Missing fields: ${missingFieldsString}`
@@ -1988,25 +1322,18 @@ class WebBrowser extends LitElement {
 							response = JSON.stringify(data)
 							break
 						}
-
-
-
 						const filename = data.filename
 						const blob = data.blob
-
 						const res = await showModalAndWait(
 							actions.SAVE_FILE,
 							{
 								filename
 							}
 						)
-
 						if (res.action === 'reject') {
 							response = '{"error": "User declined request"}'
 							break
-
 						}
-
 						const mimeType = blob.type || data.mimeType
 						let backupExention = filename.split('.').pop()
 						if (backupExention) {
@@ -2033,7 +1360,6 @@ class WebBrowser extends LitElement {
 								}
 							}
 						}
-
 						try {
 							const fileHandle = await self.showSaveFilePicker({
 								suggestedName: filename,
@@ -2041,10 +1367,8 @@ class WebBrowser extends LitElement {
 									{
 										description: mimeType,
 										...fileHandleOptions
-									},
+									}
 								]
-
-
 							})
 							const writeFile = async (fileHandle, contents) => {
 								const writable = await fileHandle.createWritable()
@@ -2061,7 +1385,6 @@ class WebBrowser extends LitElement {
 							}
 							FileSaver.saveAs(blob, filename)
 						}
-
 						response = JSON.stringify(true)
 					} catch (error) {
 						const obj = {}
@@ -2071,16 +1394,14 @@ class WebBrowser extends LitElement {
 					break
 				}
 
-				case 'DEPLOY_AT': {
+				case actions.DEPLOY_AT: {
 					const requiredFields = ['name', 'description', 'tags', 'creationBytes', 'amount', 'assetId', 'type']
 					const missingFields = []
-
 					requiredFields.forEach((field) => {
 						if (!data[field] && data[field] !== 0) {
 							missingFields.push(field)
 						}
 					})
-
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
 						const errorMsg = `Missing fields: ${missingFieldsString}`
@@ -2089,11 +1410,8 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(data)
 						break
 					}
-
-
 					try {
 						this.loader.show()
-
 						const resDeployAt = await this._deployAt(data.name, data.description, data.tags, data.creationBytes, data.amount, data.assetId, data.type)
 						response = JSON.stringify(resDeployAt)
 					} catch (error) {
@@ -2106,27 +1424,23 @@ class WebBrowser extends LitElement {
 					break
 				}
 
-				case 'GET_PROFILE_DATA': {
+				case actions.GET_PROFILE_DATA: {
 					const defaultProperties = ['tagline', 'bio', 'wallets']
-					const requiredFields = ['property'];
-					const missingFields = [];
-
+					const requiredFields = ['property']
+					const missingFields = []
 					requiredFields.forEach((field) => {
 						if (!data[field] && data[field] !== 0) {
-							missingFields.push(field);
+							missingFields.push(field)
 						}
-					});
-
+					})
 					if (missingFields.length > 0) {
-						const missingFieldsString = missingFields.join(', ');
+						const missingFieldsString = missingFields.join(', ')
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {};
-						data['error'] = errorMsg;
-						response = JSON.stringify(data);
+						let data = {}
+						data['error'] = errorMsg
+						response = JSON.stringify(data)
 						break
 					}
-
-
 					try {
 						const profileData = window.parent.reduxStore.getState().app.profileData
 						if (!profileData) {
@@ -2137,25 +1451,22 @@ class WebBrowser extends LitElement {
 						if (propertyIndex !== -1) {
 							const requestedData = profileData[property]
 							if (requestedData) {
-								response = JSON.stringify(requestedData);
+								response = JSON.stringify(requestedData)
 								break
 							} else {
 								throw new Error('Cannot find requested data')
 							}
 						}
-
 						if (property.includes('-private')) {
 							const resPrivateProperty = await showModalAndWait(
 								actions.GET_PROFILE_DATA, {
-								property
-							}
-							);
-
+									property
+								}
+							)
 							if (resPrivateProperty.action === 'accept') {
-
 								const requestedData = profileData.customData[property]
 								if (requestedData) {
-									response = JSON.stringify(requestedData);
+									response = JSON.stringify(requestedData)
 									break
 								} else {
 									throw new Error('Cannot find requested data')
@@ -2166,42 +1477,38 @@ class WebBrowser extends LitElement {
 						} else {
 							const requestedData = profileData.customData[property]
 							if (requestedData) {
-								response = JSON.stringify(requestedData);
+								response = JSON.stringify(requestedData)
 								break
 							} else {
 								throw new Error('Cannot find requested data')
 							}
 						}
-
 					} catch (error) {
-						const obj = {};
-						obj['error'] = error.message || 'Failed to join the group.';
-						response = JSON.stringify(obj);
+						const obj = {}
+						obj['error'] = error.message || 'Failed to join the group.'
+						response = JSON.stringify(obj)
 					} finally {
-						this.loader.hide();
+						this.loader.hide()
 					}
-					break;
+					break
 				}
-				case 'SET_PROFILE_DATA': {
-					const requiredFields = ['property', 'data'];
-					const missingFields = [];
 
+				case actions.SET_PROFILE_DATA: {
+					const requiredFields = ['property', 'data']
+					const missingFields = []
 					requiredFields.forEach((field) => {
 						if (!data[field] && data[field] !== 0) {
-							missingFields.push(field);
+							missingFields.push(field)
 						}
-					});
-
+					})
 					if (missingFields.length > 0) {
-						const missingFieldsString = missingFields.join(', ');
+						const missingFieldsString = missingFields.join(', ')
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {};
-						data['error'] = errorMsg;
-						response = JSON.stringify(data);
+						let data = {}
+						data['error'] = errorMsg
+						response = JSON.stringify(data)
 						break
 					}
-
-
 					try {
 						const property = data.property
 						const payload = data.data
@@ -2209,16 +1516,12 @@ class WebBrowser extends LitElement {
 						const fee = await this.getArbitraryFee()
 						const resSetPrivateProperty = await showModalAndWait(
 							actions.SET_PROFILE_DATA, {
-							property,
-							fee: fee.feeToShow
-						}
-						);
-
-
+								property,
+								fee: fee.feeToShow
+							}
+						)
 						if (resSetPrivateProperty.action !== 'accept') throw new Error('User declined permission')
-
 						//dispatch event and wait until I get a response to continue
-
 						// Create and dispatch custom event
 						const customEvent = new CustomEvent('qortal-request-set-profile-data', {
 							detail: {
@@ -2226,102 +1529,91 @@ class WebBrowser extends LitElement {
 								payload,
 								uniqueId
 							}
-						});
-						window.parent.dispatchEvent(customEvent);
-
+						})
+						window.parent.dispatchEvent(customEvent)
 						// Wait for response event
 						const res = await new Promise((resolve, reject) => {
 							function handleResponseEvent(event) {
 								// Handle the data from the event, if any
-								const responseData = event.detail;
+								const responseData = event.detail
 								if (responseData && responseData.uniqueId !== uniqueId) return
 								// Clean up by removing the event listener once we've received the response
-								window.removeEventListener('qortal-request-set-profile-data-response', handleResponseEvent);
+								window.removeEventListener('qortal-request-set-profile-data-response', handleResponseEvent)
 
 								if (responseData.response === 'saved') {
-									resolve(responseData);
+									resolve(responseData)
 								} else {
-									reject(new Error('not saved'));
+									reject(new Error('not saved'))
 								}
 							}
-
 							// Set up an event listener to wait for the response
-							window.addEventListener('qortal-request-set-profile-data-response', handleResponseEvent);
-						});
+							window.addEventListener('qortal-request-set-profile-data-response', handleResponseEvent)
+						})
 						if (!res.response) throw new Error('Failed to set property')
-						response = JSON.stringify(res.response);
-
+						response = JSON.stringify(res.response)
 					} catch (error) {
-						const obj = {};
-						obj['error'] = error.message || 'Failed to set property.';
-						response = JSON.stringify(obj);
+						const obj = {}
+						obj['error'] = error.message || 'Failed to set property.'
+						response = JSON.stringify(obj)
 					} finally {
-						this.loader.hide();
+						this.loader.hide()
 					}
-					break;
+					break
 				}
 
-				case 'OPEN_PROFILE': {
-					const requiredFields = ['name'];
-					const missingFields = [];
-
+				case actions.OPEN_PROFILE: {
+					const requiredFields = ['name']
+					const missingFields = []
 					requiredFields.forEach((field) => {
 						if (!data[field] && data[field] !== 0) {
-							missingFields.push(field);
+							missingFields.push(field)
 						}
-					});
-
+					})
 					if (missingFields.length > 0) {
-						const missingFieldsString = missingFields.join(', ');
+						const missingFieldsString = missingFields.join(', ')
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {};
-						data['error'] = errorMsg;
-						response = JSON.stringify(data);
+						let data = {}
+						data['error'] = errorMsg
+						response = JSON.stringify(data)
 						break
 					}
-
-
 					try {
 						const customEvent = new CustomEvent('open-visiting-profile', {
 							detail: data.name
-						});
-						window.parent.dispatchEvent(customEvent);
-						response = JSON.stringify(true);
+						})
+						window.parent.dispatchEvent(customEvent)
+						response = JSON.stringify(true)
 					} catch (error) {
-						const obj = {};
-						obj['error'] = error.message || 'Failed to open profile';
-						response = JSON.stringify(obj);
+						const obj = {}
+						obj['error'] = error.message || 'Failed to open profile'
+						response = JSON.stringify(obj)
 					}
-					break;
+					break
 				}
 
-
 				case actions.GET_USER_WALLET: {
-					const requiredFields = ['coin'];
-					const missingFields = [];
-
+					const requiredFields = ['coin']
+					const missingFields = []
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
-							missingFields.push(field);
+							missingFields.push(field)
 						}
-					});
-
+					})
 					if (missingFields.length > 0) {
-						const missingFieldsString = missingFields.join(', ');
+						const missingFieldsString = missingFields.join(', ')
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {};
-						data['error'] = errorMsg;
-						response = JSON.stringify(data);
+						let data = {}
+						data['error'] = errorMsg
+						response = JSON.stringify(data)
 						break
 					}
 					const res3 = await showModalAndWait(
 						actions.GET_USER_WALLET
-					);
-
+					)
 					if (res3.action === 'accept') {
-						let coin = data.coin;
-						let userWallet = {};
-						let arrrAddress = "";
+						let coin = data.coin
+						let userWallet = {}
+						let arrrAddress = ""
 						if (coin === "ARRR") {
 							arrrAddress = await parentEpml.request('apiCall', {
 								url: `/crosschain/arrr/walletaddress?apiKey=${this.getApiKey()}`,
@@ -2360,24 +1652,22 @@ class WebBrowser extends LitElement {
 							default:
 								break
 						}
-						response = JSON.stringify(userWallet);
-						break;
+						response = JSON.stringify(userWallet)
+						break
 					} else if (res3.action === 'reject') {
-						response = '{"error": "User declined request"}';
+						response = '{"error": "User declined request"}'
 					}
-					break;
+					break
 				}
 
 				case actions.GET_WALLET_BALANCE: {
 					const requiredFields = ['coin']
 					const missingFields = []
-
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
 						}
 					})
-
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
 						const errorMsg = `Missing fields: ${missingFieldsString}`
@@ -2393,7 +1683,6 @@ class WebBrowser extends LitElement {
 					const res3 = await showModalAndWait(
 						actions.GET_WALLET_BALANCE
 					)
-
 					if (res3.action === 'accept') {
 						let coin = data.coin
 						if (coin === "QORT") {
@@ -2401,7 +1690,7 @@ class WebBrowser extends LitElement {
 							try {
 								this.loader.show()
 								response = await parentEpml.request('apiCall', {
-									url: `/addresses/balance/${qortAddress}?apiKey=${this.getApiKey()}`,
+									url: `/addresses/balance/${qortAddress}?apiKey=${this.getApiKey()}`
 								})
 
 
@@ -2417,7 +1706,6 @@ class WebBrowser extends LitElement {
 						} else {
 							let _url = ``
 							let _body = null
-
 							switch (coin) {
 								case 'BTC':
 									_url = `/crosschain/btc/walletbalance?apiKey=${this.getApiKey()}`
@@ -2451,7 +1739,7 @@ class WebBrowser extends LitElement {
 								const res = await parentEpml.request('apiCall', {
 									url: _url,
 									method: 'POST',
-									body: _body,
+									body: _body
 								})
 								if (isNaN(Number(res))) {
 									const data = {}
@@ -2474,19 +1762,17 @@ class WebBrowser extends LitElement {
 					} else if (res3.action === 'reject') {
 						response = '{"error": "User declined request"}'
 					}
-
 					break
 				}
+
 				case actions.GET_USER_WALLET_INFO: {
 					const requiredFields = ['coin']
 					const missingFields = []
-
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
 						}
 					})
-
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
 						const errorMsg = `Missing fields: ${missingFieldsString}`
@@ -2495,23 +1781,17 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(data)
 						break
 					}
-
 					const userWallet = await showModalAndWait(
 						actions.GET_USER_WALLET
 					)
-
 					if (userWallet.action === 'accept') {
-						let coin = data.coin;
-						let walletKeys = this.getUserWallet(coin);
-
+						let coin = data.coin
+						let walletKeys = this.getUserWallet(coin)
 						let _url = `/crosschain/` + data.coin.toLowerCase() + `/addressinfos?apiKey=${this.getApiKey()}`
-						let _body = {
-							xpub58: walletKeys['publickey']
-						}
-
+						let _body = { xpub58: walletKeys['publickey'] }
 						try {
 							this.loader.show()
-							const bodyToString = JSON.stringify(_body);
+							const bodyToString = JSON.stringify(_body)
 							const res = await parentEpml.request('apiCall', {
 								url: _url,
 								method: 'POST',
@@ -2519,9 +1799,9 @@ class WebBrowser extends LitElement {
 									'Accept': '*/*',
 									'Content-Type': 'application/json'
 								},
-								body: bodyToString,
+								body: bodyToString
 							})
-							response = JSON.stringify(res);
+							response = JSON.stringify(res)
 						} catch (error) {
 							console.error(error)
 							const data = {}
@@ -2534,20 +1814,16 @@ class WebBrowser extends LitElement {
 					} else if (userWallet.action === 'reject') {
 						response = '{"error": "User declined request"}'
 					}
-
 					break
 				}
-
 				case actions.GET_CROSSCHAIN_SERVER_INFO: {
 					const requiredFields = ['coin']
 					const missingFields = []
-
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
 						}
 					})
-
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
 						const errorMsg = `Missing fields: ${missingFieldsString}`
@@ -2556,7 +1832,6 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(data)
 						break
 					}
-
 					let _url = `/crosschain/` + data.coin.toLowerCase() + `/serverinfos`
 					try {
 						this.loader.show()
@@ -2567,30 +1842,27 @@ class WebBrowser extends LitElement {
 								'Accept': '*/*'
 							}
 						})
-						response = JSON.stringify(res.servers);
+						response = JSON.stringify(res.servers)
 					} catch (error) {
-							console.error(error)
-							const data = {}
+						console.error(error)
+						const data = {}
 						data['error'] = error.message || 'Error in retrieving server info'
-							response = JSON.stringify(data)
-							return
-						} finally {
-							this.loader.hide()
-						}
-
+						response = JSON.stringify(data)
+						return
+					} finally {
+						this.loader.hide()
+					}
 					break
 				}
 
 				case actions.GET_TX_ACTIVITY_SUMMARY: {
 					const requiredFields = ['coin']
 					const missingFields = []
-
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
 						}
 					})
-
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
 						const errorMsg = `Missing fields: ${missingFieldsString}`
@@ -2599,9 +1871,8 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(data)
 						break
 					}
-
 					try {
-						let coin = data.coin;
+						let coin = data.coin
 						response = await parentEpml.request('apiCall', {
 							type: 'api',
 							method: 'POST',
@@ -2609,7 +1880,7 @@ class WebBrowser extends LitElement {
 							headers: {
 								'Accept': '*/*',
 								'Content-Type': 'application/json'
-							},
+							}
 						})
 					} catch (error) {
 						const data = {}
@@ -2624,13 +1895,13 @@ class WebBrowser extends LitElement {
 					const requiredFields = ['coin','type']
 					const missingFields = []
 
-					requiredFields.forEach((field) => {
+          requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
 						}
 					})
 
-					if (missingFields.length > 0) {
+          if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
 						const errorMsg = `Missing fields: ${missingFieldsString}`
 						let data = {}
@@ -2744,9 +2015,70 @@ class WebBrowser extends LitElement {
 
 				case actions.GET_DAY_SUMMARY: {
 					try {
+						let coin = data.coin;
+						let type = data.type;
 						response = await parentEpml.request('apiCall', {
 							type: 'api',
-							url: `/admin/summary?apiKey=${this.getApiKey()}`,
+							method: 'GET',
+							url: `/crosschain/${coin}/${type}?apiKey=${this.getApiKey()}`,
+							headers: {
+								'Accept': '*/*',
+								'Content-Type': 'application/json'
+							},
+						})
+					} catch (error) {
+						const data = {}
+						data['error'] = "Error in get foreign fee"
+						response = JSON.stringify(data)
+					} finally {
+						break
+					}
+				}
+
+				case actions.UPDATE_FOREIGN_FEE: {
+					const requiredFields = ['coin','type']
+					const missingFields = []
+					requiredFields.forEach((field) => {
+						if (!data[field]) {
+							missingFields.push(field)
+						}
+					})
+					if (missingFields.length > 0) {
+						const missingFieldsString = missingFields.join(', ')
+						const errorMsg = `Missing fields: ${missingFieldsString}`
+						let data = {}
+						data['error'] = errorMsg
+						response = JSON.stringify(data)
+						break
+					}
+					try {
+						let coin = data.coin;
+						let type = data.type;
+						let value = data.value;
+						response = await parentEpml.request('apiCall', {
+							type: 'api',
+							method: 'POST',
+							url: `/crosschain/${coin}/update${type}?apiKey=${this.getApiKey()}`,
+							headers: {
+								'Accept': '*/*',
+								'Content-Type': 'application/json'
+							},
+							body: `${value}`
+						})
+					} catch (error) {
+						const data = {}
+						data['error'] = "Error in update foreign fee"
+						response = JSON.stringify(data)
+					} finally {
+						break
+					}
+				}
+
+				case actions.GET_DAY_SUMMARY: {
+					try {
+						response = await parentEpml.request('apiCall', {
+							type: 'api',
+							url: `/admin/summary?apiKey=${this.getApiKey()}`
 						})
 					} catch (error) {
 						const data = {}
@@ -2760,13 +2092,11 @@ class WebBrowser extends LitElement {
 				case actions.SEND_COIN: {
 					const requiredFields = ['coin', 'destinationAddress', 'amount']
 					const missingFields = []
-
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
 						}
 					})
-
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
 						const errorMsg = `Missing fields: ${missingFieldsString}`
@@ -2776,9 +2106,7 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(data)
 						break
 					}
-
 					let checkCoin = data.coin
-
 					if (checkCoin === "QORT") {
 						// Params: data.coin, data.destinationAddress, data.amount, data.fee
 						// TODO: prompt user to send. If they confirm, call `POST /crosschain/:coin/send`, or for QORT, broadcast a PAYMENT transaction
@@ -2787,11 +2115,9 @@ class WebBrowser extends LitElement {
 						const amount = Number(data.amount)
 						const recipient = data.destinationAddress
 						const coin = data.coin
-
 						const walletBalance = await parentEpml.request('apiCall', {
-							url: `/addresses/balance/${this.myAddress.address}`,
+							url: `/addresses/balance/${this.myAddress.address}`
 						})
-
 						if (isNaN(Number(walletBalance))) {
 							let errorMsg = "Failed to Fetch QORT Balance. Try again!"
 							let failedMsg = get("walletpage.wchange33") + " QORT " + get("general.balance")
@@ -2802,18 +2128,15 @@ class WebBrowser extends LitElement {
 							response = JSON.stringify(obj)
 							break
 						}
-
 						const myRef = await parentEpml.request("apiCall", {
 							type: "api",
-							url: `/addresses/lastreference/${this.myAddress.address}`,
+							url: `/addresses/lastreference/${this.myAddress.address}`
 						})
-
 						const transformDecimals = (Number(walletBalance) * QORT_DECIMALS).toFixed(0)
 						const walletBalanceDecimals = Number(transformDecimals)
 						const amountDecimals = Number(amount) * QORT_DECIMALS
 						const balance = (Number(transformDecimals) / 1e8).toFixed(8)
 						const fee = await this.sendQortFee()
-
 						if (amountDecimals + (fee * QORT_DECIMALS) > walletBalanceDecimals) {
 							let errorMsg = "Insufficient Funds!"
 							let failedMsg = get("walletpage.wchange26")
@@ -2824,7 +2147,6 @@ class WebBrowser extends LitElement {
 							response = JSON.stringify(obj)
 							break
 						}
-
 						if (amount <= 0) {
 							let errorMsg = "Invalid Amount!"
 							await showErrorAndWait("INVALID_AMOUNT", errorMsg)
@@ -2833,7 +2155,6 @@ class WebBrowser extends LitElement {
 							response = JSON.stringify(obj)
 							break
 						}
-
 						if (recipient.length === 0) {
 							let errorMsg = "Receiver cannot be empty!"
 							await showErrorAndWait("NO_RECEIVER", errorMsg)
@@ -2842,7 +2163,6 @@ class WebBrowser extends LitElement {
 							response = JSON.stringify(obj)
 							break
 						}
-
 						const processPayment = await showModalAndWait(
 							actions.SEND_COIN,
 							{
@@ -2853,7 +2173,6 @@ class WebBrowser extends LitElement {
 								fee
 							}
 						)
-
 						if (processPayment.action === 'reject') {
 							let errorMsg = "User declined request"
 							let myMsg1 = get("transactions.declined")
@@ -2862,14 +2181,12 @@ class WebBrowser extends LitElement {
 							response = '{"error": "User declined request"}'
 							break
 						}
-
 						const validateName = async (receiverName) => {
 							let myRes
 							let myNameRes = await parentEpml.request('apiCall', {
 								type: 'api',
-								url: `/names/${receiverName}`,
+								url: `/names/${receiverName}`
 							})
-
 							if (myNameRes.error === 401) {
 								myRes = false
 							} else {
@@ -2877,21 +2194,17 @@ class WebBrowser extends LitElement {
 							}
 							return myRes
 						}
-
 						const validateAddress = async (receiverAddress) => {
 							return await window.parent.validateAddress(receiverAddress)
 						}
-
 						const validateReceiver = async (recipient) => {
 							let lastRef = myRef
 							let isAddress
-
 							try {
 								isAddress = await validateAddress(recipient)
 							} catch (err) {
 								isAddress = false
 							}
-
 							if (isAddress) {
 								let myTransaction = await makeTransactionRequest(recipient, lastRef)
 								return getTxnRequestResponse(myTransaction)
@@ -2909,26 +2222,22 @@ class WebBrowser extends LitElement {
 								}
 							}
 						}
-
 						const getName = async (recipient) => {
 							try {
 								const getNames = await parentEpml.request("apiCall", {
 									type: "api",
 									url: `/names/address/${recipient}`
 								})
-
 								if (getNames.length > 0) {
 									return getNames[0].name
 								} else {
 									return ''
 								}
 							} catch (error) {
-								return ""
+								return ''
 							}
 						}
-
 						this.loader.show()
-
 						const makeTransactionRequest = async (receiver, lastRef) => {
 							let myReceiver = receiver
 							let mylastRef = lastRef
@@ -2954,7 +2263,6 @@ class WebBrowser extends LitElement {
 								apiVersion: 2
 							})
 						}
-
 						const getTxnRequestResponse = (txnResponse) => {
 							if (txnResponse.success === false && txnResponse.message) {
 								this.loader.hide()
@@ -2966,9 +2274,7 @@ class WebBrowser extends LitElement {
 								this.loader.hide()
 								throw new Error('Error: could not send coin')
 							}
-
 						}
-
 						try {
 							response = await validateReceiver(recipient)
 						} catch (error) {
@@ -2985,13 +2291,11 @@ class WebBrowser extends LitElement {
 						const coin = data.coin
 						const xprv58 = this.btcWallet.derivedMasterPrivateKey
 						const feePerByte = data.fee ? data.fee : this.btcFeePerByte
-
 						const btcWalletBalance = await parentEpml.request('apiCall', {
 							url: `/crosschain/btc/walletbalance?apiKey=${this.getApiKey()}`,
 							method: 'POST',
 							body: `${this.btcWallet.derivedMasterPublicKey}`
 						})
-
 						if (isNaN(Number(btcWalletBalance))) {
 							this.loader.hide()
 							let errorMsg = "Failed to Fetch BTC Balance. Try again!"
@@ -3003,12 +2307,10 @@ class WebBrowser extends LitElement {
 							response = JSON.stringify(obj)
 							break
 						}
-
 						const btcWalletBalanceDecimals = Number(btcWalletBalance)
 						const btcAmountDecimals = Number(amount) * QORT_DECIMALS
 						const balance = (Number(btcWalletBalance) / 1e8).toFixed(8)
 						const fee = feePerByte * 500 // default 0.00050000
-
 						if (btcAmountDecimals + (fee * QORT_DECIMALS) > btcWalletBalanceDecimals) {
 							this.loader.hide()
 							let errorMsg = "Insufficient Funds!"
@@ -3020,9 +2322,7 @@ class WebBrowser extends LitElement {
 							response = JSON.stringify(obj)
 							break
 						}
-
 						this.loader.hide()
-
 						const processPayment = await showModalAndWait(
 							actions.SEND_COIN,
 							{
@@ -3033,7 +2333,6 @@ class WebBrowser extends LitElement {
 								fee
 							}
 						)
-
 						if (processPayment.action === 'reject') {
 							let errorMsg = "User declined request"
 							let myMsg1 = get("transactions.declined")
@@ -3042,9 +2341,7 @@ class WebBrowser extends LitElement {
 							response = '{"error": "User declined request"}'
 							break
 						}
-
 						this.loader.show()
-
 						const makeRequest = async () => {
 							const opts = {
 								xprv58: xprv58,
@@ -3054,7 +2351,6 @@ class WebBrowser extends LitElement {
 							}
 							return await parentEpml.request('sendBtc', opts)
 						}
-
 						const manageResponse = (response) => {
 							if (response.length === 64) {
 								this.loader.hide()
@@ -3075,7 +2371,6 @@ class WebBrowser extends LitElement {
 								throw new Error(response)
 							}
 						}
-
 						try {
 							const res = await makeRequest()
 							manageResponse(res)
@@ -3094,13 +2389,11 @@ class WebBrowser extends LitElement {
 						const coin = data.coin
 						const xprv58 = this.ltcWallet.derivedMasterPrivateKey
 						const feePerByte = data.fee ? data.fee : this.ltcFeePerByte
-
 						const ltcWalletBalance = await parentEpml.request('apiCall', {
 							url: `/crosschain/ltc/walletbalance?apiKey=${this.getApiKey()}`,
 							method: 'POST',
 							body: `${this.ltcWallet.derivedMasterPublicKey}`
 						})
-
 						if (isNaN(Number(ltcWalletBalance))) {
 							this.loader.hide()
 							let errorMsg = "Failed to Fetch LTC Balance. Try again!"
@@ -3112,12 +2405,10 @@ class WebBrowser extends LitElement {
 							response = JSON.stringify(obj)
 							break
 						}
-
 						const ltcWalletBalanceDecimals = Number(ltcWalletBalance)
 						const ltcAmountDecimals = Number(amount) * QORT_DECIMALS
 						const balance = (Number(ltcWalletBalance) / 1e8).toFixed(8)
 						const fee = feePerByte * 1000 // default 0.00030000
-
 						if (ltcAmountDecimals + (fee * QORT_DECIMALS) > ltcWalletBalanceDecimals) {
 							this.loader.hide()
 							let errorMsg = "Insufficient Funds!"
@@ -3129,9 +2420,7 @@ class WebBrowser extends LitElement {
 							response = JSON.stringify(obj)
 							break
 						}
-
 						this.loader.hide()
-
 						const processPayment = await showModalAndWait(
 							actions.SEND_COIN,
 							{
@@ -3142,7 +2431,6 @@ class WebBrowser extends LitElement {
 								fee
 							}
 						)
-
 						if (processPayment.action === 'reject') {
 							let errorMsg = "User declined request"
 							let myMsg1 = get("transactions.declined")
@@ -3151,9 +2439,7 @@ class WebBrowser extends LitElement {
 							response = '{"error": "User declined request"}'
 							break
 						}
-
 						this.loader.show()
-
 						const makeRequest = async () => {
 							const opts = {
 								xprv58: xprv58,
@@ -3163,7 +2449,6 @@ class WebBrowser extends LitElement {
 							}
 							return await parentEpml.request('sendLtc', opts)
 						}
-
 						const manageResponse = (response) => {
 							if (response.length === 64) {
 								this.loader.hide()
@@ -3184,7 +2469,6 @@ class WebBrowser extends LitElement {
 								throw new Error(response)
 							}
 						}
-
 						try {
 							const res = await makeRequest()
 							manageResponse(res)
@@ -3203,13 +2487,11 @@ class WebBrowser extends LitElement {
 						const coin = data.coin
 						const xprv58 = this.dogeWallet.derivedMasterPrivateKey
 						const feePerByte = data.fee ? data.fee : this.dogeFeePerByte
-
 						const dogeWalletBalance = await parentEpml.request('apiCall', {
 							url: `/crosschain/doge/walletbalance?apiKey=${this.getApiKey()}`,
 							method: 'POST',
 							body: `${this.dogeWallet.derivedMasterPublicKey}`
 						})
-
 						if (isNaN(Number(dogeWalletBalance))) {
 							this.loader.hide()
 							let errorMsg = "Failed to Fetch DOGE Balance. Try again!"
@@ -3221,12 +2503,10 @@ class WebBrowser extends LitElement {
 							response = JSON.stringify(obj)
 							break
 						}
-
 						const dogeWalletBalanceDecimals = Number(dogeWalletBalance)
 						const dogeAmountDecimals = Number(amount) * QORT_DECIMALS
 						const balance = (Number(dogeWalletBalance) / 1e8).toFixed(8)
 						const fee = feePerByte * 5000 // default 0.05000000
-
 						if (dogeAmountDecimals + (fee * QORT_DECIMALS) > dogeWalletBalanceDecimals) {
 							this.loader.hide()
 							let errorMsg = "Insufficient Funds!"
@@ -3238,9 +2518,7 @@ class WebBrowser extends LitElement {
 							response = JSON.stringify(obj)
 							break
 						}
-
 						this.loader.hide()
-
 						const processPayment = await showModalAndWait(
 							actions.SEND_COIN,
 							{
@@ -3251,7 +2529,6 @@ class WebBrowser extends LitElement {
 								fee
 							}
 						)
-
 						if (processPayment.action === 'reject') {
 							let errorMsg = "User declined request"
 							let myMsg1 = get("transactions.declined")
@@ -3260,9 +2537,7 @@ class WebBrowser extends LitElement {
 							response = '{"error": "User declined request"}'
 							break
 						}
-
 						this.loader.show()
-
 						const makeRequest = async () => {
 							const opts = {
 								xprv58: xprv58,
@@ -3272,7 +2547,6 @@ class WebBrowser extends LitElement {
 							}
 							return await parentEpml.request('sendDoge', opts)
 						}
-
 						const manageResponse = (response) => {
 							if (response.length === 64) {
 								this.loader.hide()
@@ -3293,7 +2567,6 @@ class WebBrowser extends LitElement {
 								throw new Error(response)
 							}
 						}
-
 						try {
 							const res = await makeRequest()
 							manageResponse(res)
@@ -3312,13 +2585,11 @@ class WebBrowser extends LitElement {
 						const coin = data.coin
 						const xprv58 = this.dgbWallet.derivedMasterPrivateKey
 						const feePerByte = data.fee ? data.fee : this.dgbFeePerByte
-
 						const dgbWalletBalance = await parentEpml.request('apiCall', {
 							url: `/crosschain/dgb/walletbalance?apiKey=${this.getApiKey()}`,
 							method: 'POST',
 							body: `${this.dgbWallet.derivedMasterPublicKey}`
 						})
-
 						if (isNaN(Number(dgbWalletBalance))) {
 							this.loader.hide()
 							let errorMsg = "Failed to Fetch DGB Balance. Try again!"
@@ -3330,12 +2601,10 @@ class WebBrowser extends LitElement {
 							response = JSON.stringify(obj)
 							break
 						}
-
 						const dgbWalletBalanceDecimals = Number(dgbWalletBalance)
 						const dgbAmountDecimals = Number(amount) * QORT_DECIMALS
 						const balance = (Number(dgbWalletBalance) / 1e8).toFixed(8)
 						const fee = feePerByte * 500 // default 0.00005000
-
 						if (dgbAmountDecimals + (fee * QORT_DECIMALS) > dgbWalletBalanceDecimals) {
 							this.loader.hide()
 							let errorMsg = "Insufficient Funds!"
@@ -3347,9 +2616,7 @@ class WebBrowser extends LitElement {
 							response = JSON.stringify(obj)
 							break
 						}
-
 						this.loader.hide()
-
 						const processPayment = await showModalAndWait(
 							actions.SEND_COIN,
 							{
@@ -3360,7 +2627,6 @@ class WebBrowser extends LitElement {
 								fee
 							}
 						)
-
 						if (processPayment.action === 'reject') {
 							let errorMsg = "User declined request"
 							let myMsg1 = get("transactions.declined")
@@ -3369,9 +2635,7 @@ class WebBrowser extends LitElement {
 							response = '{"error": "User declined request"}'
 							break
 						}
-
 						this.loader.show()
-
 						const makeRequest = async () => {
 							const opts = {
 								xprv58: xprv58,
@@ -3381,7 +2645,6 @@ class WebBrowser extends LitElement {
 							}
 							return await parentEpml.request('sendDgb', opts)
 						}
-
 						const manageResponse = (response) => {
 							if (response.length === 64) {
 								this.loader.hide()
@@ -3402,7 +2665,6 @@ class WebBrowser extends LitElement {
 								throw new Error(response)
 							}
 						}
-
 						try {
 							const res = await makeRequest()
 							manageResponse(res)
@@ -3421,13 +2683,11 @@ class WebBrowser extends LitElement {
 						const coin = data.coin
 						const xprv58 = this.rvnWallet.derivedMasterPrivateKey
 						const feePerByte = data.fee ? data.fee : this.rvnFeePerByte
-
 						const rvnWalletBalance = await parentEpml.request('apiCall', {
 							url: `/crosschain/rvn/walletbalance?apiKey=${this.getApiKey()}`,
 							method: 'POST',
 							body: `${this.rvnWallet.derivedMasterPublicKey}`
 						})
-
 						if (isNaN(Number(rvnWalletBalance))) {
 							this.loader.hide()
 							let errorMsg = "Failed to Fetch RVN Balance. Try again!"
@@ -3439,12 +2699,10 @@ class WebBrowser extends LitElement {
 							response = JSON.stringify(obj)
 							break
 						}
-
 						const rvnWalletBalanceDecimals = Number(rvnWalletBalance)
 						const rvnAmountDecimals = Number(amount) * QORT_DECIMALS
 						const balance = (Number(rvnWalletBalance) / 1e8).toFixed(8)
 						const fee = feePerByte * 500 // default 0.00562500
-
 						if (rvnAmountDecimals + (fee * QORT_DECIMALS) > rvnWalletBalanceDecimals) {
 							this.loader.hide()
 							let errorMsg = "Insufficient Funds!"
@@ -3456,9 +2714,7 @@ class WebBrowser extends LitElement {
 							response = JSON.stringify(obj)
 							break
 						}
-
 						this.loader.hide()
-
 						const processPayment = await showModalAndWait(
 							actions.SEND_COIN,
 							{
@@ -3469,7 +2725,6 @@ class WebBrowser extends LitElement {
 								fee
 							}
 						)
-
 						if (processPayment.action === 'reject') {
 							let errorMsg = "User declined request"
 							let myMsg1 = get("transactions.declined")
@@ -3478,9 +2733,7 @@ class WebBrowser extends LitElement {
 							response = '{"error": "User declined request"}'
 							break
 						}
-
 						this.loader.show()
-
 						const makeRequest = async () => {
 							const opts = {
 								xprv58: xprv58,
@@ -3490,7 +2743,6 @@ class WebBrowser extends LitElement {
 							}
 							return await parentEpml.request('sendRvn', opts)
 						}
-
 						const manageResponse = (response) => {
 							if (response.length === 64) {
 								this.loader.hide()
@@ -3511,7 +2763,6 @@ class WebBrowser extends LitElement {
 								throw new Error(response)
 							}
 						}
-
 						try {
 							const res = await makeRequest()
 							manageResponse(res)
@@ -3530,13 +2781,11 @@ class WebBrowser extends LitElement {
 						const coin = data.coin
 						const memo = data.memo
 						const seed58 = this.arrrWallet.seed58
-
 						const arrrWalletBalance = await parentEpml.request('apiCall', {
 							url: `/crosschain/arrr/walletbalance?apiKey=${this.getApiKey()}`,
 							method: 'POST',
 							body: `${this.arrrWallet.seed58}`
 						})
-
 						if (isNaN(Number(arrrWalletBalance))) {
 							this.loader.hide()
 							let errorMsg = "Failed to Fetch ARRR Balance. Try again!"
@@ -3548,12 +2797,10 @@ class WebBrowser extends LitElement {
 							response = JSON.stringify(obj)
 							break
 						}
-
 						const arrrWalletBalanceDecimals = Number(arrrWalletBalance)
 						const arrrAmountDecimals = Number(amount) * QORT_DECIMALS
 						const balance = (Number(arrrWalletBalance) / 1e8).toFixed(8)
 						const fee = 0.00010000
-
 						if (arrrAmountDecimals + (fee * QORT_DECIMALS) > arrrWalletBalanceDecimals) {
 							this.loader.hide()
 							let errorMsg = "Insufficient Funds!"
@@ -3565,9 +2812,7 @@ class WebBrowser extends LitElement {
 							response = JSON.stringify(obj)
 							break
 						}
-
 						this.loader.hide()
-
 						const processPayment = await showModalAndWait(
 							actions.SEND_COIN,
 							{
@@ -3578,7 +2823,6 @@ class WebBrowser extends LitElement {
 								fee
 							}
 						)
-
 						if (processPayment.action === 'reject') {
 							let errorMsg = "User declined request"
 							let myMsg1 = get("transactions.declined")
@@ -3587,9 +2831,7 @@ class WebBrowser extends LitElement {
 							response = '{"error": "User declined request"}'
 							break
 						}
-
 						this.loader.show()
-
 						const makeRequest = async () => {
 							const opts = {
 								entropy58: seed58,
@@ -3599,7 +2841,6 @@ class WebBrowser extends LitElement {
 							}
 							return await parentEpml.request('sendArrr', opts)
 						}
-
 						const manageResponse = (response) => {
 							if (response.length === 64) {
 								this.loader.hide()
@@ -3620,7 +2861,6 @@ class WebBrowser extends LitElement {
 								throw new Error(response)
 							}
 						}
-
 						try {
 							const res = await makeRequest()
 							manageResponse(res)
@@ -3635,7 +2875,7 @@ class WebBrowser extends LitElement {
 						break
 					}
 				}
-					break;
+				break
 				default:
 					console.log('Unhandled message: ' + JSON.stringify(data))
 					return
@@ -3653,24 +2893,446 @@ class WebBrowser extends LitElement {
 			if (responseObj.error != null) {
 				event.ports[0].postMessage({
 					result: null,
-					error: responseObj,
+					error: responseObj
 				})
 			} else {
 				event.ports[0].postMessage({
 					result: responseObj,
-					error: null,
+					error: null
 				})
 			}
 		})
+
 		this.clearConsole()
+
 		setInterval(() => {
 			this.clearConsole()
 		}, 60000)
 	}
 
-	getUserWallet(coin) {
-		let userWallet = {};
+	renderFullScreen() {
+		if (window.innerHeight == screen.height) {
+			return html`
+				<mwc-button
+					@click=${() => this.exitFullScreen()}
+					title="${translate('browserpage.bchange38')}"
+					class="address-bar-button float-right"
+				>
+					<mwc-icon>fullscreen_exit</mwc-icon>
+				</mwc-button>
+			`
+		} else {
+			return html`
+				<mwc-button
+					@click=${() => this.goFullScreen()}
+					title="${translate('browserpage.bchange37')}"
+					class="address-bar-button float-right"
+				>
+					<mwc-icon>fullscreen</mwc-icon>
+				</mwc-button>
+			`
+		}
+	}
 
+	goFullScreen() {
+		var elem = this.shadowRoot.getElementById('websitesWrapper')
+		if (elem.requestFullscreen) {
+			elem.requestFullscreen()
+		} else if (elem.mozRequestFullScreen) {
+			elem.mozRequestFullScreen()
+		} else if (elem.webkitRequestFullscreen) {
+			elem.webkitRequestFullscreen()
+		} else if (elem.msRequestFullscreen) {
+			elem.msRequestFullscreen()
+		}
+		this.renderFullScreen()
+	}
+
+	exitFullScreen() {
+		if (document.exitFullscreen) {
+			document.exitFullscreen()
+		} else if (document.mozCancelFullScreen) {
+			document.mozCancelFullScreen()
+		} else if (document.webkitExitFullscreen) {
+			document.webkitExitFullscreen()
+		} else if (document.msExitFullscreen) {
+			document.msExitFullscreen()
+		}
+		this.renderFullScreen()
+	}
+
+	async unitJoinFee() {
+		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+		const url = `${nodeUrl}/transactions/unitfee?txType=JOIN_GROUP`
+		const response = await fetch(url)
+		if (!response.ok) {
+			throw new Error('Error when fetching join fee')
+		}
+		const data = await response.json()
+		return (Number(data) / 1e8).toFixed(8)
+	}
+
+	async deployAtFee() {
+		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+		const url = `${nodeUrl}/transactions/unitfee?txType=DEPLOY_AT`
+		const response = await fetch(url)
+		if (!response.ok) {
+			throw new Error('Error when fetching join fee')
+		}
+		const data = await response.json()
+		return (Number(data) / 1e8).toFixed(8)
+	}
+
+	async getArbitraryFee() {
+		const timestamp = Date.now()
+		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+		const url = `${nodeUrl}/transactions/unitfee?txType=ARBITRARY&timestamp=${timestamp}`
+		const response = await fetch(url)
+		if (!response.ok) {
+			throw new Error('Error when fetching arbitrary fee')
+		}
+		const data = await response.json()
+		const arbitraryFee = (Number(data) / 1e8).toFixed(8)
+		return {
+			timestamp,
+			fee: Number(data),
+			feeToShow: arbitraryFee
+		}
+	}
+	async sendQortFee() {
+		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+		const url = `${nodeUrl}/transactions/unitfee?txType=PAYMENT`
+		const response = await fetch(url)
+		if (!response.ok) {
+			throw new Error('Error when fetching join fee')
+		}
+		const data = await response.json()
+		return (Number(data) / 1e8).toFixed(8)
+	}
+
+	async unitVoteFee() {
+		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+		const url = `${nodeUrl}/transactions/unitfee?txType=VOTE_ON_POLL`
+		const response = await fetch(url)
+		if (!response.ok) {
+			throw new Error('Error when fetching vote fee')
+		}
+		const data = await response.json()
+		return (Number(data) / 1e8).toFixed(8)
+	}
+
+	async unitCreatePollFee() {
+		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+		const url = `${nodeUrl}/transactions/unitfee?txType=CREATE_POLL`
+		const response = await fetch(url)
+		if (!response.ok) {
+			throw new Error('Error when fetching vote fee')
+		}
+		const data = await response.json()
+		return (Number(data) / 1e8).toFixed(8)
+	}
+
+	async _joinGroup(groupId, groupName) {
+		const joinFeeInput = await this.unitJoinFee()
+		const getLastRef = async () => {
+			return await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/addresses/lastreference/${this.selectedAddress.address}`
+			})
+		}
+		const validateReceiver = async () => {
+			let lastRef = await getLastRef()
+			let myTransaction = await makeTransactionRequest(lastRef)
+			return getTxnRequestResponse(myTransaction)
+		}
+		const makeTransactionRequest = async (lastRef) => {
+			let groupdialog1 = get("transactions.groupdialog1")
+			let groupdialog2 = get("transactions.groupdialog2")
+			return await parentEpml.request('transaction', {
+				type: 31,
+				nonce: this.selectedAddress.nonce,
+				params: {
+					fee: joinFeeInput,
+					registrantAddress: this.selectedAddress.address,
+					rGroupName: groupName,
+					rGroupId: groupId,
+					lastReference: lastRef,
+					groupdialog1: groupdialog1,
+					groupdialog2: groupdialog2
+				},
+				apiVersion: 2
+			})
+		}
+		const getTxnRequestResponse = (txnResponse) => {
+			if (txnResponse.success === false && txnResponse.message) {
+				throw new Error(txnResponse.message)
+			} else if (txnResponse.success === true && !txnResponse.data.error) {
+				return txnResponse.data
+			} else if (txnResponse.data && txnResponse.data.message) {
+				throw new Error(txnResponse.data.message)
+			} else {
+				throw new Error('Server error. Could not perform action.')
+			}
+		}
+		return await validateReceiver()
+	}
+
+	async _deployAt(name, description, tags, creationBytes, amount, assetId, atType) {
+		const deployAtFee = await this.deployAtFee()
+		const getLastRef = async () => {
+			return await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/addresses/lastreference/${this.selectedAddress.address}`
+			})
+		}
+		const validateReceiver = async () => {
+			let lastRef = await getLastRef()
+			let myTransaction = await makeTransactionRequest(lastRef)
+			return getTxnRequestResponse(myTransaction)
+		}
+		const makeTransactionRequest = async (lastRef) => {
+			let deployAtdialog1 = get("transactions.deployAtdialog1")
+			let deployAtdialog2 = get("transactions.deployAtdialog2")
+			let deployAtdialog3 = get("transactions.deployAtdialog3")
+			let deployAtdialog4 = get("walletpage.wchange12")
+			return await parentEpml.request('transaction', {
+				type: 16,
+				nonce: this.selectedAddress.nonce,
+				params: {
+					fee: deployAtFee,
+					rName: name,
+					rDescription: description,
+					rTags: tags,
+					rAmount: amount,
+					rAssetId: assetId,
+					rCreationBytes: creationBytes,
+					atType: atType,
+					lastReference: lastRef,
+					atDeployDialog1: deployAtdialog1,
+					atDeployDialog2: deployAtdialog2,
+					atDeployDialog3: deployAtdialog3,
+					atDeployDialog4: deployAtdialog4
+				},
+				apiVersion: 2
+			})
+		}
+		const getTxnRequestResponse = (txnResponse) => {
+			if (txnResponse.success === false && txnResponse.message) {
+				throw new Error(txnResponse.message)
+			} else if (txnResponse.success === true && !txnResponse.data.error) {
+				return txnResponse.data
+			} else if (txnResponse.data && txnResponse.data.message) {
+				throw new Error(txnResponse.data.message)
+			} else {
+				throw new Error('Server error. Could not perform action.')
+			}
+		}
+		return await validateReceiver()
+	}
+
+	async _voteOnPoll(pollName, optionIndex) {
+		const voteFeeInput = await this.unitVoteFee()
+		const getLastRef = async () => {
+			return await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/addresses/lastreference/${this.selectedAddress.address}`
+			})
+		}
+		const validateReceiver = async () => {
+			let lastRef = await getLastRef()
+			let myTransaction = await makeTransactionRequest(lastRef)
+			return getTxnRequestResponse(myTransaction)
+		}
+		const makeTransactionRequest = async (lastRef) => {
+			let votedialog1 = get("transactions.votedialog1")
+			let votedialog2 = get("transactions.votedialog2")
+			let feeDialog = get("walletpage.wchange12")
+
+			return await parentEpml.request('transaction', {
+				type: 9,
+				nonce: this.selectedAddress.nonce,
+				params: {
+					fee: voteFeeInput,
+					voterAddress: this.selectedAddress.address,
+					rPollName: pollName,
+					rOptionIndex: optionIndex,
+					lastReference: lastRef,
+					votedialog1: votedialog1,
+					votedialog2: votedialog2,
+					feeDialog
+				},
+				apiVersion: 2
+			})
+		}
+		const getTxnRequestResponse = (txnResponse) => {
+			if (txnResponse.success === false && txnResponse.message) {
+				throw new Error(txnResponse.message)
+			} else if (txnResponse.success === true && !txnResponse.data.error) {
+				return txnResponse.data
+			} else if (txnResponse.data && txnResponse.data.message) {
+				throw new Error(txnResponse.data.message)
+			} else {
+				throw new Error('Server error. Could not perform action.')
+			}
+		}
+		return await validateReceiver()
+	}
+
+	async _createPoll(pollName, pollDescription, options, pollOwnerAddress) {
+		const voteFeeInput = await this.unitCreatePollFee()
+		const getLastRef = async () => {
+			return await parentEpml.request('apiCall', {
+				type: 'api',
+				url: `/addresses/lastreference/${this.selectedAddress.address}`
+			})
+		}
+		const validateReceiver = async () => {
+			let lastRef = await getLastRef()
+			let myTransaction = await makeTransactionRequest(lastRef)
+			return getTxnRequestResponse(myTransaction)
+		}
+		const makeTransactionRequest = async (lastRef) => {
+			let votedialog3 = get("transactions.votedialog3")
+			let votedialog4 = get("transactions.votedialog4")
+			let votedialog5 = get("transactions.votedialog5")
+			let votedialog6 = get("transactions.votedialog6")
+			let feeDialog = get("walletpage.wchange12")
+			return await parentEpml.request('transaction', {
+				type: 8,
+				nonce: this.selectedAddress.nonce,
+				params: {
+					fee: voteFeeInput,
+					ownerAddress: pollOwnerAddress,
+					rPollName: pollName,
+					rPollDesc: pollDescription,
+					rOptions: options,
+					lastReference: lastRef,
+					votedialog3: votedialog3,
+					votedialog4: votedialog4,
+					votedialog5: votedialog5,
+					votedialog6: votedialog6,
+					feeDialog
+				},
+				apiVersion: 2
+			})
+		}
+		const getTxnRequestResponse = (txnResponse) => {
+			if (txnResponse.success === false && txnResponse.message) {
+				throw new Error(txnResponse.message)
+			} else if (txnResponse.success === true && !txnResponse.data.error) {
+				return txnResponse.data
+			} else if (txnResponse.data && txnResponse.data.message) {
+				throw new Error(txnResponse.data.message)
+			} else {
+				throw new Error('Server error. Could not perform action.')
+			}
+		}
+		return await validateReceiver()
+	}
+
+	async extractComponents(url) {
+		if (!url.startsWith("qortal://")) {
+			return null
+		}
+		url = url.replace(/^(qortal\:\/\/)/, "")
+		if (url.includes("/")) {
+			let parts = url.split("/")
+			const service = parts[0].toUpperCase()
+			parts.shift()
+			const name = parts[0]
+			parts.shift()
+			let identifier
+			if (parts.length > 0) {
+				identifier = parts[0] // Do not shift yet
+				// Check if a resource exists with this service, name and identifier combination
+				let responseObj = await parentEpml.request('apiCall', {
+					url: `/arbitrary/resource/status/${service}/${name}/${identifier}?apiKey=${this.getApiKey()}`
+				})
+
+				if (responseObj.totalChunkCount > 0) {
+					// Identifier exists, so don't include it in the path
+					parts.shift()
+				}
+				else {
+					identifier = null
+				}
+			}
+			const path = parts.join("/")
+			const components = {}
+			components["service"] = service
+			components["name"] = name
+			components["identifier"] = identifier
+			components["path"] = path
+			return components
+		}
+		return null
+	}
+
+	async _handleKeyDown(e) {
+		if (e.key === 'Enter') {
+			let newQuery = e.target.value
+			if (newQuery.endsWith('/')) {
+				newQuery = newQuery.slice(0, -1)
+			}
+			const res = await this.extractComponents(newQuery)
+			if (!res) return
+			const { service, name, identifier, path } = res
+			let query = `?service=${service}`
+			if (name) {
+				query = query + `&name=${name}`
+			}
+			if (identifier) {
+				query = query + `&identifier=${identifier}`
+			}
+			if (path) {
+				query = query + `&path=${path}`
+			}
+			window.location = window.location.origin + window.location.pathname + query
+		}
+	}
+
+	async linkOpenNewTab(link) {
+		let newQuery = link
+		if (newQuery.endsWith('/')) {
+			newQuery = newQuery.slice(0, -1)
+		}
+		const res = await this.extractComponents(newQuery)
+		if (!res) return
+		const { service, name, identifier, path } = res
+		let query = `?service=${service}`
+		if (name) {
+			query = query + `&name=${name}`
+		}
+		if (identifier) {
+			query = query + `&identifier=${identifier}`
+		}
+		if (path) {
+			query = query + `&path=${path}`
+		}
+		window.parent.reduxStore.dispatch(window.parent.reduxAction.setNewTab({
+			url: `qdn/browser/index.html${query}`,
+			id: this.uid.rnd(),
+			myPlugObj: {
+				"url": service === 'WEBSITE' ? "websites" : "qapps",
+				"domain": "core",
+				"page": `qdn/browser/index.html${query}`,
+				"title": name,
+				"icon": service === 'WEBSITE' ? 'vaadin:desktop' : 'vaadin:external-browser',
+				"mwcicon": service === 'WEBSITE' ? 'desktop_mac' : 'open_in_browser',
+				"menus": [],
+				"parent": false
+			}
+		}))
+	}
+
+	getUserWallet(coin) {
+		let userWallet = {}
 		switch (coin) {
 			case 'QORT':
 				userWallet['address'] = window.parent.reduxStore.getState().app.selectedAddress.address
@@ -3701,7 +3363,7 @@ class WebBrowser extends LitElement {
 			default:
 				break
 		}
-		return userWallet;
+		return userWallet
 	}
 
 	clearConsole() {
@@ -3724,7 +3386,6 @@ class WebBrowser extends LitElement {
 
 	changeLanguage() {
 		const checkLanguage = localStorage.getItem('qortalLanguage')
-
 		if (checkLanguage === null || checkLanguage.length === 0) {
 			localStorage.setItem('qortalLanguage', 'us')
 			use('us')
@@ -3737,20 +3398,19 @@ class WebBrowser extends LitElement {
 		if (!appName) throw new Error('unknown app name')
 		const id = `appNotificationList-${this.selectedAddress.address}`
 		const checkData = localStorage.getItem(id) ? JSON.parse(localStorage.getItem(id)) : null
-
 		if (!checkData) {
 			const newData = {
 				[appName]: {
 					interval: 900000, // 15mins in milliseconds
-					lastNotification: null,
-				},
+					lastNotification: null
+				}
 			}
 			localStorage.setItem(id, JSON.stringify(newData))
 		} else {
 			const copyData = { ...checkData }
 			copyData[appName] = {
 				interval: 900000, // 15mins in milliseconds
-				lastNotification: null,
+				lastNotification: null
 			}
 			localStorage.setItem(id, JSON.stringify(copyData))
 		}
@@ -3758,7 +3418,6 @@ class WebBrowser extends LitElement {
 
 	updateLastNotification(id, appName) {
 		const checkData = localStorage.getItem(id) ? JSON.parse(localStorage.getItem(id)) : null
-
 		if (checkData) {
 			const copyData = { ...checkData }
 			if (copyData[appName]) {
@@ -3766,7 +3425,7 @@ class WebBrowser extends LitElement {
 			} else {
 				copyData[appName] = {
 					interval: 900000, // 15mins in milliseconds
-					lastNotification: Date.now(),
+					lastNotification: Date.now()
 				}
 			}
 			localStorage.setItem(id, JSON.stringify(copyData))
@@ -3779,23 +3438,28 @@ class WebBrowser extends LitElement {
 		if (this.followedNames == null || !Array.isArray(this.followedNames)) {
 			return html``
 		}
-
 		if (this.followedNames.indexOf(this.name) === -1) {
 			// render follow button
-			return html`<mwc-button
-				@click=${() => this.follow()}
-				title="${translate('browserpage.bchange7')} ${this.name}"
-				class="address-bar-button float-right"
-				><mwc-icon>add_to_queue</mwc-icon></mwc-button
-			>`
+			return html`
+				<mwc-button
+					@click=${() => this.follow()}
+					title="${translate('browserpage.bchange7')} ${this.name}"
+					class="address-bar-button float-right"
+				>
+					<mwc-icon>add_to_queue</mwc-icon>
+				</mwc-button>
+			`
 		} else {
 			// render unfollow button
-			return html`<mwc-button
-				@click=${() => this.unfollow()}
-				title="${translate('browserpage.bchange8')} ${this.name}"
-				class="address-bar-button float-right"
-				><mwc-icon>remove_from_queue</mwc-icon></mwc-button
-			>`
+			return html`
+				<mwc-button
+					@click=${() => this.unfollow()}
+					title="${translate('browserpage.bchange8')} ${this.name}"
+					class="address-bar-button float-right"
+				>
+					<mwc-icon>remove_from_queue</mwc-icon>
+				</mwc-button>
+			`
 		}
 	}
 
@@ -3804,28 +3468,32 @@ class WebBrowser extends LitElement {
 		if (this.blockedNames == null || !Array.isArray(this.blockedNames)) {
 			return html``
 		}
-
 		if (this.blockedNames.indexOf(this.name) === -1) {
 			// render block button
-			return html`<mwc-button
-				@click=${() => this.block()}
-				title="${translate('browserpage.bchange9')} ${this.name}"
-				class="address-bar-button float-right"
-				><mwc-icon>block</mwc-icon></mwc-button
-			>`
+			return html`
+				<mwc-button
+					@click=${() => this.block()}
+					title="${translate('browserpage.bchange9')} ${this.name}"
+					class="address-bar-button float-right"
+				>
+					<mwc-icon>block</mwc-icon>
+				</mwc-button>
+			`
 		} else {
 			// render unblock button
-			return html`<mwc-button
-				@click=${() => this.unblock()}
-				title="${translate('browserpage.bchange10')} ${this.name}"
-				class="address-bar-button float-right"
-				><mwc-icon>radio_button_unchecked</mwc-icon></mwc-button
-			>`
+			return html`
+				<mwc-button
+					@click=${() => this.unblock()}
+					title="${translate('browserpage.bchange10')} ${this.name}"
+					class="address-bar-button float-right"
+				>
+					<mwc-icon>radio_button_unchecked</mwc-icon>
+				</mwc-button>
+			`
 		}
 	}
 
 	// Navigation
-
 	goBack() {
 		window.history.back()
 	}
@@ -3840,9 +3508,7 @@ class WebBrowser extends LitElement {
 		if (this.dev === 'FRAMEWORK') {
 			this.url = `${this.link}?time=${new Date().getMilliseconds()}`
 		} else {
-			this.url = `${nodeUrl}/render/${this.service}/${this.name}${this.path != null ? this.path : ''
-				}?theme=${this.theme}&identifier=${this.identifier != null ? this.identifier : ''
-				}&time=${new Date().getMilliseconds()}`
+			this.url = `${nodeUrl}/render/${this.service}/${this.name}${this.path != null ? this.path : ''}?theme=${this.theme}&identifier=${this.identifier != null ? this.identifier : ''}&time=${new Date().getMilliseconds()}`
 		}
 	}
 
@@ -3853,7 +3519,7 @@ class WebBrowser extends LitElement {
 		}
 		else { // Default to websites list
 			this.exitFullScreen()
-			window.location = '../index.html'
+			window.location = '../../q-website/index.html'
 		}
 	}
 
@@ -3880,16 +3546,14 @@ class WebBrowser extends LitElement {
 	async followName(name) {
 		let items = [name]
 		let namesJsonString = JSON.stringify({ items: items })
-
 		let ret = await parentEpml.request('apiCall', {
 			url: `/lists/followedNames?apiKey=${this.getApiKey()}`,
 			method: 'POST',
 			headers: {
-				'Content-Type': 'application/json',
+				'Content-Type': 'application/json'
 			},
-			body: `${namesJsonString}`,
+			body: `${namesJsonString}`
 		})
-
 		if (ret === true) {
 			// Successfully followed - add to local list
 			// Remove it first by filtering the list - doing it this way ensures the UI updates
@@ -3902,23 +3566,20 @@ class WebBrowser extends LitElement {
 			let err1string = get('browserpage.bchange11')
 			parentEpml.request('showSnackBar', `${err1string}`)
 		}
-
 		return ret
 	}
 
 	async unfollowName(name) {
 		let items = [name]
 		let namesJsonString = JSON.stringify({ items: items })
-
 		let ret = await parentEpml.request('apiCall', {
 			url: `/lists/followedNames?apiKey=${this.getApiKey()}`,
 			method: 'DELETE',
 			headers: {
-				'Content-Type': 'application/json',
+				'Content-Type': 'application/json'
 			},
-			body: `${namesJsonString}`,
+			body: `${namesJsonString}`
 		})
-
 		if (ret === true) {
 			// Successfully unfollowed - remove from local list
 			this.followedNames = this.followedNames.filter(
@@ -3928,23 +3589,20 @@ class WebBrowser extends LitElement {
 			let err2string = get('browserpage.bchange12')
 			parentEpml.request('showSnackBar', `${err2string}`)
 		}
-
 		return ret
 	}
 
 	async blockName(name) {
 		let items = [name]
 		let namesJsonString = JSON.stringify({ items: items })
-
 		let ret = await parentEpml.request('apiCall', {
 			url: `/lists/blockedNames?apiKey=${this.getApiKey()}`,
 			method: 'POST',
 			headers: {
-				'Content-Type': 'application/json',
+				'Content-Type': 'application/json'
 			},
-			body: `${namesJsonString}`,
+			body: `${namesJsonString}`
 		})
-
 		if (ret === true) {
 			// Successfully blocked - add to local list
 			// Remove it first by filtering the list - doing it this way ensures the UI updates
@@ -3957,33 +3615,27 @@ class WebBrowser extends LitElement {
 			let err3string = get('browserpage.bchange13')
 			parentEpml.request('showSnackBar', `${err3string}`)
 		}
-
 		return ret
 	}
 
 	async unblockName(name) {
 		let items = [name]
 		let namesJsonString = JSON.stringify({ items: items })
-
 		let ret = await parentEpml.request('apiCall', {
 			url: `/lists/blockedNames?apiKey=${this.getApiKey()}`,
 			method: 'DELETE',
 			headers: {
-				'Content-Type': 'application/json',
+				'Content-Type': 'application/json'
 			},
-			body: `${namesJsonString}`,
+			body: `${namesJsonString}`
 		})
-
 		if (ret === true) {
 			// Successfully unblocked - remove from local list
-			this.blockedNames = this.blockedNames.filter(
-				(item) => item != name
-			)
+			this.blockedNames = this.blockedNames.filter((item) => item != name)
 		} else {
 			let err4string = get('browserpage.bchange14')
 			parentEpml.request('showSnackBar', `${err4string}`)
 		}
-
 		return ret
 	}
 
@@ -3994,31 +3646,33 @@ class WebBrowser extends LitElement {
 			parentEpml.request('showSnackBar', `${err5string}`)
 			return
 		}
-
 		let identifier = (this.identifier == null || this.identifier.length == 0) ? 'default' : this.identifier
-
 		let ret = await parentEpml.request('apiCall', {
-			url: `/arbitrary/resource/${this.service}/${this.name
-				}/${identifier}?apiKey=${this.getApiKey()}`,
-			method: 'DELETE',
+			url: `/arbitrary/resource/${this.service}/${this.name}/${identifier}?apiKey=${this.getApiKey()}`,
+			method: 'DELETE'
 		})
-
 		if (ret === true) {
 			this.goBackToList()
 		} else {
 			let err6string = get('browserpage.bchange16')
 			parentEpml.request('showSnackBar', `${err6string}`)
 		}
-
 		return ret
 	}
 
+	// Standard functions
 	getApiKey() {
-		const myNode =
-			window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
-			window.parent.reduxStore.getState().app.nodeConfig.node
-			]
+		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 		return myNode.apiKey
+	}
+
+	isEmptyArray(arr) {
+		if (!arr) { return true }
+		return arr.length === 0
+	}
+
+	round(number) {
+		return (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
 	}
 }
 
@@ -4035,7 +3689,6 @@ async function showModalAndWait(type, data) {
 			<div class="modal my-modal-class">
 				<div class="modal-content">
 					<div class="modal-body">
-
 						${type === actions.GET_USER_ACCOUNT ? `
 							<div class="modal-subcontainer">
 								<p class="modal-paragraph">${`<span class="capitalize-first">${data.service.toLowerCase()}</span> ${get("browserpage.bchange18")}`}</p>
@@ -4099,11 +3752,13 @@ async function showModalAndWait(type, data) {
 								<p class="modal-paragraph">${get("browserpage.bchange52")}</p>
 							</div>
 						` : ''}
+
 						${type === actions.GET_WALLET_BALANCE ? `
 							<div class="modal-subcontainer">
 								<p class="modal-paragraph">${get("browserpage.bchange20")}</p>
 							</div>
 						` : ''}
+
 						${type === actions.GET_LIST_ITEMS ? `
 							<div class="modal-subcontainer">
 								<p class="modal-paragraph">${get("browserpage.bchange41")}</p>
@@ -4116,6 +3771,7 @@ async function showModalAndWait(type, data) {
 								</div>
 							</div>
 						` : ''}
+
 						${type === actions.GET_FRIENDS_LIST ? `
 							<div class="modal-subcontainer">
 								<p class="modal-paragraph">${get("browserpage.bchange54")}</p>
@@ -4127,6 +3783,7 @@ async function showModalAndWait(type, data) {
 								</div>
 							</div>
 						` : ''}
+
 						${type === actions.ADD_LIST_ITEMS ? `
 							<div class="modal-subcontainer">
 								<p class="modal-paragraph">${get("browserpage.bchange43")}</p>
@@ -4134,17 +3791,20 @@ async function showModalAndWait(type, data) {
 								<p class="modal-paragraph">${get("browserpage.bchange42")}: <span> ${data.items.join(', ')}</span></p>
 							</div>
 						` : ''}
+
 						${type === actions.SAVE_FILE ? `
 							<div class="modal-subcontainer">
 								<p class="modal-paragraph">${get("browserpage.bchange46")}: <span> ${data.filename}</span></p>
 							</div>
 						` : ''}
+
 						${type === actions.GET_PROFILE_DATA ? `
 							<div class="modal-subcontainer">
 								<p class="modal-paragraph">${get("browserpage.bchange49")}: <span style="font-weight: bold"> ${data.property}</span></p>
 
 							</div>
 						` : ''}
+
 						${type === actions.SET_PROFILE_DATA ? `
 							<div class="modal-subcontainer">
 								<p class="modal-paragraph">${get("browserpage.bchange50")} <span style="font-weight: bold"> ${data.property}</span></p>
@@ -4154,6 +3814,7 @@ async function showModalAndWait(type, data) {
 								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph">${get('browserpage.bchange51')} </p>
 							</div>
 						` : ''}
+
 						${type === actions.NOTIFICATIONS_PERMISSION ? `
 							<div class="modal-subcontainer">
 								<p class="modal-paragraph">${get("browserpage.bchange48")}</p>
@@ -4167,6 +3828,7 @@ async function showModalAndWait(type, data) {
 								<p class="modal-paragraph">${get("browserpage.bchange42")}: <span> ${data.item}</span></p>
 							</div>
 						` : ''}
+
 						${type === actions.SEND_CHAT_MESSAGE ? `
 							<p class="modal-paragraph">${get("browserpage.bchange22")}</p>
 						` : ''}
@@ -4194,11 +3856,12 @@ async function showModalAndWait(type, data) {
 			}
 			resolve({ action: 'accept', userData })
 		})
+
 		const modalContent = modal.querySelector('.modal-content')
 		modalContent.addEventListener('click', (e) => {
 			e.stopPropagation()
-
 		})
+
 		const backdropClick = document.getElementById('backdrop')
 		backdropClick.addEventListener('click', () => {
 			if (modal.parentNode === document.body) {
@@ -4213,12 +3876,14 @@ async function showModalAndWait(type, data) {
 			}
 			resolve({ action: 'reject' })
 		})
+
 		const labelButton = modal.querySelector('#authButtonLabel')
 		if (labelButton) {
 			labelButton.addEventListener('click', () => {
 				this.shadowRoot.getElementById('authButton').click()
 			})
 		}
+
 		const checkbox = modal.querySelector('#authButton')
 		if (checkbox) {
 			checkbox.addEventListener('click', (e) => {
@@ -4229,12 +3894,14 @@ async function showModalAndWait(type, data) {
 				window.parent.reduxStore.dispatch(window.parent.reduxAction.allowQAPPAutoAuth(true))
 			})
 		}
+
 		const labelButton2 = modal.querySelector('#listsButtonLabel')
 		if (labelButton2) {
 			labelButton2.addEventListener('click', () => {
 				this.shadowRoot.getElementById('listsButton').click()
 			})
 		}
+
 		const checkbox2 = modal.querySelector('#listsButton')
 		if (checkbox2) {
 			checkbox2.addEventListener('click', (e) => {
@@ -4252,6 +3919,7 @@ async function showModalAndWait(type, data) {
 				this.shadowRoot.getElementById('listsButton').click()
 			})
 		}
+
 		const labelButtonFriendsList2 = modal.querySelector('#friendsListCheckbox')
 		if (labelButtonFriendsList2) {
 			labelButtonFriendsList2.addEventListener('click', (e) => {
@@ -4275,7 +3943,6 @@ async function showErrorAndWait(type, data, data1) {
 		<div class="modal my-modal-class">
 			<div class="modal-content">
 				<div class="modal-body">
-
 					${type === "MISSING_FIELDS" ? `
 						<div class="modal-subcontainer-error">
 							<p class="modal-paragraph-error">${data}</p>
@@ -4338,181 +4005,16 @@ async function showErrorAndWait(type, data, data1) {
 							<p class="modal-paragraph-error">${data1}</p>
 						</div>
 					` : ''}
-
 				</div>
 			</div>
 		</div>
 	`
 	document.body.appendChild(error)
-
 	await modalDelay(3000)
 	document.body.removeChild(error)
 }
 
 // Add the styles for the modal
-const styles = `
-	* {
-		--mdc-theme-primary: rgb(3, 169, 244);
-		--mdc-theme-secondary: var(--mdc-theme-primary);
-		--paper-input-container-focus-color: var(--mdc-theme-primary);
-		--mdc-checkbox-unchecked-color: var(--black);
-		--mdc-theme-on-surface: var(--black);
-		--mdc-checkbox-disabled-color: var(--black);
-		--mdc-checkbox-ink-color: var(--black);
-	}
-
-	.backdrop {
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		background: rgb(186 186 186 / 26%);
-		overflow: hidden;
-		animation: backdrop_blur cubic-bezier(0.22, 1, 0.36, 1) 1s forwards;
-		z-index: 1000000;
-	}
-
-	@keyframes backdrop_blur {
-		0% {
-			backdrop-filter: blur(0px);
-			background: transparent;
-		}
-		100% {
-			backdrop-filter: blur(5px);
-			background: rgb(186 186 186 / 26%);
-		}
-	}
-
-	@keyframes modal_transition {
-		0% {
-			visibility: hidden;
-			opacity: 0;
-	}
-		100% {
-			visibility: visible;
-			opacity: 1;
-		}
-	}
-
-	.modal {
-		position: relative;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		width: 100%;
-		height: 100%;
-		animation: 1s cubic-bezier(0.22, 1, 0.36, 1) 0s 1 normal forwards running modal_transition;
-		z-index: 1000001;
-	}
-
-	@keyframes modal_transition {
-		0% {
-			visibility: hidden;
-			opacity: 0;
-		}
-		100% {
-			visibility: visible;
-			opacity: 1;
-		}
-	}
-
-	.modal-content {
-		background-color: var(--white);
-		border-radius: 10px;
-		padding: 20px;
-		box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-		max-width: 80%;
-		min-width: 300px;
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-	}
-
-	.modal-body {
-		padding: 25px;
-	}
-
-	.modal-subcontainer {
-		color: var(--black);
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 15px;
-	}
-
-	.modal-subcontainer-error {
-		color: var(--black);
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 15px;
-		overflow: auto;
-    	max-height: calc(95vh - 250px);
-	}
-
-	.modal-paragraph-error {
-		font-family: Roboto, sans-serif;
-		font-size: 20px;
-		letter-spacing: 0.3px;
-		font-weight: 700;
-		color: var(--black);
-		margin: 0;
-	}
-
-	.modal-paragraph {
-		font-family: Roboto, sans-serif;
-		font-size: 18px;
-		letter-spacing: 0.3px;
-		font-weight: 300;
-		color: var(--black);
-		margin: 0;
-		word-wrap: break-word;
-  		overflow-wrap: break-word;
-	}
-
-	.capitalize-first {
-		text-transform: capitalize;
-	}
-
-	.checkbox-row {
-		display: flex;
-		align-items: center;
-		font-family: Montserrat, sans-serif;
-		font-weight: 600;
-		color: var(--black);
-	}
-
-	.modal-buttons {
-		display: flex;
-		justify-content: space-between;
-		margin-top: 20px;
-	}
-
-	.modal-buttons button {
-		background-color: #4caf50;
-		border: none;
-		color: #fff;
-		padding: 10px 20px;
-		border-radius: 5px;
-		cursor: pointer;
-		transition: background-color 0.2s;
-	}
-
-	.modal-buttons button:hover {
-		background-color: #3e8e41;
-	}
-
-	#cancel-button {
-		background-color: #f44336;
-	}
-
-	#cancel-button:hover {
-		background-color: #d32f2f;
-	}
-`
-
 const styleSheet = new CSSStyleSheet()
-styleSheet.replaceSync(styles)
-
+styleSheet.replaceSync(webBrowserModalStyles)
 document.adoptedStyleSheets = [styleSheet]

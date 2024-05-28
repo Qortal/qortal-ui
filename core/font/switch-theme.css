@@ -6,6 +6,7 @@ html {
   --plugback: #ffffff;
   --border: #d0d6de;
   --border2: #dde2e8;
+  --border3: #080808;
   --copybutton: #707584;
   --chat-group: #080808;
   --chat-bubble: #9f9f9f0a;
@@ -83,6 +84,7 @@ html[theme="dark"] {
   --plugback: #0f1a2e;
   --border: #0b305e;
   --border2: #0b305e;
+  --border3: #767676;
   --copybutton: #d0d6de;
   --chat-group: #ffffff;
   --chat-bubble: #9694941a;

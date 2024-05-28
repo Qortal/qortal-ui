@@ -1,2 +1,2 @@
-import './initStore.js'
-import './components/main-app.js'
+import './initStore'
+import './components/main-app'

@@ -1,47 +1,39 @@
-import {css, html, LitElement} from 'lit';
-import '@vaadin/button';
-import '@polymer/paper-spinner/paper-spinner-lite.js';
+import { html, LitElement } from 'lit'
+import { myButtonStyles } from '../styles/core-css'
+import '@vaadin/button'
+import '@polymer/paper-spinner/paper-spinner-lite.js'
 
 export class MyButton extends LitElement {
-	static properties = {
-		onClick: { type: Function },
-		isLoading: { type: Boolean },
-		label: { type: String },
-	};
-
-	static styles = css`
-		vaadin-button {
-			height: 100%;
-			margin: 0;
-			cursor: pointer;
-			min-width: 80px;
-			background-color: #03a9f4;
-			color: white;
+	static get properties() {
+		return {
+			onClick: { type: Function },
+			isLoading: { type: Boolean },
+			label: { type: String }
 		}
+	}
 
-		vaadin-button:hover {
-			opacity: 0.8;
-		}
-	`;
+	static get styles() {
+		return [myButtonStyles]
+	}
 
 	constructor() {
-		super();
-		this.onClick = () => {};
-		this.isLoading = false;
-		this.label = '';
+		super()
+		this.onClick = () => { }
+		this.isLoading = false
+		this.label = ''
 	}
 
 	render() {
 		return html`
-			<vaadin-button
-				?disabled="${this.isLoading}"
-				@click="${this.onClick}"
-			>
-				${this.isLoading === false
-					? html`${this.label}`
-					: html`<paper-spinner-lite active></paper-spinner-lite>`}
+			<vaadin-button ?disabled="${this.isLoading}" @click="${this.onClick}">
+				${this.isLoading === false ? html`${this.label}` : html`<paper-spinner-lite active></paper-spinner-lite>`}
 			</vaadin-button>
-		`;
+		`
+	}
+
+	firstUpdated() {
+		// ...
 	}
 }
-customElements.define('my-button', MyButton);
+
+window.customElements.define('my-button', MyButton)

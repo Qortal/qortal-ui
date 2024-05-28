@@ -1,5 +1,4 @@
 const rollup = require('rollup')
-
 const configs = require('./build-config.js')()
 
 const watch = () => {
