@@ -1895,13 +1895,13 @@ class WebBrowser extends LitElement {
 					const requiredFields = ['coin','type']
 					const missingFields = []
 
-          requiredFields.forEach((field) => {
+          			requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
 						}
 					})
 
-          if (missingFields.length > 0) {
+          			if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
 						const errorMsg = `Missing fields: ${missingFieldsString}`
 						let data = {}
@@ -2059,67 +2059,6 @@ class WebBrowser extends LitElement {
 					} catch (error) {
 						const data = {}
 						data['error'] = "Error in set current server"
-						response = JSON.stringify(data)
-					} finally {
-						break
-					}
-				}
-
-				case actions.GET_DAY_SUMMARY: {
-					try {
-						let coin = data.coin;
-						let type = data.type;
-						response = await parentEpml.request('apiCall', {
-							type: 'api',
-							method: 'GET',
-							url: `/crosschain/${coin}/${type}?apiKey=${this.getApiKey()}`,
-							headers: {
-								'Accept': '*/*',
-								'Content-Type': 'application/json'
-							},
-						})
-					} catch (error) {
-						const data = {}
-						data['error'] = "Error in get foreign fee"
-						response = JSON.stringify(data)
-					} finally {
-						break
-					}
-				}
-
-				case actions.UPDATE_FOREIGN_FEE: {
-					const requiredFields = ['coin','type']
-					const missingFields = []
-					requiredFields.forEach((field) => {
-						if (!data[field]) {
-							missingFields.push(field)
-						}
-					})
-					if (missingFields.length > 0) {
-						const missingFieldsString = missingFields.join(', ')
-						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {}
-						data['error'] = errorMsg
-						response = JSON.stringify(data)
-						break
-					}
-					try {
-						let coin = data.coin;
-						let type = data.type;
-						let value = data.value;
-						response = await parentEpml.request('apiCall', {
-							type: 'api',
-							method: 'POST',
-							url: `/crosschain/${coin}/update${type}?apiKey=${this.getApiKey()}`,
-							headers: {
-								'Accept': '*/*',
-								'Content-Type': 'application/json'
-							},
-							body: `${value}`
-						})
-					} catch (error) {
-						const data = {}
-						data['error'] = "Error in update foreign fee"
 						response = JSON.stringify(data)
 					} finally {
 						break
