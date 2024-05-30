@@ -2742,6 +2742,58 @@ class WebBrowser extends LitElement {
 					}
 				}
 
+				case actions.SET_CURRENT_FOREIGN_SERVER: {
+					const requiredFields = ['coin']
+					const missingFields = []
+
+					requiredFields.forEach((field) => {
+						if (!data[field]) {
+							missingFields.push(field)
+						}
+					})
+
+					if (missingFields.length > 0) {
+						const missingFieldsString = missingFields.join(', ')
+						const errorMsg = `Missing fields: ${missingFieldsString}`
+						let data = {}
+						data['error'] = errorMsg
+						response = JSON.stringify(data)
+						break
+					}
+
+					try {
+						let coin = data.coin;
+						let host = data.host;
+						let port = data.port;
+						let type = data.type;
+
+						const body = {
+							hostName: host,
+							port: port,
+							connectionType: type
+						}
+
+						const bodyToString = JSON.stringify(body)
+
+						response = await parentEpml.request('apiCall', {
+							type: 'api',
+							method: 'POST',
+							url: `/crosschain/${coin}/setcurrentserver?apiKey=${this.getApiKey()}`,
+							headers: {
+								'Accept': '*/*',
+								'Content-Type': 'application/json'
+							},
+							body: `${bodyToString}`
+						})
+					} catch (error) {
+						const data = {}
+						data['error'] = "Error in set current server"
+						response = JSON.stringify(data)
+					} finally {
+						break
+					}
+				}
+
 				case actions.GET_DAY_SUMMARY: {
 					try {
 						response = await parentEpml.request('apiCall', {
