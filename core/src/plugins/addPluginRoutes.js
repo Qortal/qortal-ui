@@ -1,7 +1,7 @@
-import {routes} from './routes.js'
+import { routes } from './routes'
 
 export const addPluginRoutes = epmlInstance => {
-    Object.entries(routes).forEach(([route, handler]) => {
-        epmlInstance.route(route, handler)
-    })
+	Object.entries(routes).forEach(([route, handler]) => {
+		epmlInstance.route(route, handler)
+	})
 }

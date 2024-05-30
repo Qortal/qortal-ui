@@ -111,6 +111,7 @@ linux:
     - "AppImage"
     - "snap"
     - "rpm"
+  asar: true
 
 deb:
   artifactName: "Qortal-Setup-amd64.${ext}"

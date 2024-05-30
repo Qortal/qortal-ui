@@ -1,74 +1,109 @@
-'use strict';
-import TransactionBase from '../TransactionBase.js'
-import {store} from '../../../api.js'
-import {QORT_DECIMALS} from "../../constants.js"
+import TransactionBase from '../TransactionBase'
+import { QORT_DECIMALS } from '../../constants'
 
 export default class UpdateGroupTransaction extends TransactionBase {
-    constructor() {
-        super()
-        this.type = 23
-    }
+	constructor() {
+		super()
+		this.type = 23
+	}
 
-    render(html) {
-        const conf = store.getState().config
-        return html`
-            Are you sure to update this group ?
-            <div style="background: #eee; padding: 8px; margin: 8px 0; border-radius: 5px;">
+	render(html) {
+		return html`
+			${this._updategroupdialog1}
+			<div style="background: #eee; padding: 8px; margin: 8px 0; border-radius: 5px;">
+				<div><span style="color: #000;">${this._updategroupdialog3}: ${this._rGroupNewOwnerDesc}</span></div>
+				<hr style="border: 2px solid #03a9f4;">
+				<div><span style="color: #000;">${this._updategroupdialog4}: ${this._rGroupNewName}</span></div>
+				<hr style="border: 2px solid #03a9f4;">
+				<div><span style="color: #000;">${this._updategroupdialog5}: ${this._rGroupNewDesc}</span></div>
+				<hr style="border: 2px solid #03a9f4;">
+				<div><span style="color: #000;">${this._updategroupdialog6}: ${this._rGroupTypeDesc}</span></div>
+			</div>
+			${this._updategroupdialog2}
+		`
+	}
 
-            </div>
-            On pressing confirm, the group details will be updated!
-        `
-    }
+	set updategroupdialog1(updategroupdialog1) {
+		this._updategroupdialog1 = updategroupdialog1
+	}
 
-    set fee(fee) {
-        this._fee = fee * QORT_DECIMALS
-        this._feeBytes = this.constructor.utils.int64ToBytes(this._fee)
-    }
+	set updategroupdialog2(updategroupdialog2) {
+		this._updategroupdialog2 = updategroupdialog2
+	}
 
-    set newOwner(newOwner) {
-        this._newOwner = newOwner instanceof Uint8Array ? newOwner : this.constructor.Base58.decode(newOwner)
-    }
+	set updategroupdialog3(updategroupdialog3) {
+		this._updategroupdialog3 = updategroupdialog3
+	}
 
-    set newIsOpen(newIsOpen) {
-        this._rGroupType = new Uint8Array(1)
-        this._rGroupType[0] = newIsOpen
-    }
+	set updategroupdialog4(updategroupdialog4) {
+		this._updategroupdialog4 = updategroupdialog4
+	}
 
-    set newDescription(newDescription) {
-        this._rGroupDescBytes = this.constructor.utils.stringtoUTF8Array(newDescription.toLocaleLowerCase())
-        this._rGroupDescLength = this.constructor.utils.int32ToBytes(this._rGroupDescBytes.length)
-    }
+	set updategroupdialog5(updategroupdialog5) {
+		this._updategroupdialog5 = updategroupdialog5
+	}
 
-    set newApprovalThreshold(newApprovalThreshold) {
-        this._rGroupApprovalThreshold = new Uint8Array(1)
-        this._rGroupApprovalThreshold[0] = newApprovalThreshold;
-    }
+	set groupTypeDesc(groupTypeDesc) {
+		this._rGroupTypeDesc = groupTypeDesc
+	}
 
-    set newMinimumBlockDelay(newMinimumBlockDelay) {
-        this._rGroupMinimumBlockDelayBytes = this.constructor.utils.int32ToBytes(newMinimumBlockDelay)
-    }
+	set fee(fee) {
+		this._fee = fee * QORT_DECIMALS
+		this._feeBytes = this.constructor.utils.int64ToBytes(this._fee)
+	}
 
-    set newMaximumBlockDelay(newMaximumBlockDelay) {
-        this._rGroupMaximumBlockDelayBytes = this.constructor.utils.int32ToBytes(newMaximumBlockDelay)
-    }
+	set newGroupId(newGroupId) {
+		this._rGroupNewBytes = this.constructor.utils.int32ToBytes(newGroupId)
+	}
 
-    set _groupId(_groupId){
-        this._groupBytes = this.constructor.utils.int32ToBytes(_groupId)
-    }
+	set newOwner(newOwner) {
+		this._rGroupNewOwnerDesc = newOwner
+		this._rGroupNewOwner = newOwner instanceof Uint8Array ? newOwner : this.constructor.Base58.decode(newOwner)
+	}
 
-    get params() {
-        const params = super.params
-        params.push(
-            this._groupBytes,
-            this._newOwner,
-            this._rGroupDescLength,
-            this._rGroupDescBytes,
-            this._rGroupType,
-            this._rGroupApprovalThreshold,
-            this._rGroupMinimumBlockDelayBytes,
-            this._rGroupMaximumBlockDelayBytes,
-            this._feeBytes
-        )
-        return params
-    }
+	set newName(newName) {
+		this._rGroupNewName = newName
+		this._rGroupNewNameBytes = this.constructor.utils.stringtoUTF8Array(this._rGroupNewName)
+		this._rGroupNewNameLength = this.constructor.utils.int32ToBytes(this._rGroupNewNameBytes.length)
+	}
+
+	set newDescription(newDescription) {
+		this._rGroupNewDesc = newDescription
+		this._rGroupNewDescBytes = this.constructor.utils.stringtoUTF8Array(this._rGroupNewDesc)
+		this._rGroupNewDescLength = this.constructor.utils.int32ToBytes(this._rGroupNewDescBytes.length)
+	}
+
+	set newIsOpen(newIsOpen) {
+		this._rGroupNewType = new Uint8Array(1)
+		this._rGroupNewType[0] = newIsOpen
+	}
+
+	set newApprovalThreshold(newApprovalThreshold) {
+		this._rGroupNewApprovalThreshold = new Uint8Array(1)
+		this._rGroupNewApprovalThreshold[0] = newApprovalThreshold
+	}
+
+	set newMinimumBlockDelay(newMinimumBlockDelay) {
+		this._rGroupNewMinimumBlockDelayBytes = this.constructor.utils.int32ToBytes(newMinimumBlockDelay)
+	}
+
+	set newMaximumBlockDelay(newMaximumBlockDelay) {
+		this._rGroupNewMaximumBlockDelayBytes = this.constructor.utils.int32ToBytes(newMaximumBlockDelay)
+	}
+
+	get params() {
+		const params = super.params
+		params.push(
+			this._rGroupNewBytes,
+			this._rGroupNewOwner,
+			this._rGroupNewDescLength,
+			this._rGroupNewDescBytes,
+			this._rGroupNewType,
+			this._rGroupNewApprovalThreshold,
+			this._rGroupNewMinimumBlockDelayBytes,
+			this._rGroupNewMaximumBlockDelayBytes,
+			this._feeBytes
+		)
+		return params
+	}
 }

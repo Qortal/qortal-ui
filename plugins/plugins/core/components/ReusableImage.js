@@ -1,14 +1,16 @@
-import {css, html, LitElement} from 'lit'
-import {translate,} from '../../../../core/translate'
+import { html, LitElement } from 'lit'
+import { RequestQueueWithPromise } from '../../utils/classes'
+import { reusableImageStyles } from './plugins-css'
 import axios from 'axios'
-import {RequestQueueWithPromise} from '../../utils/queue'
-import '@material/mwc-menu'
-import '@material/mwc-list/mwc-list-item.js'
 import '@material/mwc-dialog'
+import '@material/mwc-list/mwc-list-item.js'
+import '@material/mwc-menu'
 
-const requestQueue = new RequestQueueWithPromise(5);
-const requestQueue2 = new RequestQueueWithPromise(5);
+// Multi language support
+import { translate } from '../../../../core/translate'
 
+const requestQueue = new RequestQueueWithPromise(5)
+const requestQueue2 = new RequestQueueWithPromise(5)
 
 export class ResuableImage extends LitElement {
 	static get properties() {
@@ -16,74 +18,14 @@ export class ResuableImage extends LitElement {
 			resource: { type: Object },
 			isReady: { type: Boolean },
 			status: { type: Object },
-			missingData: {type: Boolean},
+			missingData: { type: Boolean },
 			openDialogImage: { type: Boolean },
-			onLoad: {attribute: false}
+			onLoad: { attribute: false }
 		}
 	}
 
 	static get styles() {
-		return css`
-			* {
-				--mdc-theme-text-primary-on-background: var(--black);
-				--mdc-dialog-max-width: 85vw;
-				--mdc-dialog-max-height: 95vh;
-			}
-			img {
-				width: 100%;
-				height: auto;
-				object-fit: contain;
-				border-radius: 5px;
-				position: relative;
-			}
-			.smallLoading,
-			.smallLoading:after {
-				border-radius: 50%;
-				width: 2px;
-				height: 2px;
-			}
-
-			.smallLoading {
-				border-width: 0.8em;
-				border-style: solid;
-				border-color: rgba(3, 169, 244, 0.2) rgba(3, 169, 244, 0.2)
-					rgba(3, 169, 244, 0.2) rgb(3, 169, 244);
-				font-size: 30px;
-				position: relative;
-				text-indent: -9999em;
-				transform: translateZ(0px);
-				animation: 1.1s linear 0s infinite normal none running
-					loadingAnimation;
-			}
-			.imageContainer {
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				height: 100%;
-			}
-
-			@-webkit-keyframes loadingAnimation {
-				0% {
-					-webkit-transform: rotate(0deg);
-					transform: rotate(0deg);
-				}
-				100% {
-					-webkit-transform: rotate(360deg);
-					transform: rotate(360deg);
-				}
-			}
-
-			@keyframes loadingAnimation {
-				0% {
-					-webkit-transform: rotate(0deg);
-					transform: rotate(0deg);
-				}
-				100% {
-					-webkit-transform: rotate(360deg);
-					transform: rotate(360deg);
-				}
-			}
-		`
+		return [reusableImageStyles]
 	}
 
 	constructor() {
@@ -91,10 +33,10 @@ export class ResuableImage extends LitElement {
 		this.resource = {
 			identifier: '',
 			name: '',
-			service: '',
+			service: ''
 		}
 		this.status = {
-			status: '',
+			status: ''
 		}
 		this.url = ''
 		this.isReady = false
@@ -104,49 +46,83 @@ export class ResuableImage extends LitElement {
 		this.isFetching = false
 		this.missingData = false
 		this.openDialogImage = false
-
 		this.observer = new IntersectionObserver((entries) => {
 			for (const entry of entries) {
 				if (entry.isIntersecting && this.status.status !== 'READY') {
-					this._fetchImage();
+					this._fetchImage()
+
 					// Stop observing after the image has started loading
-					this.observer.unobserve(this);
+					this.observer.unobserve(this)
 				}
 			}
 		})
 	}
-	getNodeUrl() {
-		const myNode =
-			window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
-				window.parent.reduxStore.getState().app.nodeConfig.node
-			]
 
+	render() {
+		return html`
+			<div>
+				${this.status.status !== 'READY' ?
+					html`
+						<div style="display:flex;flex-direction:column;width:100%;height:100%;justify-content:center;align-items:center;">
+							<div class=${`smallLoading`}></div>
+							<p style="color: var(--black)">
+								${`${Math.round(this.status.percentLoaded || 0).toFixed(0)}% `}${translate('chatpage.cchange94')}
+							</p>
+						</div>
+					`
+					: ''
+				}
+				${this.status.status === 'READY' ?
+					html`
+						<div style="position:relative; cursor:pointer" @click=${() => {this.openDialogImage = true;}}>
+							<img crossorigin="anonymous" src=${this.url} />
+						</div>
+					`
+					: ''
+				}
+			</div>
+			<mwc-dialog id="showDialogPublicKey" ?open=${this.openDialogImage} @closed=${() => {this.openDialogImage = false;}}>
+				<div class="dialog-header"></div>
+				<div class="dialog-container imageContainer">
+					${this.openDialogImage ?
+						html`
+							<img src=${this.url} style="height: auto; max-height: 80vh; width: auto; max-width: 80vw; object-fit: contain; border-radius: 5px;"/>
+						`
+						: ''
+					}
+				</div>
+				<mwc-button slot="primaryAction" dialogAction="cancel" class="red" @click=${() => {this.openDialogImage = false;}}>
+					${translate('general.close')}
+				</mwc-button>
+			</mwc-dialog>
+		`
+	}
+
+	firstUpdated() {
+		this.observer.observe(this)
+	}
+
+	getNodeUrl() {
+		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 		return myNode.protocol + '://' + myNode.domain + ':' + myNode.port
 	}
-	getMyNode() {
-		return window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
-			window.parent.reduxStore.getState().app.nodeConfig.node
-			]
-	}
 
-	getApiKey() {
-		const myNode =
-			window.parent.reduxStore.getState().app.nodeConfig.knownNodes[
-				window.parent.reduxStore.getState().app.nodeConfig.node
-			]
-		return myNode.apiKey
+	getMyNode() {
+		return window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 	}
 
 	async fetchResource() {
 		try {
-			if (this.isFetching) return;
-			this.isFetching = true;
+			if (this.isFetching) return
+
+			this.isFetching = true
 
 			await requestQueue2.enqueue(() => {
-				return  axios.get(
-					`${this.nodeUrl}/arbitrary/resource/properties/${this.resource.service}/${this.resource.name}/${this.resource.identifier}?apiKey=${this.myNode.apiKey}`
+				return axios.get(
+					`${this.nodeUrl}/arbitrary/resource/properties/${this.resource.service}/${this.resource.name}/${this.resource.identifier}`
 				)
 			})
+
 			this.isFetching = false
 		} catch (error) {
 			this.isFetching = false
@@ -155,33 +131,39 @@ export class ResuableImage extends LitElement {
 
 	async fetchVideoUrl() {
 		await this.fetchResource();
-		this.url = `${this.nodeUrl}/arbitrary/${this.resource.service}/${this.resource.name}/${this.resource.identifier}?async=true&apiKey=${this.myNode.apiKey}`
+		this.url = `${this.nodeUrl}/arbitrary/${this.resource.service}/${this.resource.name}/${this.resource.identifier}?async=true`
 	}
 
 	async fetchStatus() {
 		let isCalling = false
 		let percentLoaded = 0
 		let timer = 24
+
 		const response = await axios.get(
-			`${this.nodeUrl}/arbitrary/resource/status/${this.resource.service}/${this.resource.name}/${this.resource.identifier}?apiKey=${this.myNode.apiKey}`
+			`${this.nodeUrl}/arbitrary/resource/status/${this.resource.service}/${this.resource.name}/${this.resource.identifier}`
 		)
+
 		if (response && response.data && response.data.status === 'READY') {
 			this.status = response.data
 			this.onLoad()
 			return
 		}
+
 		const intervalId = setInterval(async () => {
 			if (isCalling) return
+
 			isCalling = true
 
 			const data = await requestQueue.enqueue(() => {
 				return axios.get(
-					`${this.nodeUrl}/arbitrary/resource/status/${this.resource.service}/${this.resource.name}/${this.resource.identifier}?apiKey=${this.myNode.apiKey}`
+					`${this.nodeUrl}/arbitrary/resource/status/${this.resource.service}/${this.resource.name}/${this.resource.identifier}`
 				)
 			})
+
 			const res = data.data
 
 			isCalling = false
+
 			if (res.localChunkCount) {
 				if (res.percentLoaded) {
 					if (
@@ -192,24 +174,29 @@ export class ResuableImage extends LitElement {
 					} else {
 						timer = 24
 					}
+
 					if (timer < 0) {
 						timer = 24;
-						isCalling = true;
+						isCalling = true
+
 						this.status = {
 							...res,
-							status: 'REFETCHING',
-						};
+							status: 'REFETCHING'
+						}
 
 						setTimeout(() => {
 							isCalling = false
 							this.fetchResource()
 						}, 25000)
+
 						return
 					}
+
 					percentLoaded = res.percentLoaded
 				}
 
 				this.status = res
+
 				if (this.status.status === 'DOWNLOADED') {
 					await this.fetchResource()
 				}
@@ -236,14 +223,11 @@ export class ResuableImage extends LitElement {
 			await this.fetchVideoUrl({
 				name: this.resource.name,
 				service: this.resource.service,
-				identifier: this.resource.identifier,
-			});
+				identifier: this.resource.identifier
+			})
+
 			await this.fetchStatus()
 		} catch (error) { /* empty */ }
-	}
-
-	firstUpdated() {
-		this.observer.observe(this)
 	}
 
 	showContextMenu(e) {
@@ -263,61 +247,19 @@ export class ResuableImage extends LitElement {
 		contextMenu.open = true
 	}
 
-	render() {
-		return html`
-			<div>
-				${this.status.status !== 'READY'
-					? html`
-							<div
-								style="display:flex;flex-direction:column;width:100%;height:100%;justify-content:center;align-items:center;"
-							>
-								<div class=${`smallLoading`}></div>
-								<p style="color: var(--black)">
-									${`${Math.round(
-										this.status.percentLoaded || 0
-									).toFixed(0)}% `}${translate(
-										'chatpage.cchange94'
-									)}
-								</p>
-							</div>
-					  `
-					: ''}
-				${this.status.status === 'READY'
-					? html`
-							<div style="position:relative; cursor:pointer" @click=${()=> {
-								this.openDialogImage = true;
-							}}>
-								<img crossorigin="anonymous" src=${this.url} />
-							</div>
-					  `
-					: ''}
-			</div>
+	// Standard functions
+	getApiKey() {
+		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		return myNode.apiKey
+	}
 
-			<mwc-dialog
-				id="showDialogPublicKey"
-				?open=${this.openDialogImage}
-				@closed=${() => {
-					this.openDialogImage = false;
-				}}
-			>
-				<div class="dialog-header"></div>
-				<div class="dialog-container imageContainer">
-					${this.openDialogImage ? html`
-						<img src=${this.url} style="height: auto; max-height: 80vh; width: auto; max-width: 80vw; object-fit: contain; border-radius: 5px;"/>
-					` : ''}
-				</div>
-				<mwc-button
-					slot="primaryAction"
-					dialogAction="cancel"
-					class="red"
-					@click=${() => {
-						this.openDialogImage = false;
-					}}
-				>
-					${translate('general.close')}
-				</mwc-button>
-			</mwc-dialog>
-		`
+	isEmptyArray(arr) {
+		if (!arr) { return true }
+		return arr.length === 0
+	}
+
+	round(number) {
+		return (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
 	}
 }
 

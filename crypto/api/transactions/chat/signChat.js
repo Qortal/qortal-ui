@@ -1,5 +1,5 @@
-import nacl from '../../deps/nacl-fast.js'
-import utils from '../../deps/utils.js'
+import nacl from '../../deps/nacl-fast'
+import utils from '../../deps/utils'
 
 const signChat = (chatBytes, nonce, keyPair) => {
 

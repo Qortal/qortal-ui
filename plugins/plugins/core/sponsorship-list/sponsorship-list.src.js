@@ -1,11 +1,10 @@
-import {html, LitElement} from 'lit'
-import {Epml} from '../../../epml.js'
-import {get, registerTranslateConfig, translate, use} from '../../../../core/translate'
-import {blocksNeed} from '../../utils/blocks-needed.js'
-import {asyncReplace} from 'lit/directives/async-replace.js'
-import {pageStyles} from './sponsorship-list-css.src.js'
+import { html, LitElement } from 'lit'
+import { asyncReplace } from 'lit/directives/async-replace.js'
+import { Epml } from '../../../epml'
+import { blocksNeed } from '../../utils/functions'
+import { sponsorshipListStyles } from '../components/plugins-css'
 import isElectron from 'is-electron'
-
+import '../components/ButtonIconCopy'
 import '@material/mwc-button'
 import '@material/mwc-dialog'
 import '@material/mwc-icon'
@@ -13,10 +12,11 @@ import '@material/mwc-icon-button'
 import '@material/mwc-textfield'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@vaadin/button'
-import '../components/ButtonIconCopy.js'
 
+// Multi language support
+import { get, registerTranslateConfig, translate, use } from '../../../../core/translate'
 registerTranslateConfig({
-    loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
+	loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
 })
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
@@ -58,7 +58,9 @@ class SponsorshipList extends LitElement {
 		}
 	}
 
-	static styles = [pageStyles]
+	static get styles() {
+		return [sponsorshipListStyles]
+	}
 
 	constructor() {
 		super()
@@ -86,17 +88,15 @@ class SponsorshipList extends LitElement {
 
 	render() {
 		return html`
-			${
-				this.isPageLoading
-					? html`
-						<div class='loadingContainer'>
-							<div class='loading'></div>
-						</div>
-						<div class='backdrop'></div>
-					`
+			${this.isPageLoading ?
+				html`
+					<div class='loadingContainer'>
+						<div class='loading'></div>
+					</div>
+					<div class='backdrop'></div>
+				`
 				: ''
 			}
-
 			<div class='page-container'>
 				<h1 class='header-title'>
 					${translate('mintingpage.mchange35')}
@@ -149,7 +149,7 @@ class SponsorshipList extends LitElement {
 									<mwc-button
 										@click=${()=> {this.createRewardShare(sponsorship.publicKey, true)}}
 									>
-									<mwc-icon>content_copy</mwc-icon>&nbsp;${translate('sponsorshipspage.schange11')}
+										<mwc-icon>content_copy</mwc-icon>&nbsp;${translate('sponsorshipspage.schange11')}
 									</mwc-button>
 								</li>
 								<li class='grid-item grid-item-button'>
@@ -158,7 +158,7 @@ class SponsorshipList extends LitElement {
 										?disabled=${this.removeRewardShareLoading}
 										@click=${() => this.removeRewardShare(sponsorship)}
 									>
-									<mwc-icon>delete_forever</mwc-icon>&nbsp;${translate('rewardsharepage.rchange17')}
+										<mwc-icon>delete_forever</mwc-icon>&nbsp;${translate('rewardsharepage.rchange17')}
 									</mwc-button>
 								</li>
 							</ul>
@@ -204,7 +204,7 @@ class SponsorshipList extends LitElement {
 								?disabled='${this.isLoadingCreateSponsorship || !this.publicKeyValue}'
 								@click='${()=> this.createRewardShare(this.publicKeyValue)}'
 							>
-							${translate('puzzlepage.pchange15')}
+								${translate('puzzlepage.pchange15')}
 							</vaadin-button>
 						</div>
 
@@ -213,12 +213,11 @@ class SponsorshipList extends LitElement {
 								theme='primary'
 								@click='${()=> {this.isOpenDialogPublicKeyLookup = true}}'
 							>
-							${translate('sponsorshipspage.schange10')}
+								${translate('sponsorshipspage.schange10')}
 							</vaadin-button>
 						</div>
 					</div>
 				</div>
-
 				<mwc-dialog id='showDialog'>
                     		<div class='dialog-header' >
                         		<h1>${translate('sponsorshipspage.schange6')}</h1>
@@ -228,7 +227,7 @@ class SponsorshipList extends LitElement {
 						<p class='dialog-paragraph' style='text-align:center; width:100%'>${this.sponsorships.filter(s=> s.blocksRemaining <= 0).length} ${translate('sponsorshipspage.schange7')}!</p>
 						<p class='dialog-paragraph' style='margin:0px; padding:0px;text-decoration:underline'> ${translate('sponsorshipspage.schange8')}</p>
 						${this.sponsorships.filter(s=> s.blocksRemaining <= 0).map((ms)=> html`
-						<p class='dialog-paragraph'>${ms.address}</p>
+							<p class='dialog-paragraph'>${ms.address}</p>
 						`)}
 					</div>
 					<mwc-button
@@ -236,10 +235,9 @@ class SponsorshipList extends LitElement {
 						dialogAction='cancel'
 						class='red'
 					>
-					${translate('general.close')}
+						${translate('general.close')}
 					</mwc-button>
 				</mwc-dialog>
-
 				<mwc-dialog escapeKeyAction='' scrimClickAction='' id='showDialogRewardShareCreationStatus' ?hideActions=${this.errorMessage ? false : this.status < 4} ?open=${this.openDialogRewardShare}>
 					<div class='dialog-header' >
 						<div class='row'>
@@ -288,7 +286,7 @@ class SponsorshipList extends LitElement {
 										icon='content_copy'
 										@click=${()=> {this.saveToClipboard(this.privateRewardShareKey, this.renderCopyMsg())}}
 									>
-									${translate('sponsorshipspage.schange11')}
+										${translate('sponsorshipspage.schange11')}
 									</mwc-button>
 								</li>
 							` : ''}
@@ -303,7 +301,7 @@ class SponsorshipList extends LitElement {
 						`}
 					</div>
 					<mwc-button
-                        		slot='primaryAction'
+                        			slot='primaryAction'
 						@click=${()=>{
 							this.openDialogRewardShare = false
 							this.errorMessage = ''
@@ -311,12 +309,11 @@ class SponsorshipList extends LitElement {
 							this.privateRewardShareKey = ''
 							this.atMount()
 						}}
-                        		class='red'
-                    		>
-					${translate('general.close')}
+                        			class='red'
+                    			>
+						${translate('general.close')}
 					</mwc-button>
                			</mwc-dialog>
-
 				<mwc-dialog id='showDialogPublicKey' escapeKeyAction='' scrimClickAction=''  ?open=${this.isOpenDialogPublicKeyLookup}>
 					<div class='dialog-header'>
 						<h1>${translate('sponsorshipspage.schange10')}</h1>
@@ -345,20 +342,20 @@ class SponsorshipList extends LitElement {
 									this.lookUpPublicAddressFunc()
 								}}'
 							>
-							${translate('sponsorshipspage.schange10')}
+								${translate('sponsorshipspage.schange10')}
 							</vaadin-button>
 						</div>
 						${this.lookupPublicAddressValue ? html`
 							<div class='word-break' style='background: #eee; padding: 8px; margin: 8px 0; border-radius: 5px;'>
                 						<span style='color: #000;'>${this.lookupPublicAddressValue}</span>
-            					</div>
+            						</div>
 							<div class='row' style='margin-top: 20px; justify-content: center'>
 								<mwc-button
 									raised
 									icon='content_copy'
 									@click=${()=> {this.saveToClipboard(this.lookupPublicAddressValue, this.renderCopyMsg())}}
 								>
-								${translate('sponsorshipspage.schange11')}
+									${translate('sponsorshipspage.schange11')}
 								</mwc-button>
 							</div>
 						` : ''}
@@ -375,7 +372,7 @@ class SponsorshipList extends LitElement {
 
 						}}
 					>
-					${translate('general.close')}
+						${translate('general.close')}
 					</mwc-button>
 				</mwc-dialog>
 			</div>
@@ -409,11 +406,12 @@ class SponsorshipList extends LitElement {
 			})
 		}
 
+		this.clearConsole()
+
 		setInterval(() => {
 			this.atMount()
 		}, 180000)
 
-		this.clearConsole()
 		setInterval(() => {
 			this.clearConsole()
 		}, 60000)
@@ -480,11 +478,6 @@ class SponsorshipList extends LitElement {
 		this.saveToClipboard(this.privateRewardShareKey, `${copystring1}`)
 	}
 
-	getApiKey() {
-		const apiNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-		return apiNode.apiKey
-	}
-
 	async atMount() {
 		this.addressInfo = window.parent.reduxStore.getState().app.accountInfo.addressInfo
 		this.isPageLoading = true
@@ -505,21 +498,25 @@ class SponsorshipList extends LitElement {
 					type: 'api',
 					url: `/names/address/${rs.recipient}`
 				})
+
 				let url = ''
+
 				if(getNames.length > 0 ) {
 					const avatarNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 					const avatarUrl = avatarNode.protocol + '://' + avatarNode.domain + ':' + avatarNode.port
-					url = `${avatarUrl}/arbitrary/THUMBNAIL/${getNames[0].name}/qortal_avatar?async=true&apiKey=${this.getApiKey()}`
+					url = `${avatarUrl}/arbitrary/THUMBNAIL/${getNames[0].name}/qortal_avatar?async=true}`
 				}
 
 				let blocksRemaining = this._levelUpBlocks(addressInfo)
-				blocksRemaining = +blocksRemaining > 0 ? +blocksRemaining : 0
+
+				blocksRemaining = blocksRemaining > 0 ? blocksRemaining : 0
+
 				return {
 					...addressInfo,
 					...rs,
 					name: getNames.length > 0 ? getNames[0].name : '',
 					url,
-					blocksRemaining: blocksRemaining,
+					blocksRemaining: blocksRemaining
 				}
 			})
 
@@ -558,11 +555,10 @@ class SponsorshipList extends LitElement {
 	}
 
 	_levelUpBlocks(accountInfo) {
-		return (blocksNeed(0) - (accountInfo.blocksMinted + accountInfo.blocksMintedAdjustment)).toString()
+		return (blocksNeed('sponsor') - (accountInfo.blocksMinted + accountInfo.blocksMintedAdjustment)).toString()
 	}
 
 	async removeRewardShare(rewardShareObject) {
-
 		const selectedAddress = window.parent.reduxStore.getState().app.selectedAddress
 
 		const myPercentageShare = -1
@@ -601,8 +597,8 @@ class SponsorshipList extends LitElement {
 					percentageShare: myPercentageShare,
 					lastReference: mylastRef,
 					rewarddialog5: rewarddialog5,
-					rewarddialog6: rewarddialog6,
-				},
+					rewarddialog6: rewarddialog6
+				}
 			})
 		}
 
@@ -611,10 +607,7 @@ class SponsorshipList extends LitElement {
 				this.removeRewardShareLoading = false
 				parentEpml.request('showSnackBar', txnResponse.message)
 				throw new Error(txnResponse)
-			} else if (
-				txnResponse.success === true &&
-				!txnResponse.data.error
-			) {
+			} else if (txnResponse.success === true && !txnResponse.data.error) {
 				let err7tring = get('rewardsharepage.rchange22')
 				this.removeRewardShareLoading = false
 				parentEpml.request('showSnackBar', `${err7tring}`)
@@ -625,6 +618,7 @@ class SponsorshipList extends LitElement {
 				throw new Error(txnResponse)
 			}
 		}
+
 		await removeReceiver()
 	}
 
@@ -704,38 +698,37 @@ class SponsorshipList extends LitElement {
 					rewarddialog1: rewarddialog1,
 					rewarddialog2: rewarddialog2,
 					rewarddialog3: rewarddialog3,
-					rewarddialog4: rewarddialog4,
+					rewarddialog4: rewarddialog4
 				},
 				disableModal: true
 			})
 		}
 
 		const getTxnRequestResponse = (txnResponse) => {
+			const extraData = txnResponse && txnResponse.extraData
+			const data = txnResponse && txnResponse.data
+			const dataMessage = data && data.message
+			const extraDataPrivateKey = extraData && extraData.rewardSharePrivateKey
+			const txnSuccess = txnResponse && txnResponse.success
 
-			const extraData = txnResponse && txnResponse.extraData;
-			const data = txnResponse && txnResponse.data;
-			const dataMessage = data && data.message;
-			const extraDataPrivateKey = extraData && extraData.rewardSharePrivateKey;
-			const txnSuccess = txnResponse && txnResponse.success;
-
-			if (extraDataPrivateKey && typeof dataMessage === 'string' &&
-				(dataMessage.includes('multiple') || dataMessage.includes('SELF_SHARE_EXISTS'))) {
-			  this.privateRewardShareKey = extraDataPrivateKey;
-			  this.confirmRelationship(publicKeyValue, isCopy);
+			if (extraDataPrivateKey && typeof dataMessage === 'string' && (dataMessage.includes('multiple') || dataMessage.includes('SELF_SHARE_EXISTS'))) {
+				this.privateRewardShareKey = extraDataPrivateKey
+				this.confirmRelationship(publicKeyValue, isCopy)
 			} else if (txnSuccess === false && txnResponse.message) {
-			  this.errorMessage = txnResponse.message;
-			  this.isLoadingCreateSponsorship = false;
-			  throw new Error(txnResponse.message);
+				this.errorMessage = txnResponse.message
+				this.isLoadingCreateSponsorship = false
+				throw new Error(txnResponse.message)
 			} else if (txnSuccess === true && !(data && data.error)) {
-			  this.privateRewardShareKey = extraDataPrivateKey;
-			  this.confirmRelationship(publicKeyValue, isCopy);
+				this.privateRewardShareKey = extraDataPrivateKey
+				this.confirmRelationship(publicKeyValue, isCopy)
 			} else {
-			  const defaultErrorMessage = 'An unknown error occurred.';
-			  this.errorMessage = dataMessage || txnResponse.message || defaultErrorMessage;
-			  this.isLoadingCreateSponsorship = false;
-			  throw new Error(dataMessage || txnResponse.message || defaultErrorMessage);
+				const defaultErrorMessage = 'An unknown error occurred.'
+				this.errorMessage = dataMessage || txnResponse.message || defaultErrorMessage
+				this.isLoadingCreateSponsorship = false
+				throw new Error(dataMessage || txnResponse.message || defaultErrorMessage)
 			}
 		}
+
 		await validateReceiver()
 	}
 
@@ -745,13 +738,13 @@ class SponsorshipList extends LitElement {
 		let stop = false
 
 		const getAnswer = async () => {
-
 			if (!stop) {
 				stop= true
 
 				try {
 					const recipientAddress = window.parent.base58PublicKeyToAddress(recipientPublicKey)
 					const minterAddress = window.parent.reduxStore.getState().app.selectedAddress.address
+
 					const myRewardShareArray = await parentEpml.request('apiCall', {
 						type: 'api',
 						url: `/addresses/rewardshares?minters=${minterAddress}&recipients=${recipientAddress}`
@@ -767,16 +760,19 @@ class SponsorshipList extends LitElement {
 				stop = false
 			}
 		}
+
 		interval = setInterval(getAnswer, 5000)
 	}
 
 	async lookUpPublicAddressFunc() {
 		this.errorLookup = ''
+
 		try {
 			const response = await parentEpml.request('apiCall', {
 				type: 'api',
 				url: `/addresses/publickey/${this.lookupAddressValue}`
 			})
+
 			if(response.error) {
 				throw(response.message)
 			}
@@ -784,6 +780,21 @@ class SponsorshipList extends LitElement {
 		} catch (error) {
 			this.errorLookup = error
 		}
+	}
+
+	// Standard functions
+	getApiKey() {
+		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		return myNode.apiKey
+	}
+
+	isEmptyArray(arr) {
+		if (!arr) { return true }
+		return arr.length === 0
+	}
+
+	round(number) {
+		return (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
 	}
 }
 

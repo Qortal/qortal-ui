@@ -26,9 +26,8 @@ const TYPES = {
 	MESSAGE_TRANSACTION: 17
 };
 
-function getKeyPairFromSeed(seed, returnBase58)
-{
-	if(typeof(seed) == "string") {
+function getKeyPairFromSeed(seed, returnBase58) {
+	if (typeof (seed) == "string") {
 		seed = new Uint8Array(Base58.decode(seed));
 	}
 
@@ -36,7 +35,7 @@ function getKeyPairFromSeed(seed, returnBase58)
 
 	var base58privateKey = Base58.encode(keyPair.secretKey);
 	var base58publicKey = Base58.encode(keyPair.publicKey);
-	if(returnBase58) {
+	if (returnBase58) {
 		return {
 			privateKey: Base58.encode(keyPair.secretKey),
 			publicKey: Base58.encode(keyPair.publicKey)
@@ -51,16 +50,16 @@ function getKeyPairFromSeed(seed, returnBase58)
 
 function stringtoUTF8Array(message) {
 	if (typeof message == 'string') {
-        var s =  unescape(encodeURIComponent(message)); // UTF-8
-        message = new Uint8Array(s.length);
-        for (var i = 0; i < s.length; i++) {
+		var s = unescape(encodeURIComponent(message)); // UTF-8
+		message = new Uint8Array(s.length);
+		for (var i = 0; i < s.length; i++) {
 			message[i] = s.charCodeAt(i) & 0xff;
 		}
 	}
 	return message;
 }
 
-function int32ToBytes (word) {
+function int32ToBytes(word) {
 	var byteArray = [];
 	for (var b = 0; b < 32; b += 8) {
 		byteArray.push((word >>> (24 - b % 32)) & 0xFF);
@@ -68,20 +67,20 @@ function int32ToBytes (word) {
 	return byteArray;
 }
 
-function int64ToBytes (int64) {
-    // we want to represent the input as a 8-bytes array
-    var byteArray = [0, 0, 0, 0, 0, 0, 0, 0];
+function int64ToBytes(int64) {
+	// we want to represent the input as a 8-bytes array
+	var byteArray = [0, 0, 0, 0, 0, 0, 0, 0];
 
-    for ( var index = 0; index < byteArray.length; index ++ ) {
-        var byte = int64 & 0xff;
-        byteArray [ byteArray.length - index - 1 ] = byte;
-        int64 = (int64 - byte) / 256 ;
-    }
+	for (var index = 0; index < byteArray.length; index++) {
+		var byte = int64 & 0xff;
+		byteArray[byteArray.length - index - 1] = byte;
+		int64 = (int64 - byte) / 256;
+	}
 
-    return byteArray;
+	return byteArray;
 }
 
-function appendBuffer (buffer1, buffer2) {
+function appendBuffer(buffer1, buffer2) {
 	buffer1 = new Uint8Array(buffer1);
 	buffer2 = new Uint8Array(buffer2);
 	var tmp = new Uint8Array(buffer1.byteLength + buffer2.byteLength);
@@ -90,21 +89,18 @@ function appendBuffer (buffer1, buffer2) {
 	return tmp;
 }
 
-function equal (buf1, buf2)
-{
-    if (buf1.byteLength != buf2.byteLength) return false;
-    var dv1 = new Uint8Array(buf1);
-    var dv2 = new Uint8Array(buf2);
-    for (var i = 0; i != buf1.byteLength; i++)
-    {
-        if (dv1[i] != dv2[i]) return false;
-    }
-    return true;
+function equal(buf1, buf2) {
+	if (buf1.byteLength != buf2.byteLength) return false;
+	var dv1 = new Uint8Array(buf1);
+	var dv2 = new Uint8Array(buf2);
+	for (var i = 0; i != buf1.byteLength; i++) {
+		if (dv1[i] != dv2[i]) return false;
+	}
+	return true;
 }
 
-function generateAccountSeed(seed, nonce, returnBase58)
-{
-	if(typeof(seed) == "string") {
+function generateAccountSeed(seed, nonce, returnBase58) {
+	if (typeof (seed) == "string") {
 		seed = Base58.decode(seed);
 	}
 
@@ -116,7 +112,7 @@ function generateAccountSeed(seed, nonce, returnBase58)
 	resultSeed = appendBuffer(resultSeed, seed);
 	resultSeed = appendBuffer(resultSeed, nonceBytes);
 
-	if(returnBase58) {
+	if (returnBase58) {
 		return Base58.encode(SHA256.digest(SHA256.digest(resultSeed)));
 	} else {
 		return new SHA256.digest(SHA256.digest(resultSeed));
@@ -124,11 +120,10 @@ function generateAccountSeed(seed, nonce, returnBase58)
 
 }
 
-function getAccountAddressFromPublicKey(publicKey)
-{
+function getAccountAddressFromPublicKey(publicKey) {
 	var ADDRESS_VERSION = 58;  // Q
 
-	if(typeof(publicKey) == "string") {
+	if (typeof (publicKey) == "string") {
 		publicKey = Base58.decode(publicKey);
 	}
 
@@ -150,13 +145,12 @@ function getAccountAddressFromPublicKey(publicKey)
 	return Base58.encode(addressArray);
 }
 
-function getAccountAddressType(address)
-{
+function getAccountAddressType(address) {
 	try {
 		var ADDRESS_VERSION = 58;  // Q
 		var AT_ADDRESS_VERSION = 23; // A
 
-		if(typeof(address) == "string") {
+		if (typeof (address) == "string") {
 			address = Base58.decode(address);
 		}
 
@@ -166,14 +160,11 @@ function getAccountAddressType(address)
 		var checkSumTwo = SHA256.digest(SHA256.digest(addressWitoutChecksum));
 		checkSumTwo = checkSumTwo.subarray(0, 4);
 
-		if (equal(checkSum, checkSumTwo))
-		{
-			if(address[0] == ADDRESS_VERSION)
-			{
+		if (equal(checkSum, checkSumTwo)) {
+			if (address[0] == ADDRESS_VERSION) {
 				return "standard";
 			}
-			if(address[0] == AT_ADDRESS_VERSION)
-			{
+			if (address[0] == AT_ADDRESS_VERSION) {
 				return "at";
 			}
 		}
@@ -185,8 +176,7 @@ function getAccountAddressType(address)
 	}
 }
 
-function isValidAddress(address)
-{
+function isValidAddress(address) {
 	return (getAccountAddressType(address) != "invalid");
 }
 
@@ -307,8 +297,8 @@ function generateSignatureRegisterNameTransaction(keyPair, lastReference, owner,
 }
 
 function generateRegisterNameTransaction(keyPair, lastReference, owner, name, value, fee, timestamp, signature) {
-	return appendBuffer( generateRegisterNameTransactionBase(keyPair.publicKey, lastReference, owner, name, value, fee, timestamp),
-		signature );
+	return appendBuffer(generateRegisterNameTransactionBase(keyPair.publicKey, lastReference, owner, name, value, fee, timestamp),
+		signature);
 }
 
 function generateRegisterNameTransactionBase(publicKey, lastReference, owner, name, value, fee, timestamp) {

@@ -1,38 +1,18 @@
 // Author: irontiga <irontiga@gmail.com>
 
-'use strict'
-import {html, LitElement} from 'lit'
-import * as WORDLISTS from './wordlists.js'
+import { html, LitElement } from 'lit'
+import * as WORDLISTS from './wordlists'
 
 class RandomSentenceGenerator extends LitElement {
 	static get properties() {
 		return {
-			template: {
-				type: String,
-				attribute: 'template'
-			},
-			parsedString: {
-				type: String
-			},
-			fetchedWordlistCount: {
-				type: Number,
-				value: 0
-			},
-			capitalize: {
-				type: Boolean
-			},
-			partsOfSpeechMap: {
-				type: Object
-			},
-			templateEntropy: {
-				type: Number,
-				reflect: true,
-				attribute: 'template-entropy'
-			},
-			maxWordLength: {
-				type: Number,
-				attribute: 'max-word-length'
-			}
+			template: { type: String, attribute: 'template' },
+			parsedString: { type: String },
+			fetchedWordlistCount: { type: Number, value: 0 },
+			capitalize: { type: Boolean },
+			partsOfSpeechMap: { type: Object },
+			templateEntropy: { type: Number, reflect: true, attribute: 'template-entropy' },
+			maxWordLength: { type: Number, attribute: 'max-word-length' }
 		}
 	}
 
@@ -57,25 +37,42 @@ class RandomSentenceGenerator extends LitElement {
 		this._wordlists = WORDLISTS
 	}
 
+	render() {
+		return html`
+			${this.parsedString}
+		`
+	}
+
+	firstUpdated() {
+		// ...
+	}
+
 	updated(changedProperties) {
 		let regen = false
+
 		if (changedProperties.has('template')) {
 			regen = true
 		}
+
 		if (changedProperties.has('maxWordLength')) {
 			console.dir(this.maxWordLength)
+
 			if (this.maxWordLength) {
 				const wl = { ...this._wordlists }
+
 				for (const partOfSpeech in this._wordlists) {
 					console.log(this._wordlists[partOfSpeech])
 					if (Array.isArray(this._wordlists[partOfSpeech])) {
 						wl[partOfSpeech] = this._wordlists[partOfSpeech].filter(word => word.length <= this.maxWordLength)
 					}
 				}
+
 				this._wordlists = wl
 			}
+
 			regen = true
 		}
+
 		if (regen) this.generate()
 	}
 
@@ -83,13 +80,16 @@ class RandomSentenceGenerator extends LitElement {
 		if (entropy > 1074) {
 			throw new Error('Javascript can not handle that much entropy!')
 		}
+
 		let randNum = 0
+
 		const crypto = window.crypto || window.msCrypto
 
 		if (crypto) {
 			const entropy256 = Math.ceil(entropy / 8)
 
 			let buffer = new Uint8Array(entropy256)
+
 			crypto.getRandomValues(buffer)
 
 			randNum = buffer.reduce((num, value) => {
@@ -97,8 +97,10 @@ class RandomSentenceGenerator extends LitElement {
 			}, 1) / Math.pow(256, entropy256)
 		} else {
 			console.warn('Secure RNG not found. Using Math.random')
+
 			randNum = Math.random()
 		}
+
 		return randNum
 	}
 
@@ -127,7 +129,9 @@ class RandomSentenceGenerator extends LitElement {
 
 	parse(template) {
 		const split = template.split(/[\s]/g)
+
 		let entropy = 1
+
 		const final = split.map(word => {
 			const lower = word.toLowerCase()
 
@@ -139,22 +143,20 @@ class RandomSentenceGenerator extends LitElement {
 					const replacement = this.getWord(partOfSpeech)
 					word = replacement.word + word.slice(partOfSpeech.length) // Append the rest of the "word" (punctuation)
 					entropy = entropy * replacement.entropy
+
 					return true
 				}
 			})
+
 			return word
 		})
-		this.templateEntropy = Math.floor(Math.log(entropy) / Math.log(8))
-		return final.join(' ')
-	}
 
-	render() {
-		return html`
-            ${this.parsedString}
-        `
+		this.templateEntropy = Math.floor(Math.log(entropy) / Math.log(8))
+
+		return final.join(' ')
 	}
 }
 
-customElements.define('random-sentence-generator', RandomSentenceGenerator)
+window.customElements.define('random-sentence-generator', RandomSentenceGenerator)
 
 export default RandomSentenceGenerator

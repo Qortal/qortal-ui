@@ -1,8 +1,7 @@
-'use strict'
-import TransactionBase from '../TransactionBase.js'
-import publicKeyToAddress from '../../wallet/publicKeyToAddress.js'
-import {Base58} from '../../deps/deps.js'
-import {DYNAMIC_FEE_TIMESTAMP} from '../../constants.js'
+import TransactionBase from '../TransactionBase'
+import publicKeyToAddress from '../../wallet/publicKeyToAddress'
+import { Base58 } from '../../deps/deps'
+import { DYNAMIC_FEE_TIMESTAMP } from '../../constants'
 
 export default class RemoveRewardShareTransaction extends TransactionBase {
 	constructor() {
