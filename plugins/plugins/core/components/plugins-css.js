@@ -426,7 +426,6 @@ export const chatpageStyles = css`
         width: 800px;
     }
 
-
     .close-icon {
         color: #676b71;
         width: 18px;
@@ -1152,6 +1151,22 @@ export const chatpageStyles = css`
         width: 70%;
     }
 
+    .file-icon-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 128px;
+        width: 128px;
+        border-radius: 50%;
+        border: none;
+        background-color: transparent;
+    }
+
+    .file-icon {
+        height: 128px;
+        width: 128px;
+    }
+
     .attachment-name {
         font-family: Work Sans, sans-serif;
         font-size: 20px;
@@ -1440,6 +1455,7 @@ export const chatStyles = css`
         --mdc-theme-secondary: var(--mdc-theme-primary);
         --mdc-dialog-max-width: 85vw;
         --mdc-dialog-max-height: 95vh;
+
     }
 
     * :focus-visible {
@@ -1566,7 +1582,6 @@ export const chatStyles = css`
         width: fit-content;
         min-width: 150px;
     }
-
 
     .message-myBg {
         background-color: var(--chat-bubble-myBg) !important;
@@ -2107,9 +2122,7 @@ export const chatStyles = css`
         justify-content: space-evenly;
         padding: 5px 0 10px 0;
         gap: 20px;
-        cursor: pointer;
     }
-
 
     .attachment-icon-container {
         display: flex;
@@ -2124,6 +2137,30 @@ export const chatStyles = css`
 
     .attachment-icon {
         width: 70%;
+    }
+
+    .file-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+        padding: 5px 0 10px 0;
+        gap: 20px;
+    }
+
+    .file-icon-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 50px;
+        width: 50px;
+        border-radius: 50%;
+        border: none;
+        background-color: transparent;
+    }
+
+    .file-icon {
+        height: 50px;
+        width: 50px;
     }
 
     .attachment-info {
@@ -2158,6 +2195,7 @@ export const chatStyles = css`
         color: var(--chat-bubble-msg-color);
         width: 19px;
         background-color: transparent;
+	cursor: pointer;
     }
 
     .download-icon:hover::before {
@@ -2246,6 +2284,155 @@ export const chatStyles = css`
             -webkit-transform: rotate(360deg);
             transform: rotate(360deg);
         }
+    }
+
+    paper-dialog.progress {
+        width: auto;
+        max-width: 50vw;
+        height: auto;
+        max-height: 30vh;
+        background-color: var(--white);
+        color: var(--black);
+        border: 1px solid var(--black);
+        border-radius: 15px;
+        text-align: center;
+        padding: 15px;
+        line-height: 1.6;
+        overflow: hidden;
+    }
+
+    paper-dialog.close-progress {
+        min-width: 550px;
+        max-width: 550px;
+        height: auto;
+        background-color: var(--white);
+        color: var(--black);
+        border: 1px solid var(--black);
+        border-radius: 15px;
+        text-align: center;
+        padding: 15px;
+        font-size: 17px;
+        font-weight: 500;
+        line-height: 20px;
+        overflow: hidden;
+    }
+
+    .lds-roller {
+        display: inline-block;
+        position: relative;
+        width: 80px;
+        height: 80px;
+    }
+
+    .lds-roller div {
+        animation: lds-roller 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        transform-origin: 40px 40px;
+    }
+
+    .lds-roller div:after {
+        content: " ";
+        display: block;
+        position: absolute;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--black);
+        margin: -4px 0 0 -4px;
+    }
+
+    .lds-roller div:nth-child(1) {
+        animation-delay: -0.036s;
+    }
+
+    .lds-roller div:nth-child(1):after {
+        top: 63px;
+        left: 63px;
+    }
+
+    .lds-roller div:nth-child(2) {
+        animation-delay: -0.072s;
+    }
+
+    .lds-roller div:nth-child(2):after {
+        top: 68px;
+        left: 56px;
+    }
+
+    .lds-roller div:nth-child(3) {
+        animation-delay: -0.108s;
+    }
+
+    .lds-roller div:nth-child(3):after {
+        top: 71px;
+        left: 48px;
+    }
+
+    .lds-roller div:nth-child(4) {
+        animation-delay: -0.144s;
+    }
+
+    .lds-roller div:nth-child(4):after {
+        top: 72px;
+        left: 40px;
+    }
+
+    .lds-roller div:nth-child(5) {
+        animation-delay: -0.18s;
+    }
+
+    .lds-roller div:nth-child(5):after {
+        top: 71px;
+        left: 32px;
+    }
+
+    .lds-roller div:nth-child(6) {
+        animation-delay: -0.216s;
+    }
+
+    .lds-roller div:nth-child(6):after {
+        top: 68px;
+        left: 24px;
+    }
+
+    .lds-roller div:nth-child(7) {
+        animation-delay: -0.252s;
+    }
+
+    .lds-roller div:nth-child(7):after {
+        top: 63px;
+        left: 17px;
+    }
+
+    .lds-roller div:nth-child(8) {
+        animation-delay: -0.288s;
+    }
+
+    .lds-roller div:nth-child(8):after {
+        top: 56px;
+        left: 12px;
+    }
+
+    @keyframes lds-roller {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    .close-download {
+        color: var(--black);
+        font-size: 14px;
+        font-weight: bold;
+        position: absolute;
+        top: -15px;
+        right: -15px;
+    }
+
+    .close-download:hover {
+        color: #df3636;
     }
 `
 
@@ -3629,6 +3816,12 @@ export const chatTextEditorStyles = css`
     .element::-webkit-scrollbar-thumb:hover {
         background-color: rgb(148, 146, 146);
         cursor: pointer;
+    }
+
+    .ProseMirror {
+        word-wrap: break-word;
+        white-space: pre-wrap;
+        white-space: break-spaces;
     }
 
     .ProseMirror:focus {
