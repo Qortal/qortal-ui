@@ -135,14 +135,18 @@ class ChatTextEditor extends LitElement {
 								this.insertFile(e.target.files[0])
 								const filePickerInput = this.shadowRoot.getElementById('file-picker')
 								if (filePickerInput) {
-									filePickerInput.value = ""
+									filePickerInput.value = ''
 								}
 							}}"
 							id="file-picker"
 							class="file-picker-input"
 							type="file"
 							name="myImage"
-							accept="image/*, .doc, .docx, .pdf, .zip, .pdf, .txt, .odt, .ods, .xls, .xlsx, .ppt, .pptx"
+							accept="
+								image/*, .doc, .docx, .zip, .pdf, .txt, .odt, .ods, .html,
+								.xls, .xlsx, .ppt, .pptx, .jar, .gzip, .exe, .deb, .rar, .log,
+								.sh, .dmg, .pkg, .7z, .gz, .psd, .mp4, .rpm, .snap, .AppImage
+							"
 						>
 					</div>
 				</div>
@@ -295,7 +299,7 @@ class ChatTextEditor extends LitElement {
 	}
 
 	sendMessageFunc(props) {
-		if (this.editor.isEmpty && (this.iframeId !== 'newChat' && this.iframeId !== 'newAttachmentChat')) return
+		if (this.editor.isEmpty && (this.iframeId !== 'newChat' && this.iframeId !== 'newGifChat' && this.iframeId !== 'newAttachmentChat' && this.iframeId !== 'newFileChat')) return
 
 		this.getMessageSize(this.editor.getJSON())
 
@@ -351,18 +355,42 @@ class ChatTextEditor extends LitElement {
 					repliedTo: '',
 					version: 3
 				}
+			} else if (this.gifFile && this.iframeId === 'newGifChat') {
+				messageObject = {
+					messageText: trimmedMessage,
+					images: [{
+						service: "IMAGE",
+						name: '123456789123456789123456789',
+						identifier: '123456'
+					}],
+					repliedTo: '',
+					version: 3
+				}
 			} else if (this.attachment && this.iframeId === 'newAttachmentChat') {
 				messageObject = {
 					messageText: trimmedMessage,
 					attachments: [{
-						service: "QCHAT_ATTACHMENT",
+						service: "ATTACHMENT",
 						name: '123456789123456789123456789',
 						identifier: '123456',
 						attachmentName: "123456789123456789123456789",
 						attachmentSize: "123456"
 					}],
 					repliedTo: '',
-					version: 2
+					version: 3
+				}
+			} else if (this.appFile && this.iframeId === 'newFileChat') {
+				messageObject = {
+					messageText: trimmedMessage,
+					files: [{
+						service: "FILE",
+						name: '123456789123456789123456789',
+						identifier: '123456',
+						appFileName: "123456789123456789123456789",
+						appFileSize: "123456"
+					}],
+					repliedTo: '',
+					version: 3
 				}
 			} else {
 				messageObject = {

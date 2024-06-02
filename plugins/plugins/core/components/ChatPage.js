@@ -8,6 +8,7 @@ import { escape } from 'html-escaper'
 import { inputKeyCodes, replaceMessagesEdited, generateIdFromAddresses } from '../../utils/functions'
 import { publishData, modalHelper, RequestQueue } from '../../utils/classes'
 import { EmojiPicker } from 'emoji-picker-js'
+import { Slice, Fragment, Node } from 'prosemirror-model'
 import { chatpageStyles } from './plugins-css'
 import localForage from 'localforage'
 import StarterKit from '@tiptap/starter-kit'
@@ -84,11 +85,17 @@ class ChatPage extends LitElement {
 			editedMessageObj: { type: Object },
 			iframeHeight: { type: Number },
 			imageFile: { type: Object },
+			gifFile: { type: Object },
 			attachment: { type: Object },
+			appFile: { type: Object },
 			isUploadingImage: { type: Boolean },
-			isDeletingImage: { type: Boolean },
+			isUploadingGif: { type: Boolean },
 			isUploadingAttachment: { type: Boolean },
+			isUploadingAppFile: { type: Boolean },
+			isDeletingImage: { type: Boolean },
+			isDeletingGif: { type: Boolean },
 			isDeletingAttachment: { type: Boolean },
+			isDeletingAppFile: { type: Boolean },
 			userLanguage: { type: String },
 			lastMessageRefVisible: { type: Boolean },
 			isLoadingOldMessages: { type: Boolean },
@@ -172,7 +179,9 @@ class ChatPage extends LitElement {
 		this.editedMessageObj = null
 		this.iframeHeight = 42
 		this.imageFile = null
+		this.gifFile = null
 		this.attachment = null
+		this.appFile = null
 		this.uid = new ShortUniqueId()
 		this.userLanguage = ""
 		this.lastMessageRefVisible = false
@@ -391,6 +400,19 @@ class ChatPage extends LitElement {
 						`
 						: ''
 					}
+					${(this.isUploadingGif || this.isDeletingGif) ?
+						html`
+							<div class="dialogCustom">
+								<div class="dialogCustomInner">
+									<div class="dialog-container-loader">
+										<div class=${`smallLoading marginLoader`}></div>
+										<p>${this.isDeletingImage ? translate("chatpage.cchange104") : translate("chatpage.cchange103")}</p>
+									</div>
+								</div>
+							</div>
+						`
+						: ''
+					}
 					${(this.isUploadingAttachment || this.isDeletingAttachment) ?
 						html`
 							<div class="dialogCustom">
@@ -404,9 +426,23 @@ class ChatPage extends LitElement {
 						`
 						: ''
 					}
+					${(this.isUploadingAppFile || this.isDeletingAppFile) ?
+						html`
+							<div class="dialogCustom">
+								<div class="dialogCustomInner">
+									<div class="dialog-container-loader">
+										<div class=${`smallLoading marginLoader`}></div>
+										<p>${this.isDeletingAppFile ? translate("chatpage.cchange99") : translate("chatpage.cchange98")}</p>
+									</div>
+								</div>
+							</div>
+						`
+						: ''
+					}
 					<wrapper-modal .onClickFunc=${() => {this.removeImage();}} style=${(this.imageFile && !this.isUploadingImage) ? "visibility:visible; z-index:50" : "visibility: hidden;z-index:-100"}>
 						<div>
 							<div class="dialog-container">
+								<p class="dialog-container-title">${translate("chatpage.cchange110")}</p>
 								${this.imageFile &&
 									html`
 										<img
@@ -455,9 +491,62 @@ class ChatPage extends LitElement {
 							</div>
 						</div>
 					</wrapper-modal>
+					<wrapper-modal .onClickFunc=${() => {this.removeGif();}} style=${(this.gifFile && !this.isUploadingGif) ? "visibility:visible; z-index:50" : "visibility: hidden;z-index:-100"}>
+						<div>
+							<div class="dialog-container">
+								<p class="dialog-container-title">${translate("chatpage.cchange111")}</p>
+								${this.gifFile &&
+									html`
+										<img
+											src=${this.gifFile.identifier ?
+												`
+													${this.nodeUrl}/arbitrary/${this.gifFile.service}/${this.gifFile.name}/${this.gifFile.identifier}
+												`
+												: URL.createObjectURL(this.gifFile)
+											}
+											alt="dialog-gif"
+											class="dialog-image"
+										>
+									`
+								}
+								<div class="caption-container">
+									<chat-text-editor
+										iframeId="newGifChat"
+										?hasGlobalEvents=${false}
+										placeholder=${this.chatEditorPlaceholder}
+										._sendMessage=${this._sendMessage}
+										.gifFile=${this.gifFile}
+										.insertFile=${this.insertFile}
+										.editedMessageObj=${this.editedMessageObj}
+										?isLoading=${this.isLoading}
+										?isLoadingMessages=${this.isLoadingMessages}
+										id="chatGifId"
+										.editor=${this.editorGif}
+										.updatePlaceholder=${(editor, value) => this.updatePlaceholder(editor, value)}
+									>
+									</chat-text-editor>
+								</div>
+								<div class="modal-button-row">
+									<button class="modal-button-red" @click=${() => {this.removeGif();}}>
+										${translate("chatpage.cchange33")}
+									</button>
+									<button
+										class="modal-button"
+										@click=${() => {
+											const chatTextEditor = this.shadowRoot.getElementById('chatGifId');
+											chatTextEditor.sendMessageFunc({type: 'gif',});
+										}}
+									>
+										${translate("chatpage.cchange9")}
+									</button>
+								</div>
+							</div>
+						</div>
+					</wrapper-modal>
 					<wrapper-modal .onClickFunc=${() => {this.removeAttachment();}} style=${this.attachment && !this.isUploadingAttachment ? "visibility: visible; z-index: 50" : "visibility: hidden; z-index: -100"}>
 						<div>
 							<div class="dialog-container">
+								<p class="dialog-container-title">${translate("chatpage.cchange112")}</p>
 								${this.attachment &&
 									html`
 										<div class="attachment-icon-container"><img src="/img/attachment-icon.png" alt="attachment-icon" class="attachment-icon" /></div>
@@ -491,6 +580,50 @@ class ChatPage extends LitElement {
 										@click=${() => {
 											const chatTextEditor = this.shadowRoot.getElementById('chatAttachmentId');
 											chatTextEditor.sendMessageFunc({type: 'attachment',});
+										}}
+									>
+										${translate("chatpage.cchange9")}
+									</button>
+								</div>
+							</div>
+						</div>
+					</wrapper-modal>
+					<wrapper-modal .onClickFunc=${() => {this.removeAppFile();}} style=${this.appFile && !this.isUploadingAppFile ? "visibility: visible; z-index: 50" : "visibility: hidden; z-index: -100"}>
+						<div>
+							<div class="dialog-container">
+								<p class="dialog-container-title">${translate("chatpage.cchange113")}</p>
+								${this.appFile &&
+									html`
+										<div class="file-icon-container"><img src="/img/file-icon.png" alt="file-icon" class="file-icon"></div>
+									`
+								}
+								<p class="attachment-name">${this.appFile && this.appFile.name}</p>
+								<div class="caption-container">
+									<chat-text-editor
+										iframeId="newFileChat"
+										?hasGlobalEvents=${false}
+										placeholder=${this.chatEditorPlaceholder}
+										._sendMessage=${this._sendMessage}
+										.appFile=${this.appFile}
+										.insertFile=${this.insertFile}
+										.editedMessageObj=${this.editedMessageObj}
+										?isLoading=${this.isLoading}
+										?isLoadingMessages=${this.isLoadingMessages}
+										id="chatFileId"
+										.editor=${this.editorFile}
+										.updatePlaceholder=${(editor, value) => this.updatePlaceholder(editor, value)}
+									>
+									</chat-text-editor>
+								</div>
+								<div class="modal-button-row">
+									<button class="modal-button-red" @click=${() => {this.removeAppFile();}}>
+										${translate("chatpage.cchange33")}
+									</button>
+									<button
+										class="modal-button"
+										@click=${() => {
+											const chatTextEditor = this.shadowRoot.getElementById('chatFileId');
+											chatTextEditor.sendMessageFunc({type: 'file'});
 										}}
 									>
 										${translate("chatpage.cchange9")}
@@ -834,36 +967,70 @@ class ChatPage extends LitElement {
 	async connectedCallback() {
 		super.connectedCallback()
 		await this.initUpdate()
+
 		if (!this.webWorker) {
 			this.webWorker = new WebWorker()
 		}
+
 		if (!this.webWorkerFile) {
 			this.webWorkerFile = new WebWorkerFile()
 		}
+
 		if (!this.webWorkerSortMessages) {
 			this.webWorkerSortMessages = new WebWorkerSortMessages()
-
 		}
+
 		if (!this.webWorkerDecodeMessages) {
 			this.webWorkerDecodeMessages = new WebWorkerDecodeMessages()
 		}
+
 		await this.getUpdateCompleteTextEditor()
 
 		const elementChatId = this.shadowRoot.getElementById('_chatEditorDOM').shadowRoot.getElementById('_chatEditorDOM')
 		const elementChatImageId = this.shadowRoot.getElementById('chatTextCaption').shadowRoot.getElementById('newChat')
+		const elementChatGifId = this.shadowRoot.getElementById('chatGifId').shadowRoot.getElementById('newGifChat')
 		const elementChatAttachmentId = this.shadowRoot.getElementById('chatAttachmentId').shadowRoot.getElementById('newAttachmentChat')
+		const elementChatFileId = this.shadowRoot.getElementById('chatFileId').shadowRoot.getElementById('newFileChat')
+
+		const placeholderString = get('chatpage.cchange114')
+
+		const clipboardTextParser = (text, context, plain) => {
+			const splitLines = text.replace().split(/(?:\r\n?|\n)/)
+			const nodesLines = []
+
+			splitLines.forEach(line => {
+				let nodeJson = {type: "paragraph"}
+
+				if (line.length === 0) {
+					nodeJson.content = [{type: "hardBreak"}]
+				} else if (line.length > 0) {
+					nodeJson.content = [{type: "text", text: line}]
+				}
+
+				let modifiedLine = Node.fromJSON(context.doc.type.schema, nodeJson)
+
+				nodesLines.push(modifiedLine)
+			})
+
+			const fragment = Fragment.fromArray(nodesLines)
+
+			return Slice.maxOpen(fragment)
+		}
+
 		this.editor = new Editor({
+			editorProps: {
+				clipboardTextParser: clipboardTextParser
+			},
 			onUpdate: () => {
 				this.shadowRoot.getElementById('_chatEditorDOM').getMessageSize(this.editor.getJSON())
 			},
-
 			element: elementChatId,
 			extensions: [
 				StarterKit,
 				Underline,
 				Highlight,
 				Placeholder.configure({
-					placeholder: 'Write something …',
+					placeholder: `${placeholderString}`
 				}),
 				Extension.create({
 					name: 'shortcuts',
@@ -901,7 +1068,7 @@ class ChatPage extends LitElement {
 				Underline,
 				Highlight,
 				Placeholder.configure({
-					placeholder: 'Write something …',
+					placeholder: `${placeholderString}`
 				}),
 				Extension.create({
 					addKeyboardShortcuts: () => {
@@ -910,6 +1077,34 @@ class ChatPage extends LitElement {
 								const chatTextEditor = this.shadowRoot.getElementById('chatTextCaption')
 								chatTextEditor.sendMessageFunc({
 									type: 'image'
+								})
+								return true
+							}
+						}
+					}
+				})
+			]
+		})
+
+		this.editorGif = new Editor({
+			onUpdate: () => {
+				this.shadowRoot.getElementById('chatGifId').getMessageSize(this.editorGif.getJSON())
+			},
+			element: elementChatGifId,
+			extensions: [
+				StarterKit,
+				Underline,
+				Highlight,
+				Placeholder.configure({
+					placeholder: `${placeholderString}`
+				}),
+				Extension.create({
+					addKeyboardShortcuts: () => {
+						return {
+							'Enter': () => {
+								const chatTextEditor = this.shadowRoot.getElementById('chatGifId')
+								chatTextEditor.sendMessageFunc({
+									type: 'gif'
 								})
 								return true
 							}
@@ -929,7 +1124,7 @@ class ChatPage extends LitElement {
 				Underline,
 				Highlight,
 				Placeholder.configure({
-					placeholder: 'Write something …',
+					placeholder: `${placeholderString}`
 				}),
 				Extension.create({
 					addKeyboardShortcuts: () => {
@@ -938,6 +1133,34 @@ class ChatPage extends LitElement {
 								const chatTextEditor = this.shadowRoot.getElementById('chatAttachmentId')
 								chatTextEditor.sendMessageFunc({
 									type: 'attachment'
+								})
+								return true
+							}
+						}
+					}
+				})
+			]
+		})
+
+		this.editorFile = new Editor({
+			onUpdate: () => {
+				this.shadowRoot.getElementById('chatFileId').getMessageSize(this.editorFile.getJSON())
+			},
+			element: elementChatFileId,
+			extensions: [
+				StarterKit,
+				Underline,
+				Highlight,
+				Placeholder.configure({
+					placeholder: `${placeholderString}`
+				}),
+				Extension.create({
+					addKeyboardShortcuts: () => {
+						return {
+							'Enter': () => {
+								const chatTextEditor = this.shadowRoot.getElementById('chatFileId')
+								chatTextEditor.sendMessageFunc({
+									type: 'file'
 								})
 								return true
 							}
@@ -983,25 +1206,44 @@ class ChatPage extends LitElement {
 
 	disconnectedCallback() {
 		super.disconnectedCallback()
+
 		if (this.webSocket) {
 			this.webSocket.close(1000, 'switch chat')
 			this.webSocket = ''
 		}
+
 		if (this.webWorker) {
 			this.webWorker.terminate()
 		}
+
 		if (this.webWorkerFile) {
 			this.webWorkerFile.terminate()
 		}
+
 		if (this.webWorkerSortMessages) {
 			this.webWorkerSortMessages.terminate()
 		}
+
 		if (this.editor) {
 			this.editor.destroy()
 		}
+
 		if (this.editorImage) {
 			this.editorImage.destroy()
 		}
+
+		if (this.editorGif) {
+			this.editorGif.destroy()
+		}
+
+		if (this.editorAttachment) {
+			this.editorAttachment.destroy()
+		}
+
+		if (this.editorFile) {
+			this.editorFile.destroy()
+		}
+
 		if (this.observer) {
 			this.observer.disconnect()
 		}
@@ -1023,7 +1265,6 @@ class ChatPage extends LitElement {
 	}
 
 	async pasteImage(e) {
-		const event = e
 		const handleTransferIntoURL = (dataTransfer) => {
 			try {
 				const [firstItem] = dataTransfer.items
@@ -1031,15 +1272,19 @@ class ChatPage extends LitElement {
 				return blob
 			} catch (error) { /* empty */ }
 		}
-		if (event.clipboardData) {
-			const blobFound = handleTransferIntoURL(event.clipboardData)
+
+		if (e.clipboardData) {
+			const blobFound = handleTransferIntoURL(e.clipboardData)
+
 			if (blobFound) {
 				this.insertFile(blobFound)
 				e.preventDefault()
 				return
 			} else {
 				const item_list = await navigator.clipboard.read()
+
 				let image_type
+
 				const item = item_list.find(item =>
 					item.types.some(type => {
 						if (type.startsWith('image/')) {
@@ -1048,10 +1293,11 @@ class ChatPage extends LitElement {
 						}
 					})
 				)
+
 				if (item) {
 					try {
 						const blob = item && await item.getType(image_type)
-						let file = new File([blob], "name", {
+						let file = new File([blob], 'name', {
 							type: image_type
 						})
 						this.insertFile(file)
@@ -1196,17 +1442,47 @@ class ChatPage extends LitElement {
 	}
 
 	insertFile(file) {
+		const acceptedFileExtension = [
+			'zip', 'jar', 'gzip', 'exe', 'deb',
+			'rar', 'dmg', 'pkg', '7z', 'gz', 'psd',
+			'mp4', 'rpm', 'snap', 'AppImage'
+		]
+
+		const acceptedAttachmentExtension = [
+			'pdf', 'txt', 'odt', 'ods', 'doc', 'html',
+			'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'sh', 'log'
+		]
+
+		const fileExtension = file.name.split('.').pop()
+
 		if (file.identifier) {
 			this.imageFile = file
 			this.currentEditor = 'newChat'
+			this.editorImage.commands.setContent('')
+			return
+		} else if (file.type === 'image/gif') {
+			this.gifFile = file
+			this.currentEditor = 'newGifChat'
+			this.editorGif.commands.setContent('')
 			return
 		} else if (file.type.includes('image')) {
 			this.imageFile = file
 			this.currentEditor = 'newChat'
+			this.editorImage.commands.setContent('')
 			return
-		} else {
+		} else if (acceptedFileExtension.includes(fileExtension)) {
+			this.appFile = file
+			this.currentEditor = 'newFileChat'
+			this.editorFile.commands.setContent('')
+			return
+		} else if (acceptedAttachmentExtension.includes(fileExtension)){
 			this.attachment = file
 			this.currentEditor = "newAttachmentChat"
+			this.editorAttachment.commands.setContent('')
+			return
+		} else {
+			this.resetChatEditor()
+			parentEpml.request('showSnackBar', get("chatpage.cchange109"))
 			return
 		}
 	}
@@ -1217,8 +1493,20 @@ class ChatPage extends LitElement {
 		this.currentEditor = '_chatEditorDOM'
 	}
 
+	removeGif() {
+		this.gifFile = null
+		this.resetChatEditor()
+		this.currentEditor = '_chatEditorDOM'
+	}
+
 	removeAttachment() {
 		this.attachment = null
+		this.resetChatEditor()
+		this.currentEditor = '_chatEditorDOM'
+	}
+
+	removeAppFile() {
+		this.appFile = null
 		this.resetChatEditor()
 		this.currentEditor = '_chatEditorDOM'
 	}
@@ -1233,7 +1521,9 @@ class ChatPage extends LitElement {
 			this.webSocket.close(1000, 'switch chat')
 			this.webSocket = ''
 		}
+
 		this.pageNumber = 1
+
 		const getAddressPublicKey = () => {
 			parentEpml.request('apiCall', {
 				type: 'api',
@@ -1260,18 +1550,16 @@ class ChatPage extends LitElement {
 			this.chatId.includes('direct') === true ? this.isReceipient = true : this.isReceipient = false
 			this._chatId = this.chatId.split('/')[1]
 
-			const mstring = get("chatpage.cchange8")
+			const mstring = get('chatpage.cchange114')
 			const placeholder = isRecipient === true ? `Message ${this._chatId}` : `${mstring}`
 			this.chatEditorPlaceholder = placeholder
 
 			isRecipient ? getAddressPublicKey() : this.fetchChatMessages(this._chatId)
-
-			// Init ChatEditor
-			// this.initChatEditor()
 		}, 100)
 
 		const isRecipient = this.chatId.includes('direct') === true ? true : false
 		const groupId = this.chatId.split('/')[1]
+
 		if (!isRecipient && groupId.toString() !== '0') {
 			try {
 				const getMembers = await parentEpml.request("apiCall", {
@@ -1314,7 +1602,9 @@ class ChatPage extends LitElement {
 					} catch (error) { /* empty */ }
 					return memberItem
 				})
+
 				const membersWithName = await Promise.all(getMembersWithName)
+
 				this.groupAdmin = membersAdminsWithName
 				this.groupMembers = membersWithName
 				this.groupInfo = getGroupInfo
@@ -1337,7 +1627,7 @@ class ChatPage extends LitElement {
 			const userLang = changedProperties.get('userLanguage')
 			if (userLang) {
 				await new Promise(r => setTimeout(r, 100))
-				this.chatEditorPlaceholder = this.isReceipient === true ? `Message ${this._chatId}` : `${get("chatpage.cchange8")}`
+				this.chatEditorPlaceholder = this.isReceipient === true ? `Message ${this._chatId}` : `${get('chatpage.cchange114')}`
 			}
 		}
 
@@ -1345,10 +1635,12 @@ class ChatPage extends LitElement {
 			if (this.isLoading === true && this.currentEditor === '_chatEditorDOM' && this.editor && this.editor.setEditable) {
 				this.editor.setEditable(false)
 			}
+
 			if (this.isLoading === false && this.currentEditor === '_chatEditorDOM' && this.editor && this.editor.setEditable) {
 				this.editor.setEditable(true)
 			}
 		}
+
 		if (changedProperties && changedProperties.has('chatId') && this.webSocket) {
 			const previousChatId = changedProperties.get('chatId')
 
@@ -1427,12 +1719,16 @@ class ChatPage extends LitElement {
 				return ""
 			}
 		}
-		let userName = ""
+
+		let userName = ''
+
 		if (this.isReceipient) {
 			userName = await getName(this._chatId)
 		}
-		const mstring = get("chatpage.cchange8")
+
+		const mstring = get('chatpage.cchange114')
 		const placeholder = this.isReceipient === true ? `Message ${userName ? userName : this._chatId}` : `${mstring}`
+
 		return placeholder
 	}
 
@@ -1865,13 +2161,14 @@ class ChatPage extends LitElement {
 			const signature = item.originalSignature || item.signature
 			newObj[signature] = item
 		})
+
 		this.updateMessageHash = {
 			...this.updateMessageHash,
 			...newObj
 		}
+
 		this.requestUpdate()
 		await this.getUpdateComplete()
-
 	}
 
 	async clearUpdateMessageHashmap() {
@@ -1895,31 +2192,35 @@ class ChatPage extends LitElement {
 				}
 			}
 		}
+
 		return null
 	}
 
 	async processMessages(messages, isInitial, isUnread, count) {
 		const isReceipient = this.chatId.includes('direct')
 		let decodedMessages = []
+
 		if (!this.webWorkerDecodeMessages) {
 			this.webWorkerDecodeMessages = new WebWorkerDecodeMessages()
 		}
+
 		if (!this.webWorkerSortMessages) {
 			this.webWorkerSortMessages = new WebWorkerSortMessages()
 		}
+
 		await new Promise((res, rej) => {
 			this.webWorkerDecodeMessages.postMessage({ messages: messages, isReceipient: this.isReceipient, _publicKey: this._publicKey, privateKey: window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey })
 
 			this.webWorkerDecodeMessages.onmessage = e => {
 				decodedMessages = e.data
 				res()
-
 			}
+
 			this.webWorkerDecodeMessages.onerror = () => {
 				rej()
-
 			}
 		})
+
 		if (isInitial) {
 			this.chatEditorPlaceholder = await this.renderPlaceholder()
 
@@ -1953,7 +2254,6 @@ class ChatPage extends LitElement {
 			const lastReadMessageTimestamp = this.lastReadMessageTimestamp
 
 			if (isUnread) {
-
 				this.messagesRendered = {
 					messages: this._messages,
 					type: 'initialLastSeen',
@@ -2045,6 +2345,7 @@ class ChatPage extends LitElement {
 		}
 
 		let viewElement = this.shadowRoot.querySelector('chat-scroller')
+
 		if (viewElement) {
 			viewElement = viewElement.shadowRoot.getElementById('viewElement')
 		} else {
@@ -2052,34 +2353,34 @@ class ChatPage extends LitElement {
 		}
 
 		if (newMessage.sender === this.selectedAddress.address) {
-
-
 			this.messagesRendered = {
 				messages: [newMessage],
 				type: 'newComingInAuto',
 			}
+
 			await this.getUpdateComplete()
 
 			// viewElement.scrollTop = viewElement.scrollHeight
 		} else if (this.isUserDown) {
-
 			this.messagesRendered = {
 				messages: [newMessage],
 				type: 'newComingInAuto',
 			}
+
 			// Append the message and scroll to the bottom if user is down the page
 			// this.messagesRendered = [...this.messagesRendered, newMessage]
 			await this.getUpdateComplete()
+
 			if (viewElement) {
 				viewElement.scrollTop = viewElement.scrollHeight
 			}
 
 		} else {
-
 			this.messagesRendered = {
 				messages: [newMessage],
 				type: 'newComingInAuto',
 			}
+
 			await this.getUpdateComplete()
 
 			this.showNewMessageBar()
@@ -2094,6 +2395,7 @@ class ChatPage extends LitElement {
 	decodeMessage(encodedMessageObj, isReceipient, _publicKey) {
 		let isReceipientVar
 		let _publicKeyVar
+
 		try {
 			isReceipientVar = this.isReceipient === undefined ? isReceipient : this.isReceipient
 			_publicKeyVar = this._publicKey === undefined ? _publicKey : this._publicKey
@@ -2115,12 +2417,12 @@ class ChatPage extends LitElement {
 			} else {
 				decodedMessageObj = { ...encodedMessageObj, decodedMessage: "Cannot Decrypt Message!" }
 			}
-
 		} else {
 			// group chat
 			let decodedMessage = window.parent.Base64.decode(encodedMessageObj.data)
 			decodedMessageObj = { ...encodedMessageObj, decodedMessage }
 		}
+
 		return decodedMessageObj
 	}
 
@@ -2144,6 +2446,7 @@ class ChatPage extends LitElement {
 			}
 
 			this.webSocket = new WebSocket(directSocketLink)
+
 			// Open Connection
 			this.webSocket.onopen = () => {
 				setTimeout(pingDirectSocket, 50)
@@ -2375,9 +2678,19 @@ class ChatPage extends LitElement {
 		if (this.currentEditor === '_chatEditorDOM') {
 			this.editor.commands.setContent('')
 		}
+
 		if (this.currentEditor === 'newChat') {
 			this.editorImage.commands.setContent('')
 		}
+
+		if (this.currentEditor === 'newGifChat') {
+			this.editorGif.commands.setContent('')
+		}
+
+		if (this.currentEditor === 'newFileChat') {
+			this.editorAttachment.commands.setContent('')
+		}
+
 		if (this.currentEditor === 'newAttachmentChat') {
 			this.editorAttachment.commands.setContent('')
 		}
@@ -2386,8 +2699,9 @@ class ChatPage extends LitElement {
 	async _sendMessage(outSideMsg, msg, messageQueue) {
 		const _chatId = this._chatId
 		const isReceipient = this.isReceipient
+		const str = "iVBORw0KGgoAAAANSUhEUgAAAsAAAAGMAQMAAADuk4YmAAAAA1BMVEX///+nxBvIAAAAAXRSTlMAQObYZgAAADlJREFUeF7twDEBAAAAwiD7p7bGDlgYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAGJrAABgPqdWQAAAABJRU5ErkJggg=="
+
 		let _publicKey = this._publicKey
-		const attachment = this.attachment
 
 		try {
 			if (this.isReceipient) {
@@ -2420,14 +2734,16 @@ class ChatPage extends LitElement {
 
 				}
 			}
+
 			// have params to determine if it's a reply or not
 			// have variable to determine if it's a response, holds signature in constructor
 			// need original message signature
 			// need whole original message object, transform the data and put it in local storage
 			// create new var called repliedToData and use that to modify the UI
 			// find specific object property in local
+
 			let typeMessage = 'regular'
-			// this.isLoading = true
+
 			const trimmedMessage = msg
 
 			const getName = async (recipient) => {
@@ -2444,16 +2760,18 @@ class ChatPage extends LitElement {
 					}
 
 				} catch (error) {
-					return ""
+					return ''
 				}
 			}
 
 			if (outSideMsg && outSideMsg.type === 'delete') {
 				this.isDeletingImage = true
-				const userName = outSideMsg.name
-				const identifier = outSideMsg.identifier
-				let compressedFile = ''
-				var str = "iVBORw0KGgoAAAANSUhEUgAAAsAAAAGMAQMAAADuk4YmAAAAA1BMVEX///+nxBvIAAAAAXRSTlMAQObYZgAAADlJREFUeF7twDEBAAAAwiD7p7bGDlgYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAGJrAABgPqdWQAAAABJRU5ErkJggg=="
+
+				let userName
+				let identifier
+
+				userName = outSideMsg.name
+				identifier = outSideMsg.identifier
 
 				if (this.webWorkerFile) {
 					this.webWorkerFile.terminate()
@@ -2481,7 +2799,11 @@ class ChatPage extends LitElement {
 					const blob = new Blob(byteArrays, { type: contentType })
 					return blob
 				}
+
 				const blob = b64toBlob(str, 'image/png')
+
+				let compressedFile = ''
+
 				await new Promise(resolve => {
 					new Compressor(blob, {
 						quality: 0.6,
@@ -2498,13 +2820,15 @@ class ChatPage extends LitElement {
 						},
 					})
 				})
+
 				const arbitraryFeeData = await modalHelper.getArbitraryFee()
-				const res = await modalHelper.showModalAndWaitPublish(
-					{
-						feeAmount: arbitraryFeeData.feeToShow
-					}
-				)
+
+				const res = await modalHelper.showModalAndWaitPublish({
+					feeAmount: arbitraryFeeData.feeToShow
+				})
+
 				if (res.action !== 'accept') throw new Error('User declined publish')
+
 				try {
 					await publishData({
 						registeredName: userName,
@@ -2519,37 +2843,46 @@ class ChatPage extends LitElement {
 						withFee: true,
 						feeAmount: arbitraryFeeData.fee
 					})
+
 					this.isDeletingImage = false
 				} catch (error) {
 					this.isLoading = false
 					return
 				}
+
 				typeMessage = 'edit'
+
 				let chatReference = outSideMsg.editedMessageObj.signature
 
 				if (outSideMsg.editedMessageObj.chatReference) {
 					chatReference = outSideMsg.editedMessageObj.chatReference
 				}
 
-				let message = ""
+				let message = ''
+
 				try {
 					const parsedMessageObj = JSON.parse(outSideMsg.editedMessageObj.decodedMessage)
 					message = parsedMessageObj
 				} catch (error) {
 					message = outSideMsg.editedMessageObj.decodedMessage
 				}
+
 				const messageObject = {
 					...message,
 					isImageDeleted: true
 				}
+
 				const stringifyMessageObject = JSON.stringify(messageObject)
+
 				return this.sendMessage({ messageText: stringifyMessageObject, typeMessage, chatReference, isForward: false, isReceipient, _chatId, _publicKey, messageQueue })
-			} else if (outSideMsg && outSideMsg.type === 'deleteAttachment') {
-				this.isDeletingAttachment = true
-				let compressedFile = ''
-				const str = "iVBORw0KGgoAAAANSUhEUgAAAsAAAAGMAQMAAADuk4YmAAAAA1BMVEX///+nxBvIAAAAAXRSTlMAQObYZgAAADlJREFUeF7twDEBAAAAwiD7p7bGDlgYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAGJrAABgPqdWQAAAABJRU5ErkJggg=="
-				const userName = outSideMsg.name
-				const identifier = outSideMsg.identifier
+			} else if (outSideMsg && outSideMsg.type === 'deleteGif') {
+				this.isDeletingGif = true
+
+				let userName
+				let identifier
+
+				userName = outSideMsg.name
+				identifier = outSideMsg.identifier
 
 				if (this.webWorkerFile) {
 					this.webWorkerFile.terminate()
@@ -2579,6 +2912,9 @@ class ChatPage extends LitElement {
 				}
 
 				const blob = b64toBlob(str, 'image/png')
+
+				let compressedFile = ''
+
 				await new Promise(resolve => {
 					new Compressor(blob, {
 						quality: 0.6,
@@ -2595,18 +2931,20 @@ class ChatPage extends LitElement {
 						},
 					})
 				})
+
 				const arbitraryFeeData = await modalHelper.getArbitraryFee()
-				const res = await modalHelper.showModalAndWaitPublish(
-					{
-						feeAmount: arbitraryFeeData.feeToShow
-					}
-				)
+
+				const res = await modalHelper.showModalAndWaitPublish({
+					feeAmount: arbitraryFeeData.feeToShow
+				})
+
 				if (res.action !== 'accept') throw new Error('User declined publish')
+
 				try {
 					await publishData({
 						registeredName: userName,
 						file: compressedFile,
-						service: 'QCHAT_ATTACHMENT',
+						service: 'IMAGE',
 						identifier: identifier,
 						parentEpml,
 						metaData: undefined,
@@ -2616,19 +2954,23 @@ class ChatPage extends LitElement {
 						withFee: true,
 						feeAmount: arbitraryFeeData.fee
 					})
-					this.isDeletingAttachment = false
+
+					this.isDeletingGif = false
 				} catch (error) {
 					this.isLoading = false
 					return
 				}
+
 				typeMessage = 'edit'
+
 				let chatReference = outSideMsg.editedMessageObj.signature
 
 				if (outSideMsg.editedMessageObj.chatReference) {
 					chatReference = outSideMsg.editedMessageObj.chatReference
 				}
 
-				let message = ""
+				let message = ''
+
 				try {
 					const parsedMessageObj = JSON.parse(outSideMsg.editedMessageObj.decodedMessage)
 					message = parsedMessageObj
@@ -2636,17 +2978,247 @@ class ChatPage extends LitElement {
 				} catch (error) {
 					message = outSideMsg.editedMessageObj.decodedMessage
 				}
+
+				const messageObject = {
+					...message,
+					isGifDeleted: true
+				}
+
+				const stringifyMessageObject = JSON.stringify(messageObject)
+
+				return this.sendMessage({ messageText: stringifyMessageObject, typeMessage, chatReference, isForward: false, isReceipient, _chatId, _publicKey, messageQueue })
+			} else if (outSideMsg && outSideMsg.type === 'deleteAttachment') {
+				this.isDeletingAttachment = true
+
+				let userName
+				let identifier
+
+				userName = outSideMsg.name
+				identifier = outSideMsg.identifier
+
+				if (this.webWorkerFile) {
+					this.webWorkerFile.terminate()
+					this.webWorkerFile = null
+				}
+
+				this.webWorkerFile = new WebWorkerFile()
+
+				const b64toBlob = (b64Data, contentType = '', sliceSize = 512) => {
+					const byteCharacters = atob(b64Data)
+					const byteArrays = []
+
+					for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+						const slice = byteCharacters.slice(offset, offset + sliceSize)
+
+						const byteNumbers = new Array(slice.length)
+						for (let i = 0; i < slice.length; i++) {
+							byteNumbers[i] = slice.charCodeAt(i)
+						}
+
+						const byteArray = new Uint8Array(byteNumbers)
+						byteArrays.push(byteArray)
+					}
+
+					const blob = new Blob(byteArrays, { type: contentType })
+					return blob
+				}
+
+				const blob = b64toBlob(str, 'image/png')
+
+				let compressedFile = ''
+
+				await new Promise(resolve => {
+					new Compressor(blob, {
+						quality: 0.6,
+						maxWidth: 500,
+						success(result) {
+							const file = new File([result], "name", {
+								type: 'image/png'
+							})
+
+							compressedFile = file
+							resolve()
+						},
+						error() {
+						},
+					})
+				})
+
+				const arbitraryFeeData = await modalHelper.getArbitraryFee()
+
+				const res = await modalHelper.showModalAndWaitPublish({
+					feeAmount: arbitraryFeeData.feeToShow
+				})
+
+				if (res.action !== 'accept') throw new Error('User declined publish')
+
+				try {
+					await publishData({
+						registeredName: userName,
+						file: compressedFile,
+						service: 'ATTACHMENT',
+						identifier: identifier,
+						parentEpml,
+						metaData: undefined,
+						uploadType: 'file',
+						selectedAddress: this.selectedAddress,
+						worker: this.webWorkerFile,
+						withFee: true,
+						feeAmount: arbitraryFeeData.fee
+					})
+
+					this.isDeletingAttachment = false
+				} catch (error) {
+					this.isLoading = false
+					return
+				}
+
+				typeMessage = 'edit'
+
+				let chatReference = outSideMsg.editedMessageObj.signature
+
+				if (outSideMsg.editedMessageObj.chatReference) {
+					chatReference = outSideMsg.editedMessageObj.chatReference
+				}
+
+				let message = ''
+
+				try {
+					const parsedMessageObj = JSON.parse(outSideMsg.editedMessageObj.decodedMessage)
+					message = parsedMessageObj
+
+				} catch (error) {
+					message = outSideMsg.editedMessageObj.decodedMessage
+				}
+
 				const messageObject = {
 					...message,
 					isAttachmentDeleted: true
 				}
+
 				const stringifyMessageObject = JSON.stringify(messageObject)
+
+				return this.sendMessage({ messageText: stringifyMessageObject, typeMessage, chatReference, isForward: false, isReceipient, _chatId, _publicKey, messageQueue })
+			} else if (outSideMsg && outSideMsg.type === 'deleteFile') {
+				this.isDeletingAppFile = true
+
+				let userName
+				let identifier
+
+				userName = outSideMsg.name
+				identifier = outSideMsg.identifier
+
+				if (this.webWorkerFile) {
+					this.webWorkerFile.terminate()
+					this.webWorkerFile = null
+				}
+
+				this.webWorkerFile = new WebWorkerFile()
+
+				const b64toBlob = (b64Data, contentType = '', sliceSize = 512) => {
+					const byteCharacters = atob(b64Data)
+					const byteArrays = []
+
+					for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+						const slice = byteCharacters.slice(offset, offset + sliceSize)
+
+						const byteNumbers = new Array(slice.length)
+						for (let i = 0; i < slice.length; i++) {
+							byteNumbers[i] = slice.charCodeAt(i)
+						}
+
+						const byteArray = new Uint8Array(byteNumbers)
+						byteArrays.push(byteArray)
+					}
+
+					const blob = new Blob(byteArrays, { type: contentType })
+					return blob
+				}
+
+				const blob = b64toBlob(str, 'image/png')
+
+				let compressedFile = ''
+
+				await new Promise(resolve => {
+					new Compressor(blob, {
+						quality: 0.6,
+						maxWidth: 500,
+						success(result) {
+							const file = new File([result], "name", {
+								type: 'image/png'
+							})
+
+							compressedFile = file
+							resolve()
+						},
+						error() {
+						},
+					})
+				})
+
+				const arbitraryFeeData = await modalHelper.getArbitraryFee()
+
+				const res = await modalHelper.showModalAndWaitPublish({
+					feeAmount: arbitraryFeeData.feeToShow
+				})
+
+				if (res.action !== 'accept') throw new Error('User declined publish')
+
+				try {
+					await publishData({
+						registeredName: userName,
+						file: compressedFile,
+						service: 'FILE',
+						identifier: identifier,
+						parentEpml,
+						metaData: undefined,
+						uploadType: 'file',
+						selectedAddress: this.selectedAddress,
+						worker: this.webWorkerFile,
+						withFee: true,
+						feeAmount: arbitraryFeeData.fee
+					})
+
+					this.isDeletingAppFile = false
+				} catch (error) {
+					this.isDeletingAppFile = false
+					this.isLoading = false
+					return
+				}
+
+				typeMessage = 'edit'
+
+				let chatReference = outSideMsg.editedMessageObj.signature
+
+				if (outSideMsg.editedMessageObj.chatReference) {
+					chatReference = outSideMsg.editedMessageObj.chatReference
+				}
+
+				let message = ''
+
+				try {
+					const parsedMessageObj = JSON.parse(outSideMsg.editedMessageObj.decodedMessage)
+					message = parsedMessageObj
+
+				} catch (error) {
+					message = outSideMsg.editedMessageObj.decodedMessage
+				}
+
+				const messageObject = {
+					...message,
+					isFileDeleted: true
+				}
+
+				const stringifyMessageObject = JSON.stringify(messageObject)
+
 				return this.sendMessage({ messageText: stringifyMessageObject, typeMessage, chatReference, isForward: false, isReceipient, _chatId, _publicKey, messageQueue })
 			} else if (outSideMsg && outSideMsg.type === 'image') {
 				if (!this.imageFile.identifier) {
 					this.isUploadingImage = true
 				}
+
 				const userName = await getName(this.selectedAddress.address)
+
 				if (!userName) {
 					parentEpml.request('showSnackBar', get("chatpage.cchange27"))
 					this.isLoading = false
@@ -2655,21 +3227,21 @@ class ChatPage extends LitElement {
 					return
 				}
 
-
 				let service = "QCHAT_IMAGE"
 				let name = userName
 				let identifier
+
 				if (this.imageFile.identifier) {
 					identifier = this.imageFile.identifier
 					name = this.imageFile.name
 					service = this.imageFile.service
 				} else {
 					const arbitraryFeeData = await modalHelper.getArbitraryFee()
-					const res = await modalHelper.showModalAndWaitPublish(
-						{
-							feeAmount: arbitraryFeeData.feeToShow
-						}
-					)
+
+					const res = await modalHelper.showModalAndWaitPublish({
+						feeAmount: arbitraryFeeData.feeToShow
+					})
+
 					if (res.action !== 'accept') throw new Error('User declined publish')
 
 					if (this.webWorkerFile) {
@@ -2678,16 +3250,21 @@ class ChatPage extends LitElement {
 					}
 
 					this.webWorkerFile = new WebWorkerFile()
+
 					const image = this.imageFile
 					const id = this.uid.rnd()
 					let groupPart
+
 					if (this.isReceipient) {
 						groupPart = `direct_${generateIdFromAddresses(this._chatId, this.selectedAddress.address)}`
 					} else {
 						groupPart = `group_${this._chatId}`
 					}
+
 					identifier = `qchat_${groupPart}_${id}`
+
 					let compressedFile = ''
+
 					await new Promise(resolve => {
 						new Compressor(image, {
 							quality: .6,
@@ -2704,7 +3281,9 @@ class ChatPage extends LitElement {
 							},
 						})
 					})
+
 					const fileSize = compressedFile.size
+
 					if (fileSize > 500000) {
 						parentEpml.request('showSnackBar', get("chatpage.cchange26"))
 						this.isLoading = false
@@ -2713,7 +3292,6 @@ class ChatPage extends LitElement {
 					}
 
 					try {
-
 						await publishData({
 							registeredName: userName,
 							file: compressedFile,
@@ -2727,6 +3305,7 @@ class ChatPage extends LitElement {
 							withFee: true,
 							feeAmount: arbitraryFeeData.fee
 						})
+
 						this.isUploadingImage = false
 						this.removeImage()
 					} catch (error) {
@@ -2742,42 +3321,124 @@ class ChatPage extends LitElement {
 					images: [{
 						service: service,
 						name: name,
-						identifier: identifier,
+						identifier: identifier
 					}],
 					isImageDeleted: false,
 					repliedTo: '',
 					version: 3
 				}
+
 				const stringifyMessageObject = JSON.stringify(messageObject)
+
 				this.removeImage()
+
 				return this.sendMessage({ messageText: stringifyMessageObject, typeMessage, chatReference: undefined, isForward: false, isReceipient, _chatId, _publicKey, messageQueue })
 			} else if (outSideMsg && outSideMsg.type === 'gif') {
+				if (!this.gifFile.identifier) {
+					this.isUploadingGif = true
+				}
+
 				const userName = await getName(this.selectedAddress.address)
+
 				if (!userName) {
 					parentEpml.request('showSnackBar', get("chatpage.cchange27"))
 					this.isLoading = false
+					this.isUploadingGif = false
+					this.gifFile = null
+					return
+				}
+
+				let identifier
+				let groupPart
+
+				if (this.webWorkerFile) {
+					this.webWorkerFile.terminate()
+					this.webWorkerFile = null
+				}
+
+				this.webWorkerFile = new WebWorkerFile()
+
+				const gifFile = this.gifFile
+				const id = this.uid.rnd()
+
+				if (this.isReceipient) {
+					groupPart = `direct_${generateIdFromAddresses(this._chatId, this.selectedAddress.address)}`
+				} else {
+					groupPart = `group_${this._chatId}`
+				}
+
+				identifier = `qchat_${groupPart}_gif_${id}`
+
+				const fileSize = gifFile.size
+
+				if (fileSize > 3000000) {
+					parentEpml.request('showSnackBar', get("chatpage.cchange103"))
+					this.isLoading = false
+					this.isUploadingGif = false
+					return
+				}
+
+				const arbitraryFeeData = await modalHelper.getArbitraryFee()
+
+				const res = await modalHelper.showModalAndWaitPublish({
+					feeAmount: arbitraryFeeData.feeToShow
+				})
+
+				if (res.action !== 'accept') throw new Error('User declined publish')
+
+				try {
+					await publishData({
+						registeredName: userName,
+						file: gifFile,
+						service: 'IMAGE',
+						identifier: identifier,
+						parentEpml,
+						metaData: undefined,
+						uploadType: 'file',
+						selectedAddress: this.selectedAddress,
+						worker: this.webWorkerFile,
+						withFee: true,
+						feeAmount: arbitraryFeeData.fee
+					})
+
+					this.isUploadingGif = false
+					this.removeGif()
+				} catch (error) {
+					this.isLoading = false
+					this.isUploadingGif = false
 					return
 				}
 
 				const messageObject = {
-					messageText: '',
+					messageText: trimmedMessage,
 					gifs: [{
-						service: outSideMsg.service,
-						name: outSideMsg.name,
-						identifier: outSideMsg.identifier,
-						filePath: outSideMsg.filePath
+						service: 'IMAGE',
+						name: userName,
+						identifier: identifier
 					}],
+					isGifDeleted: false,
 					repliedTo: '',
 					version: 3
 				}
+
 				const stringifyMessageObject = JSON.stringify(messageObject)
+
 				return this.sendMessage({ messageText: stringifyMessageObject, typeMessage, chatReference: undefined, isForward: false, isReceipient, _chatId, _publicKey, messageQueue })
 			} else if (outSideMsg && outSideMsg.type === 'attachment') {
-				this.isUploadingAttachment = true
+				if (!this.attachment.identifier) {
+					this.isUploadingAttachment = true
+				}
+
+				let identifier
+				let groupPart
+
 				const userName = await getName(this.selectedAddress.address)
+
 				if (!userName) {
 					parentEpml.request('showSnackBar', get("chatpage.cchange27"))
+					this.isUploadingAttachment = false
 					this.isLoading = false
+					this.attachment = null
 					return
 				}
 
@@ -2788,28 +3449,39 @@ class ChatPage extends LitElement {
 
 				this.webWorkerFile = new WebWorkerFile()
 
-				// const attachment = attachment
-				const id = this.uid()
-				const identifier = `qchat_${id}`
+				const attachment = this.attachment
+				const id = this.uid.rnd()
+
+				if (this.isReceipient) {
+					groupPart = `direct_${generateIdFromAddresses(this._chatId, this.selectedAddress.address)}`
+				} else {
+					groupPart = `group_${this._chatId}`
+				}
+
+				identifier = `qchat_${groupPart}_attachment_${id}`
+
 				const fileSize = attachment.size
-				if (fileSize > 1000000) {
+
+				if (fileSize > 10000000) {
 					parentEpml.request('showSnackBar', get("chatpage.cchange77"))
 					this.isLoading = false
 					this.isUploadingAttachment = false
 					return
 				}
+
 				const arbitraryFeeData = await modalHelper.getArbitraryFee()
-				const res = await modalHelper.showModalAndWaitPublish(
-					{
-						feeAmount: arbitraryFeeData.feeToShow
-					}
-				)
+
+				const res = await modalHelper.showModalAndWaitPublish({
+					feeAmount: arbitraryFeeData.feeToShow
+				})
+
 				if (res.action !== 'accept') throw new Error('User declined publish')
+
 				try {
 					await publishData({
 						registeredName: userName,
 						file: attachment,
-						service: 'QCHAT_ATTACHMENT',
+						service: 'ATTACHMENT',
 						identifier: identifier,
 						parentEpml,
 						metaData: undefined,
@@ -2819,6 +3491,7 @@ class ChatPage extends LitElement {
 						withFee: true,
 						feeAmount: arbitraryFeeData.fee
 					})
+
 					this.isUploadingAttachment = false
 					this.removeAttachment()
 				} catch (error) {
@@ -2826,10 +3499,11 @@ class ChatPage extends LitElement {
 					this.isUploadingAttachment = false
 					return
 				}
+
 				const messageObject = {
 					messageText: trimmedMessage,
 					attachments: [{
-						service: 'QCHAT_ATTACHMENT',
+						service: 'ATTACHMENT',
 						name: userName,
 						identifier: identifier,
 						attachmentName: attachment.name,
@@ -2839,18 +3513,115 @@ class ChatPage extends LitElement {
 					repliedTo: '',
 					version: 3
 				}
+
 				const stringifyMessageObject = JSON.stringify(messageObject)
+
+				return this.sendMessage({ messageText: stringifyMessageObject, typeMessage, chatReference: undefined, isForward: false, isReceipient, _chatId, _publicKey, messageQueue })
+			} else if (outSideMsg && outSideMsg.type === 'file') {
+				if (!this.appFile.identifier) {
+					this.isUploadingAppFile = true
+				}
+
+				let identifier
+				let groupPart
+
+				const userName = await getName(this.selectedAddress.address)
+
+				if (!userName) {
+					parentEpml.request('showSnackBar', get("chatpage.cchange27"))
+					this.isUploadingAppFile = false
+					this.isLoading = false
+					this.appFile = null
+					return
+				}
+
+				if (this.webWorkerFile) {
+					this.webWorkerFile.terminate()
+					this.webWorkerFile = null
+				}
+
+				this.webWorkerFile = new WebWorkerFile()
+
+				const appFile = this.appFile
+				const id = this.uid.rnd()
+
+				if (this.isReceipient) {
+					groupPart = `direct_${generateIdFromAddresses(this._chatId, this.selectedAddress.address)}`
+				} else {
+					groupPart = `group_${this._chatId}`
+				}
+
+				identifier = `qchat_${groupPart}_file_${id}`
+
+				const fileSize = appFile.size
+
+				if (fileSize > 125000000) {
+					parentEpml.request('showSnackBar', get("chatpage.cchange100"))
+					this.isLoading = false
+					this.isUploadingAppFile = false
+					return
+				}
+
+				const arbitraryFeeData = await modalHelper.getArbitraryFee()
+
+				const res = await modalHelper.showModalAndWaitPublish({
+					feeAmount: arbitraryFeeData.feeToShow
+				})
+
+				if (res.action !== 'accept') throw new Error('User declined publish')
+
+				try {
+					await publishData({
+						registeredName: userName,
+						file: appFile,
+						service: 'FILE',
+						identifier: identifier,
+						parentEpml,
+						metaData: undefined,
+						uploadType: 'file',
+						selectedAddress: this.selectedAddress,
+						worker: this.webWorkerFile,
+						withFee: true,
+						feeAmount: arbitraryFeeData.fee
+					})
+
+					this.isUploadingAppFile = false
+					this.removeAppFile()
+				} catch (error) {
+					this.isLoading = false
+					this.isUploadingAppFile = false
+					return
+				}
+
+				const messageObject = {
+					messageText: trimmedMessage,
+					files: [{
+						service: 'FILE',
+						name: userName,
+						identifier: identifier,
+						appFileName: appFile.name,
+						appFileSize: appFile.size
+					}],
+					isFileDeleted: false,
+					repliedTo: '',
+					version: 3
+				}
+
+				const stringifyMessageObject = JSON.stringify(messageObject)
+
 				return this.sendMessage({ messageText: stringifyMessageObject, typeMessage, chatReference: undefined, isForward: false, isReceipient, _chatId, _publicKey, messageQueue })
 			} else if (outSideMsg && outSideMsg.type === 'reaction') {
 				const userName = await getName(this.selectedAddress.address)
+
 				typeMessage = 'edit'
+
 				let chatReference = outSideMsg.editedMessageObj.signature
 
 				if (outSideMsg.editedMessageObj.chatReference) {
 					chatReference = outSideMsg.editedMessageObj.chatReference
 				}
 
-				let message = ""
+				let message = ''
 
 				try {
 					const parsedMessageObj = JSON.parse(outSideMsg.editedMessageObj.decodedMessage)
@@ -2860,10 +3631,13 @@ class ChatPage extends LitElement {
 				}
 
 				let reactions = message.reactions || []
+
 				const findEmojiIndex = reactions.findIndex((reaction) => reaction.type === outSideMsg.reaction)
+
 				if (findEmojiIndex !== -1) {
 					let users = reactions[findEmojiIndex].users || []
 					const findUserIndex = users.findIndex((user) => user.address === this.selectedAddress.address)
+
 					if (findUserIndex !== -1) {
 						users.splice(findUserIndex, 1)
 					} else {
@@ -2872,11 +3646,13 @@ class ChatPage extends LitElement {
 							name: userName
 						})
 					}
+
 					reactions[findEmojiIndex] = {
 						...reactions[findEmojiIndex],
 						qty: users.length,
 						users
 					}
+
 					if (users.length === 0) {
 						reactions.splice(findEmojiIndex, 1)
 					}
@@ -2890,27 +3666,35 @@ class ChatPage extends LitElement {
 						}]
 					}]
 				}
+
 				const messageObject = {
 					...message,
 					reactions
 				}
+
 				const stringifyMessageObject = JSON.stringify(messageObject)
+
 				return this.sendMessage({ messageText: stringifyMessageObject, typeMessage, chatReference, isForward: false, isReceipient, _chatId, _publicKey, messageQueue })
 			} else if (/^\s*$/.test(trimmedMessage)) {
 				this.isLoading = false
 			} else if (this.repliedToMessageObj) {
 				let chatReference = this.repliedToMessageObj.signature
+
 				if (this.repliedToMessageObj.chatReference) {
 					chatReference = this.repliedToMessageObj.chatReference
 				}
+
 				typeMessage = 'reply'
+
 				const messageObject = {
 					messageText: trimmedMessage,
 					images: [''],
 					repliedTo: chatReference,
 					version: 3
 				}
+
 				const stringifyMessageObject = JSON.stringify(messageObject)
+
 				return this.sendMessage({ messageText: stringifyMessageObject, typeMessage, chatReference: undefined, isForward: false, isReceipient, _chatId, _publicKey, messageQueue })
 			} else if (this.editedMessageObj) {
 				typeMessage = 'edit'
@@ -2920,7 +3704,8 @@ class ChatPage extends LitElement {
 					chatReference = this.editedMessageObj.chatReference
 				}
 
-				let message = ""
+				let message = ''
+
 				try {
 					const parsedMessageObj = JSON.parse(this.editedMessageObj.decodedMessage)
 					message = parsedMessageObj
@@ -2928,12 +3713,15 @@ class ChatPage extends LitElement {
 				} catch (error) {
 					message = this.editedMessageObj.decodedMessage
 				}
+
 				const messageObject = {
 					...message,
 					messageText: trimmedMessage,
 					isEdited: true
 				}
+
 				const stringifyMessageObject = JSON.stringify(messageObject)
+
 				return this.sendMessage({ messageText: stringifyMessageObject, typeMessage, chatReference, isForward: false, isReceipient, _chatId, _publicKey, messageQueue })
 			} else {
 				const messageObject = {
@@ -2942,6 +3730,7 @@ class ChatPage extends LitElement {
 					repliedTo: '',
 					version: 3
 				}
+
 				const stringifyMessageObject = JSON.stringify(messageObject)
 
 				if (this.balance < 4) {
@@ -2955,6 +3744,9 @@ class ChatPage extends LitElement {
 		} catch (error) {
 			this.isLoading = false
 			this.isUploadingImage = false
+			this.isUploadingGif = false
+			this.isUploadingAttachment = false
+			this.isUploadingAppFile = false
 			return
 		}
 
@@ -2968,6 +3760,7 @@ class ChatPage extends LitElement {
 			this.closeRepliedToContainer()
 			return
 		}
+
 		if (isForward) {
 			this.isLoading = true
 		}
@@ -2975,6 +3768,7 @@ class ChatPage extends LitElement {
 		let _reference = new Uint8Array(64)
 		window.crypto.getRandomValues(_reference)
 		let reference = window.parent.Base58.encode(_reference)
+
 		const sendMessageRequest = async () => {
 			if (isReceipient === true) {
 				let chatResponse = await parentEpml.request('chat', {
