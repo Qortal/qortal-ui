@@ -36,7 +36,7 @@ class ChatGroupInvites extends LitElement {
 		this.isLoading = false
 		this.isOpenLeaveModal = false
 		this.leaveGroupObj = {}
-		this.leaveFee = 0.001
+		this.leaveFee = 0.01
 		this.error = false
 		this.message = ''
 		this.chatHeads = []

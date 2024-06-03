@@ -3,7 +3,6 @@ import TransactionBase from '../TransactionBase'
 import nacl from '../../deps/nacl-fast'
 import ed2curve from '../../deps/ed2curve'
 import { Sha256 } from 'asmcrypto.js'
-import { DYNAMIC_FEE_TIMESTAMP } from '../../constants'
 
 export default class RewardShareTransaction extends TransactionBase {
 	constructor() {
@@ -53,11 +52,7 @@ export default class RewardShareTransaction extends TransactionBase {
 		this._base58RewardShareSeed = this.constructor.Base58.encode(this._rewardShareSeed)
 		this._rewardShareKeyPair = nacl.sign.keyPair.fromSeed(this._rewardShareSeed)
 
-		if (new Date(this._timestamp).getTime() >= DYNAMIC_FEE_TIMESTAMP) {
-			this.fee = (recipientPublicKey === this.constructor.Base58.encode(this._keyPair.publicKey) ? 0 : 0.01)
-		} else {
-			this.fee = (recipientPublicKey === this.constructor.Base58.encode(this._keyPair.publicKey) ? 0 : 0.001)
-		}
+		this.fee = (recipientPublicKey === this.constructor.Base58.encode(this._keyPair.publicKey) ? 0 : 0.01)
 	}
 
 	set recipient(recipient) {

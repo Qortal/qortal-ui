@@ -210,7 +210,7 @@ class MultiWallet extends LitElement {
 		this.dgbAmount = 0
 		this.rvnAmount = 0
 		this.arrrAmount = 0
-		this.qortPaymentFee = 0.001
+		this.qortPaymentFee = 0.01
 		this.btcFeePerByte = 100
 		this.btcSatMinFee = 20
 		this.btcSatMaxFee = 150
@@ -3502,11 +3502,11 @@ class MultiWallet extends LitElement {
 	calculateQortAll() {
 		this.amount = 0
 		this.shadowRoot.getElementById('amountInput').value = this.amount
-		if (this.balance < 0.01100000) {
+		if (this.balance < this.qortPaymentFee) {
 			let not_enough_string = get("walletpage.wchange26")
 			parentEpml.request('showSnackBar', `${not_enough_string}`)
 		} else {
-			this.amount = (this.balance - 0.01100000).toFixed(8)
+			this.amount = (this.balance - this.qortPaymentFee).toFixed(8)
 			this.shadowRoot.getElementById('amountInput').value = this.amount
 			this.shadowRoot.getElementById('amountInput').blur()
 			this.shadowRoot.getElementById('amountInput').focus()
@@ -3691,7 +3691,7 @@ class MultiWallet extends LitElement {
 		} else {
 			const checkQortAmountInput = this.shadowRoot.getElementById('amountInput').value
 			const checkQortAmount = this.round(parseFloat(checkQortAmountInput))
-			const myFunds = this.round(parseFloat(this.balance - 0.01100000))
+			const myFunds = this.round(parseFloat(this.balance - this.qortPaymentFee))
 			if (Number(myFunds) >= Number(checkQortAmount)) {
 				this.shadowRoot.getElementById('amountInput').value = checkQortAmountInput
 				this.btnDisable = false
@@ -3722,7 +3722,7 @@ class MultiWallet extends LitElement {
 					} else {
 						const checkQortAmountInput = this.shadowRoot.getElementById('amountInput').value
 						const checkQortAmount = this.round(parseFloat(checkQortAmountInput))
-						const myFunds = this.round(parseFloat(this.balance - 0.01100000))
+						const myFunds = this.round(parseFloat(this.balance - this.qortPaymentFee))
 						if (Number(myFunds) >= Number(checkQortAmount)) {
 							this.shadowRoot.getElementById('amountInput').value = checkQortAmountInput
 							this.btnDisable = false
@@ -3740,7 +3740,7 @@ class MultiWallet extends LitElement {
 			} else {
 				const checkQortAmountInput = this.shadowRoot.getElementById('amountInput').value
 				const checkQortAmount = this.round(parseFloat(checkQortAmountInput))
-				const myFunds = this.round(parseFloat(this.balance - 0.01100000))
+				const myFunds = this.round(parseFloat(this.balance - this.qortPaymentFee))
 				if (Number(myFunds) >= Number(checkQortAmount)) {
 					this.shadowRoot.getElementById('amountInput').value = checkQortAmountInput
 					this.btnDisable = false
@@ -3762,7 +3762,7 @@ class MultiWallet extends LitElement {
 		this.sendMoneyLoading = true
 		this.btnDisable = true
 
-		if (parseFloat(amount) + parseFloat(0.001) > parseFloat(this.balance)) {
+		if (parseFloat(amount) + parseFloat(sendFee) > parseFloat(this.balance)) {
 			this.sendMoneyLoading = false
 			this.btnDisable = false
 			let snack1string = get("walletpage.wchange26")

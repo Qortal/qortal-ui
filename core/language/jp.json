@@ -717,7 +717,7 @@
 		"bchange26": "常に自動的に認証",
 		"bchange27": "拒否",
 		"bchange28": "受け入れる",
-		"bchange29": "インスタント公開 (手数料 0.001 QORTが必要)",
+		"bchange29": "インスタント公開 (手数料 0.01 QORTが必要)",
 		"bchange30": "サービス",
 		"bchange31": "名前",
 		"bchange32": "識別子",

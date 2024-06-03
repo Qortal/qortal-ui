@@ -2231,7 +2231,7 @@ class TradePortal extends LitElement {
 		await this.tradeFee()
 		const sellAmountInput = this.shadowRoot.getElementById('sellAmountInput').value
 		const sellTotalInput = this.shadowRoot.getElementById('sellTotalInput').value
-		const fundingQortAmount = this.round(parseFloat(sellAmountInput) + 0.001)
+		const fundingQortAmount = this.round(parseFloat(sellAmountInput) + this.tradeFee)
 
 		const makeRequest = async () => {
 			let _receivingAddress = null
