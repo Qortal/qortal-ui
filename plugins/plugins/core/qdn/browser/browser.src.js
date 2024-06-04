@@ -3822,6 +3822,7 @@ async function showModalAndWait(type, data) {
 
 						${type === actions.SEND_CHAT_MESSAGE ? `
 							<p class="modal-paragraph">${get("browserpage.bchange22")}</p>
+							<p class="modal-paragraph">${get("chatpage.cchange4")}: <span> ${data.message}</span></p>
 						` : ''}
 					</div>
 					<div class="modal-buttons">
