@@ -316,7 +316,7 @@ class GroupManagement extends LitElement {
 							maxlength="32"
 							id="groupNameInput"
 							label="${translate("grouppage.gchange4")}"
-							placeholder="${translate("grouppage.gchange60")}"
+							placeholder="${translate("grouppage.gchange59")}"
 							helper-text="${translate("managegroup.mg51")}"
 							allowed-char-pattern="[0-9a-zA-Z'() #.:,_<>+\u002D\u3000-\u303F\u3400-\u4DBF\u4E00-\u9FFF\u3040-\u309F\u30A0-\u30FF\u0400-\u04FF\u0900-\u097F\u2000-\u3300\u1F600-\u1FFFF]"
 							clear-button-visible
@@ -332,7 +332,7 @@ class GroupManagement extends LitElement {
 							maxlength="128"
 							id="groupDescInput"
 							label="${translate("grouppage.gchange5")}"
-							placeholder="${translate("grouppage.gchange61")}"
+							placeholder="${translate("grouppage.gchange60")}"
 							helper-text="${translate("managegroup.mg52")}"
 							allowed-char-pattern="[0-9a-zA-Z'() #.:,_<>+\u002D\u3000-\u303F\u3400-\u4DBF\u4E00-\u9FFF\u3040-\u309F\u30A0-\u30FF\u0400-\u04FF\u0900-\u097F\u2000-\u3300\u1F600-\u1FFFF]"
 							clear-button-visible
@@ -1587,9 +1587,9 @@ class GroupManagement extends LitElement {
 						style="width: 100%; --vaadin-input-field-border-width: 1px; --vaadin-input-field-border-color: var(--border3);"
 						maxlength="34"
 						id="newGroupOwnerInput"
-						label="${translate("grouppage.gchange64")}"
+						label="${translate("grouppage.gchange63")}"
 						value="${this.selectedAddress.address}"
-						helper-text="${translate("grouppage.gchange65")}"
+						helper-text="${translate("grouppage.gchange64")}"
 						allowed-char-pattern="[0-9a-zA-Z]"
 						clear-button-visible
 					>
@@ -1769,11 +1769,11 @@ class GroupManagement extends LitElement {
 	}
 
 	renderErr10Text() {
-		return html`${translate("grouppage.gchange66")}`
+		return html`${translate("grouppage.gchange65")}`
 	}
 
 	renderErr11Text() {
-		return html`${translate("grouppage.gchange67")}`
+		return html`${translate("grouppage.gchange66")}`
 	}
 
 	renderSuccessText() {
@@ -1895,7 +1895,7 @@ class GroupManagement extends LitElement {
 
 		return html`
 			<vaadin-button theme="primary medium" @click=${() => this.uploadAvatar(nameForAvatar, indentifierForAvatar)}>
-				${translate("grouppage.gchange68")}
+				${translate("grouppage.gchange67")}
 			</vaadin-button>
 		`
 	}
@@ -2950,9 +2950,9 @@ class GroupManagement extends LitElement {
 		}
 
 		const makeTransactionRequest = async (_newGroupIdInput, _newGroupTypeInput, _newGroupApprovalInput, _newGroupMinDelayInput, _newGroupMaxDelayInput, lastRef) => {
-			let updategroupdialog1 = get('grouppage.gchange62')
-			let updategroupdialog2 = get('grouppage.gchange63')
-			let updategroupdialog3 = get('grouppage.gchange64')
+			let updategroupdialog1 = get('grouppage.gchange61')
+			let updategroupdialog2 = get('grouppage.gchange62')
+			let updategroupdialog3 = get('grouppage.gchange63')
 			let updategroupdialog4 = get('grouppage.gchange4')
 			let updategroupdialog5 = get('grouppage.gchange5')
 			let updategroupdialog6 = get('grouppage.gchange13')
