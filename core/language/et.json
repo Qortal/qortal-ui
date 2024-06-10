@@ -973,7 +973,10 @@
 		"gchange65": "Asendage see aadress grupi omandiõiguse üleandmiseks!",
 		"gchange66": "Kehtetu omanik / uue omaniku aadress",
 		"gchange67": "Grupi UUENDAMINE edukas!",
-		"gchange68": "Rühma avatari määramine"
+		"gchange68": "Rühma avatari määramine",
+		"gchange69": "Sõnumid",
+		"gchange70": "Viimase 24 tunni jooksul pole ühtegi sõnumit!",
+		"gchange71": "Olete selle grupiga juba liitunud!"
 	},
 	"puzzlepage": {
 		"pchange1": "Puzzled",

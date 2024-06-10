@@ -973,7 +973,10 @@
 		"gchange65": "Erstatt denne adressen til OVERFØR EIERSKAP av gruppen!",
 		"gchange66": "Ugyldig eier / ny eieradresse",
 		"gchange67": "Gruppeoppdatering vellykket!",
-		"gchange68": "Angi gruppeavatar"
+		"gchange68": "Angi gruppeavatar",
+		"gchange69": "Meldinger",
+		"gchange70": "Ingen meldinger de siste 24 timene!",
+		"gchange71": "Du har allerede blitt med i denne gruppen!"
 	},
 	"puzzlepage": {
 		"pchange1": "Puzzles",

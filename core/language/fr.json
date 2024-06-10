@@ -973,7 +973,10 @@
 		"gchange65": "Remplacez cette adresse par TRANSFERT DE PROPRIÉTÉ du groupe !",
 		"gchange66": "Invalid Owner / New Owner Address",
 		"gchange67": "MISE À JOUR DE GROUPE réussie !",
-		"gchange68": "Définir l'avatar de groupe"
+		"gchange68": "Définir l'avatar de groupe",
+		"gchange69": "Messages",
+		"gchange70": "Aucun message ces dernières 24 heures !",
+		"gchange71": "Vous avez déjà rejoint ce groupe !"
 	},
 	"puzzlepage": {
 		"pchange1": "Puzzles",

@@ -973,7 +973,10 @@
 		"gchange65": "Vervang dit adres enkel als U de EIGENDOM van de groep wenst OVER TE DRAGEN!",
 		"gchange66": "Ongeldig adres van huidige of nieuwe eigenaar",
 		"gchange67": "Groep UPDATE succesvol uitgevoerd!",
-		"gchange68": "Groepsavatar instellen"
+		"gchange68": "Groepsavatar instellen",
+		"gchange69": "Berichten",
+		"gchange70": "Geen berichten in de afgelopen 24 uur!",
+		"gchange71": "Je bent al lid van deze groep!"
 	},
 	"puzzlepage": {
 		"pchange1": "Puzzels",

@@ -973,7 +973,10 @@
 		"gchange65": "Zameni ovu adresu NA PRENOS VLASNIŠTVA GRUPE!",
 		"gchange66": "Nevažeći vlasnik / adresa novog vlasnika",
 		"gchange67": "Grupni UPDATE je uspešan!",
-		"gchange68": "Postavi grupni avatar"
+		"gchange68": "Postavi grupni avatar",
+		"gchange69": "Poruke",
+		"gchange70": "Nema poruka u poslednja 24 sata!",
+		"gchange71": "Već ste se pridružili ovoj grupi!"
 	},
 	"puzzlepage": {
 		"pchange1": "Slagalice",

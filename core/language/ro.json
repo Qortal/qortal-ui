@@ -973,7 +973,10 @@
 		"gchange65": "Înlocuiți această adresă la TRANSFERAȚI PROPRIETATEA grupului!",
 		"gchange66": "Adresa proprietarului / proprietarului nou nevalidă",
 		"gchange67": "UPDATE de grup Reușit!",
-		"gchange68": "Set Avatar grup"
+		"gchange68": "Set Avatar grup",
+		"gchange69": "Mesaje",
+		"gchange70": "Niciun mesaj în ultimele 24 de ore!",
+		"gchange71": "Te-ai alaturat deja acestui grup!"
 	},
 	"puzzlepage": {
 		"pchange1": "Puzzle-uri",

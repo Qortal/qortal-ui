@@ -973,7 +973,10 @@
 		"gchange65": "Sostituisci questo indirizzo per TRASFERIRE LA PROPRIETA' del gruppo!",
 		"gchange66": "Indirizzo del proprietario non valido/nuovo proprietario",
 		"gchange67": "AGGIORNAMENTO di gruppo riuscito!",
-		"gchange68": "Imposta avatar di gruppo"
+		"gchange68": "Imposta avatar di gruppo",
+		"gchange69": "Messaggi",
+		"gchange70": "Nessun messaggio nelle ultime 24 ore!",
+		"gchange71": "Ti sei già unito a questo gruppo!"
 	},
 	"puzzlepage": {
 		"pchange1": "Puzzle",
