@@ -167,7 +167,13 @@ class ChatTextEditor extends LitElement {
 							}
 						</div>
 					` : html`
-						<div style="margin-bottom: 10px; ${(this.iframeId === 'newChat' || this.iframeId === "newAttachmentChat") ? 'display: none;' : 'display: flex;'}">
+						<div style="margin-bottom: 10px; ${(
+							this.iframeId === 'newChat'
+							|| this.iframeId === "newImageChat"
+							|| this.iframeId === "newGifChat"
+							|| this.iframeId === "newAttachmentChat"
+							|| this.iframeId === "newFileChat"
+						) ? 'display: none;' : 'display: flex;'}">
 							${this.isLoading === false
 								? html`
 									<img src="/img/qchat-send-message-icon.svg" alt="send-icon" class="send-icon" @click=${() => {this.sendMessageFunc(this.messageQueue)}}>
