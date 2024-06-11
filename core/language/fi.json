@@ -973,7 +973,10 @@
 		"gchange65": "Korvaa tämä osoite muotoon SIIRRÄ RYHMÄN OMISTAJUUS!",
 		"gchange66": "Virheellinen omistaja / uuden omistajan osoite",
 		"gchange67": "Ryhmän päivitys onnistui!",
-		"gchange68": "Aseta ryhmän avatar"
+		"gchange68": "Aseta ryhmän avatar",
+		"gchange69": "Viestit",
+		"gchange70": "Ei viestejä viimeisen 24 tunnin aikana!",
+		"gchange71": "Olet jo liittynyt tähän ryhmään!"
 	},
 	"puzzlepage": {
 		"pchange1": "Palapelit",

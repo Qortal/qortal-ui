@@ -973,7 +973,10 @@
 		"gchange65": "Cserélje ki ezt a címet erre: A CSOPORT TULAJDONJOGÁNAK ÁTRUHÁZÁSA!",
 		"gchange66": "Érvénytelen tulajdonos / új tulajdonos címe",
 		"gchange67": "Csoportos FRISSÍTÉS sikeres!",
-		"gchange68": "Csoportavatar beállítása"
+		"gchange68": "Csoportavatar beállítása",
+		"gchange69": "Üzenetek",
+		"gchange70": "Nincs üzenet az elmúlt 24 órában!",
+		"gchange71": "Már csatlakoztál ehhez a csoporthoz!"
 	},
 	"puzzlepage": {
 		"pchange1": "Rejtvények",

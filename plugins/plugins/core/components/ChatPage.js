@@ -1045,7 +1045,7 @@ class ChatPage extends LitElement {
 								}
 
 							},
-							"Shift-Enter": () => {
+							'Shift-Enter': () => {
 								if (this.isEnabledChatEnter) {
 									this.editor.commands.first(() => [
 										this.editor.commands.newlineInCode()
@@ -1079,6 +1079,13 @@ class ChatPage extends LitElement {
 									type: 'image'
 								})
 								return true
+							},
+							'Shift-Enter': () => {
+								if (this.isEnabledChatEnter) {
+									this.editor.commands.first(() => [
+										this.editor.commands.newlineInCode()
+									])
+								}
 							}
 						}
 					}
@@ -1107,6 +1114,13 @@ class ChatPage extends LitElement {
 									type: 'gif'
 								})
 								return true
+							},
+							'Shift-Enter': () => {
+								if (this.isEnabledChatEnter) {
+									this.editor.commands.first(() => [
+										this.editor.commands.newlineInCode()
+									])
+								}
 							}
 						}
 					}
@@ -1135,6 +1149,13 @@ class ChatPage extends LitElement {
 									type: 'attachment'
 								})
 								return true
+							},
+							'Shift-Enter': () => {
+								if (this.isEnabledChatEnter) {
+									this.editor.commands.first(() => [
+										this.editor.commands.newlineInCode()
+									])
+								}
 							}
 						}
 					}
@@ -1163,6 +1184,13 @@ class ChatPage extends LitElement {
 									type: 'file'
 								})
 								return true
+							},
+							'Shift-Enter': () => {
+								if (this.isEnabledChatEnter) {
+									this.editor.commands.first(() => [
+										this.editor.commands.newlineInCode()
+									])
+								}
 							}
 						}
 					}
@@ -1312,7 +1340,6 @@ class ChatPage extends LitElement {
 				}
 			}
 		}
-
 	}
 
 	async goToRepliedMessage(message, clickedOnMessage) {

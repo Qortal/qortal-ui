@@ -973,7 +973,10 @@
 		"gchange65": "Zamień ten adres na PRZENIESIENIE WŁASNOŚCI grupy!",
 		"gchange66": "Nieprawidłowy właściciel / nowy adres właściciela",
 		"gchange67": "AKTUALIZACJA grupy powiodła się!",
-		"gchange68": "Ustaw awatar grupy"
+		"gchange68": "Ustaw awatar grupy",
+		"gchange69": "Wiadomości",
+		"gchange70": "Brak wiadomości w ciągu ostatnich 24 godzin!",
+		"gchange71": "Już dołączyłeś do tej grupy!"
 	},
 	"puzzlepage": {
 		"pchange1": "Zagadki",

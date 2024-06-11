@@ -973,7 +973,10 @@
 		"gchange65": "将此地址替换为组的 TRANSFER OWNERSHIP！",
 		"gchange66": "无效的所有者/新所有者地址",
 		"gchange67": "组更新成功！",
-		"gchange68": "设置组头像"
+		"gchange68": "设置组头像",
+		"gchange69": "消息",
+		"gchange70": "过去 24 小时内没有消息！",
+		"gchange71": "您已经加入此群组！"
 	},
 	"puzzlepage": {
 		"pchange1": "益智游戏",

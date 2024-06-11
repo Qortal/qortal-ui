@@ -1,8 +1,15 @@
 import { html, LitElement } from 'lit'
 import { render } from 'lit/html.js'
+import { unsafeHTML } from 'lit/directives/unsafe-html.js'
 import { Epml } from '../../../epml'
+import { generateHTML } from '@tiptap/core'
+import { roundToNearestDecimal } from '../../utils/functions'
 import { groupManagementStyles } from '../components/plugins-css'
 import isElectron from 'is-electron'
+import Highlight from '@tiptap/extension-highlight'
+import ShortUniqueId from 'short-unique-id'
+import StarterKit from '@tiptap/starter-kit'
+import Underline from '@tiptap/extension-underline'
 import '../components/time-elements/index'
 import '@material/mwc-button'
 import '@material/mwc-dialog'
@@ -93,7 +100,11 @@ class GroupManagement extends LitElement {
 			haveName: { type: Boolean },
 			myName: { type: String },
 			haveGoName: { type: Boolean },
-			goName: { type: String }
+			goName: { type: String },
+			chatMessageArray: { type: Array },
+			chatInfoName: { type: String },
+			chatInfoId: { type: String },
+			chatInfoMembers: { type: String }
 		}
 	}
 
@@ -159,6 +170,10 @@ class GroupManagement extends LitElement {
 		this.myName = ''
 		this.haveGoName = false
 		this.goName = ''
+		this.chatMessageArray = []
+		this.chatInfoName = ''
+		this.chatInfoId = ''
+		this.chatInfoMembers = ''
 		this.selectedView = { id: 'group-members', name: 'Group Members' }
 	}
 
@@ -167,11 +182,16 @@ class GroupManagement extends LitElement {
 			<div id="group-management-page">
 				<div style="min-height: 48px; display: flex; padding-bottom: 6px; margin: 2px;">
 					<h2 style="margin: 0; flex: 1; padding-top: .1em; display: inline;">${translate("grouppage.gchange1")}</h2>
-					<mwc-button style="float:right;" @click=${() =>
-						this.shadowRoot.querySelector('#createGroupDialog').show()}>
-						<mwc-icon>add</mwc-icon>
-						${translate("grouppage.gchange2")}
-					</mwc-button>
+					<div style="float: right;">
+						<mwc-button @click=${() => this.shadowRoot.querySelector('#createGroupDialog').show()}>
+							<mwc-icon>add</mwc-icon>
+							${translate("grouppage.gchange2")}
+						</mwc-button>
+						<mwc-button class="green" @click=${() => this.openPreviewGeneral()}>
+							<mwc-icon>pageview</mwc-icon>
+							&nbsp;<span style="color: var(--qchat-name); font-size: 14px;">${translate("general.view")} Qortal General Chat</span>
+						</mwc-button>
+					</div>
 				</div>
 				<div class="divCard">
 					<h3 style="margin: 0; margin-bottom: 1em; text-align: left;">${translate("grouppage.gchange55")}</h3>
@@ -197,6 +217,10 @@ class GroupManagement extends LitElement {
 					<br />
 					<vaadin-grid theme="large" id="priveGroupSearchGrid" ?hidden="${this.isEmptyArray(this.privateGroupSearch)}" .items="${this.privateGroupSearch}" aria-label="My Search Result" all-rows-visible>
 						<vaadin-grid-column width="8rem" flex-grow="0" header="${translate("grouppage.gchange54")}" path="memberCount"></vaadin-grid-column>
+						<vaadin-grid-column width="8rem" flex-grow="0" header="${translate("grouppage.gchange69")}" .renderer=${async (root, column, data) => {
+							await this.getChatMessageCount(data.item)
+							render(html`<span>${this.countArray.length}</span>`, root)
+						}}></vaadin-grid-column>
 						<vaadin-grid-column header="${translate("grouppage.gchange4")}" path="groupName"></vaadin-grid-column>
 						<vaadin-grid-column header="${translate("managegroup.mg42")}" .renderer=${(root, column, data) => {
 							if (data.item.isOpen === true) {
@@ -207,11 +231,19 @@ class GroupManagement extends LitElement {
 						}}></vaadin-grid-column>
 						<vaadin-grid-column header="${translate("grouppage.gchange5")}" path="description"></vaadin-grid-column>
 						<vaadin-grid-column header="${translate("grouppage.gchange10")}" path="owner"></vaadin-grid-column>
-						<vaadin-grid-column width="11rem" flex-grow="0" header="${translate("grouppage.gchange7")}" .renderer=${(root, column, data) => {
+						<vaadin-grid-column width="11rem" flex-grow="0" header="${translate("datapage.dchange8")}" .renderer=${(root, column, data) => {
 							render(html`
 								<mwc-button @click=${() => this.openJoinGroup(data.item)}>
 									<mwc-icon>queue</mwc-icon>
 									&nbsp;${translate("grouppage.gchange51")}
+								</mwc-button>
+							`, root)
+						}}></vaadin-grid-column>
+						<vaadin-grid-column width="11rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
+							render(html`
+								<mwc-button class="green" @click=${() => this.openPreviewChat(data.item)}>
+									<mwc-icon>pageview</mwc-icon>
+									&nbsp;${translate("general.view")}
 								</mwc-button>
 							`, root)
 						}}></vaadin-grid-column>
@@ -221,13 +253,25 @@ class GroupManagement extends LitElement {
 					<h3 style="margin: 0; margin-bottom: 1em; text-align: center;">${translate("grouppage.gchange3")}</h3>
 					<vaadin-grid theme="large" id="joinedGroupsGrid" ?hidden="${this.isEmptyArray(this.joinedGroups)}" .items="${this.joinedGroups}" aria-label="Joined Groups" all-rows-visible>
 						<vaadin-grid-sort-column width="8rem" flex-grow="0" header="${translate("grouppage.gchange54")}" path="memberCount"></vaadin-grid-sort-column>
+						<vaadin-grid-column width="8rem" flex-grow="0" header="${translate("grouppage.gchange69")}" .renderer=${async (root, column, data) => {
+							await this.getChatMessageCount(data.item)
+							render(html`<span>${this.countArray.length}</span>`, root)
+						}}></vaadin-grid-column>
 						<vaadin-grid-sort-column header="${translate("grouppage.gchange4")}" path="groupName"></vaadin-grid-sort-column>
 						<vaadin-grid-sort-column header="${translate("grouppage.gchange5")}" path="description"></vaadin-grid-sort-column>
 						<vaadin-grid-column width="11rem" flex-grow="0" header="${translate("grouppage.gchange6")}" .renderer=${(root, column, data) => {
 							render(html`${this.renderRole(data.item)}`, root)
 						}}></vaadin-grid-column>
-						<vaadin-grid-column width="11rem" flex-grow="0" header="${translate("registernamepage.nchange7")}" .renderer=${(root, column, data) => {
+						<vaadin-grid-column width="11rem" flex-grow="0" header="${translate("datapage.dchange8")}" .renderer=${(root, column, data) => {
 							render(html`${this.renderManageButton(data.item)}`, root)
+						}}></vaadin-grid-column>
+						<vaadin-grid-column width="11rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
+							render(html`
+								<mwc-button class="green" @click=${() => this.openPreviewChat(data.item)}>
+									<mwc-icon>pageview</mwc-icon>
+									&nbsp;${translate("general.view")}
+								</mwc-button>
+							`, root)
 						}}></vaadin-grid-column>
 					</vaadin-grid>
 					${this.isEmptyArray(this.joinedGroups) ? html`
@@ -240,6 +284,10 @@ class GroupManagement extends LitElement {
 					<h3 style="margin: 0; margin-bottom: 1em; text-align: center;">${translate("managegroup.mg36")}</h3>
 					<vaadin-grid theme="large" id="openGroupInvitesGrid" ?hidden="${this.isEmptyArray(this.groupInvites)}" .items="${this.groupInvites}" aria-label="My Group Invites" all-rows-visible>
 						<vaadin-grid-column width="8rem" flex-grow="0" header="${translate("grouppage.gchange54")}" path="memberCount"></vaadin-grid-column>
+						<vaadin-grid-column width="8rem" flex-grow="0" header="${translate("grouppage.gchange69")}" .renderer=${async (root, column, data) => {
+							await this.getChatMessageCount(data.item)
+							render(html`<span>${this.countArray.length}</span>`, root)
+						}}></vaadin-grid-column>
 						<vaadin-grid-column header="${translate("grouppage.gchange4")}" path="groupName"></vaadin-grid-column>
 						<vaadin-grid-column header="${translate("managegroup.mg42")}" .renderer=${(root, column, data) => {
 							if (data.item.isOpen === true) {
@@ -252,11 +300,19 @@ class GroupManagement extends LitElement {
 							const expiryString = new Date(data.item.expiry).toLocaleString()
 							render(html`${expiryString}`, root)
 						}}></vaadin-grid-column>
-						<vaadin-grid-column width="11rem" flex-grow="0" header="${translate("grouppage.gchange7")}" .renderer=${(root, column, data) => {
+						<vaadin-grid-column width="11rem" flex-grow="0" header="${translate("datapage.dchange8")}" .renderer=${(root, column, data) => {
 							render(html`
 								<mwc-button @click=${() => this.openJoinGroup(data.item)}>
 									<mwc-icon>queue</mwc-icon>
 									&nbsp;${translate("grouppage.gchange51")}
+								</mwc-button>
+							`, root)
+						}}></vaadin-grid-column>
+						<vaadin-grid-column width="10rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
+							render(html`
+								<mwc-button class="green" @click=${() => this.openPreviewChat(data.item)}>
+									<mwc-icon>pageview</mwc-icon>
+									&nbsp;${translate("general.view")}
 								</mwc-button>
 							`, root)
 						}}></vaadin-grid-column>
@@ -287,11 +343,19 @@ class GroupManagement extends LitElement {
 						<vaadin-grid-sort-column header="${translate("grouppage.gchange4")}" path="groupName"></vaadin-grid-sort-column>
 						<vaadin-grid-sort-column header="${translate("grouppage.gchange5")}" path="description"></vaadin-grid-sort-column>
 						<vaadin-grid-sort-column header="${translate("grouppage.gchange10")}" path="owner"></vaadin-grid-sort-column>
-						<vaadin-grid-column width="11rem" flex-grow="0" header="${translate("grouppage.gchange7")}" .renderer=${(root, column, data) => {
+						<vaadin-grid-column width="11rem" flex-grow="0" header="${translate("datapage.dchange8")}" .renderer=${(root, column, data) => {
 							render(html`
 								<mwc-button @click=${() => this.openJoinGroup(data.item)}>
 									<mwc-icon>queue</mwc-icon>
 									&nbsp;${translate("grouppage.gchange51")}
+								</mwc-button>
+							`, root)
+						}}></vaadin-grid-column>
+						<vaadin-grid-column width="11rem" flex-grow="0" header="" .renderer=${(root, column, data) => {
+							render(html`
+								<mwc-button class="green" @click=${() => this.openPreviewChat(data.item)}>
+									<mwc-icon>pageview</mwc-icon>
+									&nbsp;${translate("general.view")}
 								</mwc-button>
 							`, root)
 						}}></vaadin-grid-column>
@@ -607,6 +671,52 @@ class GroupManagement extends LitElement {
 					</mwc-button>
 				</mwc-dialog>
 			</div>
+			<paper-dialog id="chatInfoDialog" class="info" modal>
+				<div style="width: 97%; height: 100%; max-height: 5vh; overflow: hidden;">
+					<div class="actions">
+						<h2>${translate("grouppage.gchange4")}: ${this.chatInfoName} / ${translate("managegroup.mg8")}: ${this.chatInfoId} / ${translate("grouppage.gchange54")}: ${this.chatInfoMembers}</h2>
+						<div>
+						<mwc-icon
+							class="close-icon-chat"
+							@click=${() => this.shadowRoot.getElementById('chat-container').scrollIntoView({
+								block: 'end',
+								behavior: 'smooth'
+							})}
+							title="${translate("managegroup.mg5")}"
+						>
+							arrow_circle_down
+						</mwc-icon>
+						<mwc-icon
+							class="close-icon-chat"
+							@click=${() => this.shadowRoot.getElementById('chat-container').scrollIntoView({
+								block: 'start',
+								behavior: 'smooth'
+							})}
+							title="${translate("managegroup.mg5")}"
+						>
+							arrow_circle_up
+						</mwc-icon>
+						<mwc-icon class="close-icon-chat" @click=${() => this.closePreviewChat()} title="${translate("managegroup.mg5")}">highlight_off</mwc-icon>
+						</div>
+					</div>
+				</div>
+				<div style="width: 100%; max-width: 71vw; height: 100%; max-height: 65vh; overflow-y: auto;">
+					<div id="chat-container"></div>
+				</div>
+			</paper-dialog>
+			<paper-dialog id="downloadProgressDialog" class="progress" modal>
+				<div class="lds-roller">
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+				</div>
+				<h2>${translate("chatpage.cchange2")}</h2>
+			</paper-dialog>
 		`
 	}
 
@@ -744,7 +854,7 @@ class GroupManagement extends LitElement {
 				if (sideEffectAction && sideEffectAction.type === 'openJoinGroupModal') {
 					const res = await getGroupInfo(sideEffectAction.data)
 					if (res && res.groupId) {
-						this.joinGroup(res)
+						this.openJoinGroup(res)
 					}
 					window.parent.reduxStore.dispatch(
 						window.parent.reduxAction.setSideEffectAction(null)
@@ -2495,21 +2605,22 @@ class GroupManagement extends LitElement {
 	}
 
 	async getNewGroupInvitesList(theGroup) {
-		let callGroupID = theGroup
 		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
 
+		let callGroupID = theGroup
 		let inviteObj = []
 		this.groupInviteMembers = []
+		this.newGroupInvitesList = []
 
 		await parentEpml.request('apiCall', {
 			url: `/groups/invites/group/${callGroupID}`
 		}).then(res => {
-			this.groupInviteMembers = res
+			this.groupInviteMembers = res.filter((item) => item.expiry > Date.now())
 		})
 
-		if (this.groupInviteMembers.length === 0) {
-
+		if (this.isEmptyArray(this.groupInviteMembers)) {
+			// Nothing to do because no open invites
 		} else {
 			this.groupInviteMembers.map(a => {
 				let callTheInviteMember = a.invitee
@@ -2593,8 +2704,14 @@ class GroupManagement extends LitElement {
 	}
 
 	closeManageGroupOwnerDialog() {
-		this.resetDefaultSettings()
+		this.manageGroupId = ''
+		this.theGroupOwner = ''
+		this.manageGroupName = ''
+		this.manageGroupCount = ''
+		this.manageGroupType = ''
 		this.shadowRoot.getElementById('manageGroupOwnerDialog').close()
+		this.resetDefaultSettings()
+
 		window.location.reload()
 	}
 
@@ -2605,13 +2722,17 @@ class GroupManagement extends LitElement {
 	}
 
 	async manageGroupOwner(groupObj) {
+		this.shadowRoot.getElementById('downloadProgressDialog').open()
+		const manageGroupDelay = ms => new Promise(res => setTimeout(res, ms))
+
+		let intervalInvites
+
 		this.manageGroupId = ''
 		this.theGroupOwner = ''
 		this.manageGroupName = ''
 		this.manageGroupCount = ''
 		this.manageGroupType = ''
 		this.manageGroupDescription = ''
-		const manageGroupDelay = ms => new Promise(res => setTimeout(res, ms))
 		this.manageGroupObj = groupObj
 		this.manageGroupId = groupObj.groupId
 		this.theGroupOwner = groupObj.owner
@@ -2619,46 +2740,1195 @@ class GroupManagement extends LitElement {
 		this.manageGroupCount = groupObj.memberCount
 		this.manageGroupType = groupObj.isOpen
 		this.manageGroupDescription = groupObj.description
+
 		await this.getNewMemberList(groupObj.groupId)
 		await this.getNewBannedList(groupObj.groupId)
 		await this.getNewGroupInvitesList(groupObj.groupId)
 		await this.getNewGroupJoinList(groupObj.groupId)
 		await this.getGoName(groupObj.owner)
 		await manageGroupDelay(1000)
+
 		this.shadowRoot.getElementById('manageGroupOwnerDialog').open()
+		this.shadowRoot.getElementById('downloadProgressDialog').close()
+
+		intervalInvites = setInterval(() => { this.getNewGroupInvitesList(this.manageGroupId) }, 300000)
 	}
 
 	async manageGroupAdmin(groupObj) {
+		this.shadowRoot.getElementById('downloadProgressDialog').open()
+		const manageGroupDelay = ms => new Promise(res => setTimeout(res, ms))
+
+		let intervalInvites
+
 		this.manageGroupId = ''
 		this.theGroupOwner = ''
 		this.manageGroupName = ''
 		this.manageGroupCount = ''
 		this.manageGroupType = ''
-		const manageGroupDelay = ms => new Promise(res => setTimeout(res, ms))
 		this.manageGroupObj = groupObj
 		this.manageGroupId = groupObj.groupId
 		this.theGroupOwner = groupObj.owner
 		this.manageGroupName = groupObj.groupName
 		this.manageGroupCount = groupObj.memberCount
 		this.manageGroupType = groupObj.isOpen
+
 		await this.getNewMemberList(groupObj.groupId)
 		await this.getNewBannedList(groupObj.groupId)
 		await this.getNewGroupInvitesList(groupObj.groupId)
 		await this.getGoName(groupObj.owner)
 		await manageGroupDelay(1000)
+
 		this.shadowRoot.getElementById('manageGroupOwnerDialog').open()
+		this.shadowRoot.getElementById('downloadProgressDialog').close()
+
+		intervalInvites = setInterval(() => { this.getNewGroupInvitesList(this.manageGroupId) }, 300000)
 	}
 
-	openJoinGroup(groupObj) {
-		this.resetDefaultSettings()
-		this.joinGroupObj = groupObj
-		this.shadowRoot.querySelector('#joinDialog').show()
+	async openJoinGroup(groupObj) {
+		this.joinGroupObj = {}
+		let joinedHroups = []
+		let requestJoin
+
+		let resJoinedGroups = await parentEpml.request('apiCall', {
+			url: `/groups/member/${this.selectedAddress.address}`
+		})
+
+		joinedHroups = resJoinedGroups
+		requestJoin = groupObj.groupId
+
+		if (joinedHroups.find(item => item.groupId === requestJoin)) {
+			this.resetDefaultSettings()
+			let allreadyJoindedString = get('grouppage.gchange71')
+			parentEpml.request('showSnackBar', `${allreadyJoindedString}`)
+		} else {
+			this.resetDefaultSettings()
+			this.joinGroupObj = groupObj
+			this.shadowRoot.querySelector('#joinDialog').show()
+		}
 	}
 
 	openLeaveGroup(groupObj) {
 		this.resetDefaultSettings()
 		this.leaveGroupObj = groupObj
 		this.shadowRoot.querySelector('#leaveDialog').show()
+	}
+
+	async openPreviewChat(groupObj) {
+		this.chatInfoName = groupObj.groupName
+		this.chatInfoId = groupObj.groupId
+		this.chatInfoMembers = groupObj.memberCount
+		this.shadowRoot.getElementById('downloadProgressDialog').open()
+		await this.getChatContent(groupObj.groupId)
+	}
+
+	async openPreviewGeneral() {
+		this.chatInfoName = 'Qortal General Chat'
+		this.chatInfoId = 0
+		this.chatInfoMembers = 'Everyone'
+		this.shadowRoot.getElementById('downloadProgressDialog').open()
+		await this.getChatContent(0)
+	}
+
+	closePreviewChat() {
+		this.shadowRoot.getElementById('chatInfoDialog').close()
+		this.chatInfoName = ''
+		this.chatInfoId = ''
+		this.chatInfoMembers = ''
+		this.chatMessageArray = []
+		this.shadowRoot.getElementById('chat-container').innerHTML = ''
+
+		if (this.webSocket) {
+			this.webSocket.close(1000, 'closed preview')
+			this.webSocket = ''
+		}
+	}
+
+	async getChatMessageCount(groupObj) {
+		this.countArray = []
+
+		let retChatArr = await parentEpml.request('apiCall', {
+			url: `/chat/messages?txGroupId=${groupObj.groupId}&haschatreference=false&encoding=BASE64&limit=0&reverse=false`
+		})
+
+		this.countArray = retChatArr
+	}
+
+	decodeMessage(string) {
+		const binaryString = atob(string)
+		const binaryLength = binaryString.length
+		const bytes = new Uint8Array(binaryLength)
+
+		for (let i = 0; i < binaryLength; i++) {
+			bytes[i] = binaryString.charCodeAt(i)
+		}
+
+		const decoder = new TextDecoder()
+		const decodedString = decoder.decode(bytes)
+		return decodedString
+	}
+
+	async getChatContent(involved) {
+		let chatArray = []
+		let decodedArray = []
+		this.chatMessageArray = []
+		this.firstMessageTimestamp = 0
+		const chatDelay = ms => new Promise(res => setTimeout(res, ms))
+
+		// Call the chat messages without chatreference ( without chatreference are messages in original )
+		let retChat = await parentEpml.request('apiCall', {
+			url: `/chat/messages?txGroupId=${involved}&haschatreference=false&encoding=BASE64&limit=0&reverse=false`
+		})
+
+		chatArray = retChat
+
+		// Decode the BASE64 Messagge and add to new array
+		chatArray.forEach(item => {
+			let decodedMessageObj = {}
+			let decodedMessage = this.decodeMessage(item.data)
+
+			const messageObj = {
+				timestamp: item.timestamp,
+				txGroupId: item.txGroupId,
+				reference: item.reference,
+				senderPublicKey: item.senderPublicKey,
+				sender: item.sender,
+				senderName: item.senderName,
+				encoding: item.encoding,
+				isText: item.isText,
+				isEncrypted: item.isEncrypted,
+				signature: item.signature
+			}
+
+			decodedMessageObj = { ...messageObj, decodedMessage }
+
+			decodedArray.push(decodedMessageObj)
+		})
+
+		// Set decoded array to new array
+		this.chatMessageArray = decodedArray
+
+		let chaEditedArray = []
+
+		// Call the chat messages with chatreference ( with chatreference means a message got edited )
+		let getEditedArray = await parentEpml.request('apiCall', {
+			url: `/chat/messages?txGroupId=${involved}&haschatreference=true&encoding=BASE64&limit=0&reverse=false`
+		})
+										
+		chaEditedArray = getEditedArray
+
+		// Replace messages which got edited in the chatMessageArray
+		chaEditedArray.forEach(item => {
+			let editedDecodedMessage = ''
+			let editedSignature = ''
+
+			editedDecodedMessage = this.decodeMessage(item.data)
+			editedSignature = item.chatReference
+
+			const found = this.chatMessageArray.some(el => el.signature === editedSignature)
+
+			if (found) {
+				this.chatMessageArray.find(v => v.signature === editedSignature).decodedMessage = editedDecodedMessage
+			}
+		})
+
+		this.shadowRoot.getElementById('downloadProgressDialog').close()
+		this.shadowRoot.getElementById('chatInfoDialog').open()
+		this.shadowRoot.getElementById('chat-container').innerHTML = ''
+
+		// Render the chat messages from chatMessageArray
+		await this.renderChatMessagesGrid(this.chatMessageArray, false)
+		await chatDelay(250)
+
+		this.shadowRoot.getElementById('chat-container').scrollIntoView({
+			block: 'end',
+			behavior: 'smooth'
+		})
+
+		// Start the websocket for new messages
+		this.fetchChatMessages(involved)
+	}
+
+	async scrollChatToEnd() {
+		const scrollDelay = ms => new Promise(res => setTimeout(res, ms))
+
+		await scrollDelay(100)
+
+		this.shadowRoot.getElementById('chat-container').scrollIntoView({
+			block: 'end',
+			behavior: 'smooth'
+		})
+	}
+
+	renderChatMessagesGrid(renderArray, scroll) {
+		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+		const chatGridContainer = this.shadowRoot.getElementById('chat-container')
+
+		let noMessagesString = get('grouppage.gchange70')
+		let forwardedString = get('blockpage.bcchange17')
+		let editedString = get('chatpage.cchange68')
+		let imageDeletedString = get('chatpage.cchange80')
+		let gifDeletedString = get('chatpage.cchange107')
+		let attachmentDeletedString = get('chatpage.cchange82')
+		let fileDeletedString = get('chatpage.cchange102')
+		let sizeString = get('websitespage.schange27')
+
+		if (this.shadowRoot.getElementById('chat-container').innerHTML === '') {
+			this.shadowRoot.getElementById('chat-container').innerHTML = ''
+		}
+		
+		if (this.isEmptyArray(renderArray)) {
+			const chatEmpty = document.createElement('div')
+			chatEmpty.classList.add('no-messages')
+			chatEmpty.textContent = noMessagesString
+
+			chatGridContainer.appendChild(chatEmpty)
+		} else {
+			renderArray.forEach(item => {
+				const parsedMessageObj = JSON.parse(item.decodedMessage)
+
+				let chatID = ''
+				let messageID = ''
+				let messageTimeID = ''
+				let messageEditedID = ''
+				let messageImageID = ''
+				let messageGifID = ''
+				let messageAttachmentID = ''
+				let messageFileID = ''
+				let repliedID = ''
+				let repliedImageID = ''
+				let repliedGifID = ''
+				let repliedAttachmentID = ''
+				let repliedFileID = ''
+				let subcontainer1ID = ''
+				let subcontainer2ID = ''
+				let name = ''
+				let repliedName = ''
+				let messageAddress = ''
+				let repliedMessageAddress = ''
+				let repliedMessage = ''
+				let messageContent = ''
+				let imageLink = ''
+				let gifLink = ''
+				let attachmentLink = ''
+				let fileLink = ''
+				let attachmentName = ''
+				let fileName = ''
+				let attachmentSize = ''
+				let fileSize = ''
+				let repliedImageLink = ''
+				let repliedGifLink = ''
+				let repliedAttachmentLink = ''
+				let repliedFileLink = ''
+				let repliedAttachmentName = ''
+				let repliedFileName = ''
+				let repliedAttachmentSize = ''
+				let repliedFileSize = ''
+				let messageTimeString = ''
+				let haveImage = false
+				let haveGif = false
+				let haveAttachment = false
+				let haveFile = false
+				let haveRepliedImage = false
+				let haveRepliedGif = false
+				let haveRepliedAttachment = false
+				let haveRepliedFile = false
+				let hasImageDeleted = false
+				let hasGifDeleted = false
+				let hasAttachmentDeleted = false
+				let hasFileDeleted = false
+				let hasRepliedImageDeleted = false
+				let hasRepliedGifDeleted = false
+				let hasRepliedAttachmentDeleted = false
+				let hasRepliedFileDeleted = false
+				let isForwarded = false
+				let isEdited = false
+				let avatarFetches = 0
+				let imageFetches = 0
+				let repliedImageFetches = 0
+
+				messageTimeString = new Date(item.timestamp).toLocaleString()
+
+				if (item.senderName) {
+					name = item.senderName
+					messageAddress = item.sender
+				} else {
+					name = item.sender
+					messageAddress = item.sender
+				}
+
+				chatID = item.reference
+				messageID = item.signature
+				messageTimeID = 'time-' + item.signature
+				messageEditedID = 'edited-' + item.signature
+				messageImageID = 'image-' + item.signature
+				messageGifID = 'gif-' + item.signature
+				messageAttachmentID = 'attachment-' + item.signature
+				messageFileID = 'file-' + item.signature
+				subcontainer1ID = 'subcontainer1-' + item.signature
+				subcontainer2ID = 'subcontainer2-' + item.signature
+				isForwarded = parsedMessageObj.type === 'forward'
+				isEdited = parsedMessageObj.isEdited
+
+				if (parsedMessageObj.version > 1 && parsedMessageObj.messageText) {
+					messageContent = generateHTML(parsedMessageObj.messageText, [StarterKit, Underline, Highlight])
+				}
+
+				if (parsedMessageObj.repliedTo) {
+					let replied = this.chatMessageArray.filter(obj => {
+						return obj.signature === parsedMessageObj.repliedTo
+					})
+
+					replied.forEach(item => {
+						const parsedRepliedMessageObj = JSON.parse(item.decodedMessage)
+
+						if (item.senderName) {
+							repliedName = item.senderName
+							repliedMessageAddress = item.sender
+						} else {
+							repliedName = item.sender
+							repliedMessageAddress = item.sender
+						}
+
+						repliedID = item.reference
+						repliedImageID = 'repimage-' + item.signature
+						repliedGifID = 'repgif-' + item.signature
+						repliedAttachmentID = 'repattachment-' + item.signature
+						repliedFileID = 'repfile-' + item.signature
+
+						if (parsedRepliedMessageObj.isImageDeleted === false) {
+							haveRepliedImage = true
+							hasRepliedImageDeleted = false
+
+							parsedRepliedMessageObj.images.forEach(item => {
+								if (item.name) {
+									repliedImageLink = item.service + '/' + item.name + '/' + item.identifier
+								}
+							})
+						} else if (parsedRepliedMessageObj.isImageDeleted === true) {
+							haveRepliedImage = true
+							hasRepliedImageDeleted = true
+						}
+
+						if (parsedRepliedMessageObj.isGifDeleted === false) {
+							haveRepliedGif = true
+							hasRepliedGifDeleted = false
+
+							parsedRepliedMessageObj.gifs.forEach(item => {
+								if (item.name) {
+									repliedGifLink = item.service + '/' + item.name + '/' + item.identifier
+								}
+							})
+						} else if (parsedRepliedMessageObj.isGifDeleted === true) {
+							haveRepliedGif = true
+							hasRepliedGifDeleted = true
+						}
+
+						if (parsedRepliedMessageObj.isAttachmentDeleted === false) {
+							haveRepliedAttachment = true
+							hasRepliedAttachmentDeleted = false
+
+							parsedRepliedMessageObj.attachments.forEach(item => {
+								if (item.name) {
+									repliedAttachmentLink = item.service + '/' + item.name + '/' + item.identifier
+									repliedAttachmentName = item.attachmentName
+									let repliedAttachmentSizeMb = roundToNearestDecimal(item.attachmentSize)
+									repliedAttachmentSize = sizeString + ': ' + repliedAttachmentSizeMb + ' mb'
+								}
+							})
+						} else if (parsedRepliedMessageObj.isAttachmentDeleted === true) {
+							haveRepliedAttachment = true
+							hasRepliedAttachmentDeleted = true
+						}
+
+						if (parsedRepliedMessageObj.isFileDeleted === false) {
+							haveRepliedFile = true
+							hasRepliedFileDeleted = false
+
+							parsedRepliedMessageObj.files.forEach(item => {
+								if (item.name) {
+									repliedFileLink = item.service + '/' + item.name + '/' + item.identifier
+									repliedFileName = item.appFileName
+									let repliedFileSizeMb = roundToNearestDecimal(item.appFileSize)
+									repliedFileSize = sizeString + ': ' + repliedFileSizeMb + ' mb'
+								}
+							})
+						} else if (parsedRepliedMessageObj.isFileDeleted === true) {
+							haveRepliedFile = true
+							hasRepliedFileDeleted = true
+						}
+
+						if (parsedRepliedMessageObj.version > 1 && parsedRepliedMessageObj.messageText) {
+							repliedMessage = generateHTML(parsedRepliedMessageObj.messageText, [StarterKit, Underline, Highlight])
+						}
+					})
+				}
+
+				if (parsedMessageObj.isImageDeleted === false) {
+					haveImage = true
+					hasImageDeleted = false
+
+					parsedMessageObj.images.forEach(item => {
+						if (item.name) {
+							imageLink = item.service + '/' + item.name + '/' + item.identifier
+						}
+					})
+				} else if (parsedMessageObj.isImageDeleted === true) {
+					haveImage = true
+					hasImageDeleted = true
+				}
+
+				if (parsedMessageObj.isGifDeleted === false) {
+					haveGif = true
+					hasGifDeleted = false
+
+					parsedMessageObj.gifs.forEach(item => {
+						if (item.name) {
+							gifLink = item.service + '/' + item.name + '/' + item.identifier
+						}
+					})
+				} else if (parsedMessageObj.isGifDeleted === true) {
+					haveGif = true
+					hasGifDeleted = true
+				}
+
+				if (parsedMessageObj.isAttachmentDeleted === false) {
+					haveAttachment = true
+					hasAttachmentDeleted = false
+
+					parsedMessageObj.attachments.forEach(item => {
+						if (item.name) {
+							attachmentLink = item.service + '/' + item.name + '/' + item.identifier
+							attachmentName = item.attachmentName
+							let attachmentSizeMb = roundToNearestDecimal(item.attachmentSize)
+							attachmentSize = sizeString + ': ' + attachmentSizeMb + ' mb'
+						}
+					})
+				} else if (parsedMessageObj.isAttachmentDeleted === true) {
+					haveAttachment = true
+					hasAttachmentDeleted = true
+				}
+
+				if (parsedMessageObj.isFileDeleted === false) {
+					haveFile = true
+					hasFileDeleted = false
+
+					parsedMessageObj.files.forEach(item => {
+						if (item.name) {
+							fileLink = item.service + '/' + item.name + '/' + item.identifier
+							fileName = item.appFileName
+							let fileSizeMb = roundToNearestDecimal(item.appFileSize)
+							fileSize = sizeString + ': ' + fileSizeMb + ' mb'
+						}
+					})
+				} else if (parsedMessageObj.isFileDeleted === true) {
+					haveFile = true
+					hasFileDeleted = true
+				}
+
+				const chatElement = document.createElement('div')
+				chatElement.setAttribute('id', chatID)
+				chatElement.classList.add('message-container')
+
+				const forwarded = document.createElement('span')
+				forwarded.classList.add('message-data-forward')
+				forwarded.textContent = forwardedString
+
+				const subcontainer1 = document.createElement('div')
+				subcontainer1.setAttribute('id', subcontainer1ID)
+				subcontainer1.classList.add('message-subcontainer1')
+
+				const subcontainer2 = document.createElement('div')
+				subcontainer2.setAttribute('id', subcontainer2ID)
+				if (this.selectedAddress.address === messageAddress) {
+					subcontainer2.classList.add('message-subcontainer2-mybg', 'message-triangle-mybg')
+				} else {
+					subcontainer2.classList.add('message-subcontainer2', 'message-triangle')
+				}
+
+				const avatarContainer = document.createElement('div')
+				avatarContainer.classList.add('message-avatar')
+
+				const userinfo = document.createElement('div')
+				userinfo.classList.add('message-user-info')
+
+				const username = document.createElement('span')
+				if (this.selectedAddress.address === messageAddress) {
+					username.classList.add('message-data-my-name')
+				} else {
+					username.classList.add('message-data-name')
+				}
+				username.textContent = name
+
+				if (isForwarded) {
+					userinfo.appendChild(username)
+					userinfo.appendChild(forwarded)
+				} else {
+					userinfo.appendChild(username)
+				}
+
+				const messageContainer = document.createElement('div')
+				messageContainer.setAttribute('id', messageID)
+				messageContainer.classList.add('message')
+				messageContainer.innerHTML = messageContent
+
+				const messageTimeContainer = document.createElement('div')
+				messageTimeContainer.setAttribute('id', messageTimeID)
+
+				const messageOrgTimeString = document.createElement('span')
+				messageOrgTimeString.classList.add('message-data-edited')
+				messageOrgTimeString.textContent = messageTimeString
+
+				const messageEditedString = document.createElement('span')
+				messageEditedString.setAttribute('id', messageEditedID)
+				messageEditedString.classList.add('message-data-edited')
+				messageEditedString.textContent = editedString
+
+				if (!isEdited) {
+					messageTimeContainer.classList.add('message-data-time')
+					messageTimeContainer.appendChild(messageOrgTimeString)
+				} else if (isEdited) {
+					messageTimeContainer.classList.add('message-data-time-edited')
+					messageTimeContainer.appendChild(messageEditedString)
+					messageTimeContainer.appendChild(messageOrgTimeString)
+				}
+
+				const avatarUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${name}/qortal_avatar?async=true`
+				const avatarImage = document.createElement('img')
+				avatarImage.src = `${avatarUrl}`
+				avatarImage.onerror = () => {
+					if (avatarFetches < 4) {
+						setTimeout(() => {
+							avatarFetches = avatarFetches + 1
+							avatarImage.src = `${avatarUrl}`
+						}, 750)
+					} else {
+						avatarImage.src = '/img/incognito.png'
+					}
+				}
+				avatarContainer.appendChild(avatarImage)
+
+				const contentDeltedContainer = document.createElement('div')
+				contentDeltedContainer.classList.add('attachment-container')
+
+				const contentDeltedInfo = document.createElement('div')
+				contentDeltedInfo.classList.add('attachment-info')
+
+				const contentDeltedText = document.createElement('p')
+				contentDeltedText.classList.add('attachment-deleted')
+
+				const repliedtodata = document.createElement('div')
+				repliedtodata.classList.add('original-message')
+				repliedtodata.onclick = () => {
+					this.shadowRoot.getElementById(repliedID).scrollIntoView({
+						behavior: 'smooth'
+					})
+				}
+
+				const repliedtoname = document.createElement('p')
+				if (this.selectedAddress.address === repliedMessageAddress) {
+					repliedtoname.classList.add('original-message-sender-wasme')
+				} else {
+					repliedtoname.classList.add('original-message-sender')
+				}
+				repliedtoname.textContent = repliedName
+
+				const repliedtomessage = document.createElement('p')
+				repliedtomessage.classList.add('replied-message')
+				repliedtomessage.innerHTML = repliedMessage
+
+				const attachmentContainer = document.createElement('div')
+				attachmentContainer.setAttribute('id', messageAttachmentID)
+				attachmentContainer.classList.add('attachment-container')
+
+				const attachmentIconContainer = document.createElement('div')
+				attachmentIconContainer.classList.add('attachment-icon-container')
+
+				const attachmentIconUrl = `/img/attachment-icon.png`
+				const attachmentIcon = document.createElement('img')
+				attachmentIcon.classList.add('attachment-icon')
+				attachmentIcon.src = `${attachmentIconUrl}`
+
+				attachmentIconContainer.appendChild(attachmentIcon)
+
+				const attachmentInfoContainer = document.createElement('div')
+				attachmentInfoContainer.classList.add('attachment-info')
+
+				const attachmentNameContainer = document.createElement('p')
+				attachmentNameContainer.classList.add('attachment-name')
+				attachmentNameContainer.textContent = attachmentName
+
+				const attachmentSizeContainer = document.createElement('p')
+				attachmentSizeContainer.classList.add('attachment-size')
+				attachmentSizeContainer.textContent = attachmentSize
+
+				attachmentInfoContainer.appendChild(attachmentNameContainer)
+				attachmentInfoContainer.appendChild(attachmentSizeContainer)
+
+				attachmentContainer.appendChild(attachmentIconContainer)
+				attachmentContainer.appendChild(attachmentInfoContainer)
+
+				const repliedAttachmentContainer = document.createElement('div')
+				repliedAttachmentContainer.setAttribute('id', repliedAttachmentID)
+				repliedAttachmentContainer.classList.add('attachment-container')
+
+				const repliedAttachmentIconContainer = document.createElement('div')
+				repliedAttachmentIconContainer.classList.add('attachment-icon-container')
+
+				const repliedAttachmentIconUrl = `/img/attachment-icon.png`
+				const repliedAttachmentIcon = document.createElement('img')
+				repliedAttachmentIcon.classList.add('attachment-icon')
+				repliedAttachmentIcon.src = `${repliedAttachmentIconUrl}`
+
+				repliedAttachmentIconContainer.appendChild(repliedAttachmentIcon)
+
+				const repliedAttachmentInfoContainer = document.createElement('div')
+				repliedAttachmentInfoContainer.classList.add('attachment-info')
+
+				const repliedAttachmentNameContainer = document.createElement('p')
+				repliedAttachmentNameContainer.classList.add('attachment-name')
+				repliedAttachmentNameContainer.textContent = repliedAttachmentName
+
+				const repliedAttachmentSizeContainer = document.createElement('p')
+				repliedAttachmentSizeContainer.classList.add('attachment-size')
+				repliedAttachmentSizeContainer.textContent = repliedAttachmentSize
+
+				repliedAttachmentInfoContainer.appendChild(repliedAttachmentNameContainer)
+				repliedAttachmentInfoContainer.appendChild(repliedAttachmentSizeContainer)
+
+				repliedAttachmentContainer.appendChild(repliedAttachmentIconContainer)
+				repliedAttachmentContainer.appendChild(repliedAttachmentInfoContainer)
+
+				const fileContainer = document.createElement('div')
+				fileContainer.setAttribute('id', messageFileID)
+				fileContainer.classList.add('file-container')
+
+				const fileIconContainer = document.createElement('div')
+				fileIconContainer.classList.add('file-icon-container')
+
+				const fileIconUrl = `/img/file-icon.png`
+				const fileIcon = document.createElement('img')
+				fileIcon.classList.add('file-icon')
+				fileIcon.src = `${fileIconUrl}`
+
+				fileIconContainer.appendChild(fileIcon)
+
+				const fileInfoContainer = document.createElement('div')
+				fileInfoContainer.classList.add('attachment-info')
+
+				const fileNameContainer = document.createElement('p')
+				fileNameContainer.classList.add('attachment-name')
+				fileNameContainer.textContent = fileName
+
+				const fileSizeContainer = document.createElement('p')
+				fileSizeContainer.classList.add('attachment-size')
+				fileSizeContainer.textContent = fileSize
+
+				fileInfoContainer.appendChild(fileNameContainer)
+				fileInfoContainer.appendChild(fileSizeContainer)
+
+				fileContainer.appendChild(fileIconContainer)
+				fileContainer.appendChild(fileInfoContainer)
+
+				const repliedFileContainer = document.createElement('div')
+				repliedFileContainer.setAttribute('id', repliedFileID)
+				repliedFileContainer.classList.add('file-container')
+
+				const repliedFileIconContainer = document.createElement('div')
+				repliedFileIconContainer.classList.add('file-icon-container')
+
+				const repliedFileIconUrl = `/img/file-icon.png`
+				const repliedFileIcon = document.createElement('img')
+				repliedFileIcon.classList.add('file-icon')
+				repliedFileIcon.src = `${repliedFileIconUrl}`
+
+				repliedFileIconContainer.appendChild(repliedFileIcon)
+
+				const repliedFileInfoContainer = document.createElement('div')
+				repliedFileInfoContainer.classList.add('attachment-info')
+
+				const repliedFileNameContainer = document.createElement('p')
+				repliedFileNameContainer.classList.add('attachment-name')
+				repliedFileNameContainer.textContent = repliedFileName
+
+				const repliedFileSizeContainer = document.createElement('p')
+				repliedFileSizeContainer.classList.add('attachment-size')
+				repliedFileSizeContainer.textContent = repliedFileSize
+
+				repliedFileInfoContainer.appendChild(repliedFileNameContainer)
+				repliedFileInfoContainer.appendChild(repliedFileSizeContainer)
+
+				repliedFileContainer.appendChild(repliedFileIconContainer)
+				repliedFileContainer.appendChild(repliedFileInfoContainer)
+
+				if (repliedMessage
+					&& !haveRepliedImage
+					&& !hasRepliedImageDeleted
+					&& !haveRepliedGif
+					&& !hasRepliedGifDeleted
+					&& !haveRepliedAttachment
+					&& !hasRepliedAttachmentDeleted
+					&& !haveRepliedFile
+					&& !hasRepliedFileDeleted
+				) {
+					repliedtodata.appendChild(repliedtoname)
+					repliedtodata.appendChild(repliedtomessage)
+
+					subcontainer2.appendChild(userinfo)
+					subcontainer2.appendChild(repliedtodata)
+					subcontainer2.appendChild(messageContainer)
+					subcontainer2.appendChild(messageTimeContainer)
+
+					subcontainer1.appendChild(avatarContainer)
+					subcontainer1.appendChild(subcontainer2)
+
+					chatElement.appendChild(subcontainer1)
+
+					chatGridContainer.appendChild(chatElement)
+				} else if (repliedMessage
+					&& haveRepliedImage
+					&& !hasRepliedImageDeleted
+					&& !haveRepliedGif
+					&& !hasRepliedGifDeleted
+					&& !haveRepliedAttachment
+					&& !hasRepliedAttachmentDeleted
+					&& !haveRepliedFile
+					&& !hasRepliedFileDeleted
+				) {
+					const repliedImageContainer = document.createElement('div')
+					repliedImageContainer.setAttribute('id', repliedImageID)
+					repliedImageContainer.classList.add('image-container')
+
+					const repliedImageUrl = `${nodeUrl}/arbitrary/${repliedImageLink}?async=true`
+
+					const chatRepliedImage = document.createElement('img')
+					chatRepliedImage.classList.add('chat-replied-img')
+					chatRepliedImage.src = `${repliedImageUrl}`
+					chatRepliedImage.onerror = () => {
+						chatRepliedImage.src = '/img/img-loading.png'
+						if (repliedImageFetches < 400) {
+							setTimeout(() => {
+								repliedImageFetches = repliedImageFetches + 1
+								chatRepliedImage.src = `${repliedImageUrl}`
+							}, 750)
+						} else {
+							chatRepliedImage.src = '/img/chain.png'
+						}
+					}
+
+					repliedImageContainer.appendChild(chatRepliedImage)
+
+					repliedtodata.appendChild(repliedtoname)
+					repliedtodata.appendChild(repliedImageContainer)
+					repliedtodata.appendChild(repliedtomessage)
+
+					subcontainer2.appendChild(userinfo)
+					subcontainer2.appendChild(repliedtodata)
+					subcontainer2.appendChild(messageContainer)
+					subcontainer2.appendChild(messageTimeContainer)
+
+					subcontainer1.appendChild(avatarContainer)
+					subcontainer1.appendChild(subcontainer2)
+
+					chatElement.appendChild(subcontainer1)
+
+					chatGridContainer.appendChild(chatElement)
+				} else if (repliedMessage
+					&& haveRepliedImage
+					&& hasRepliedImageDeleted
+					&& !haveRepliedGif
+					&& !hasRepliedGifDeleted
+					&& !haveRepliedAttachment
+					&& !hasRepliedAttachmentDeleted
+					&& !haveRepliedFile
+					&& !hasRepliedFileDeleted
+				) {
+					contentDeltedText.textContent = imageDeletedString
+
+					contentDeltedInfo.appendChild(contentDeltedText)
+					contentDeltedContainer.appendChild(contentDeltedInfo)
+
+					repliedtodata.appendChild(repliedtoname)
+					repliedtodata.appendChild(contentDeltedContainer)
+					repliedtodata.appendChild(repliedtomessage)
+
+					subcontainer2.appendChild(userinfo)
+					subcontainer2.appendChild(repliedtodata)
+					subcontainer2.appendChild(messageContainer)
+					subcontainer2.appendChild(messageTimeContainer)
+
+					subcontainer1.appendChild(avatarContainer)
+					subcontainer1.appendChild(subcontainer2)
+
+					chatElement.appendChild(subcontainer1)
+
+					chatGridContainer.appendChild(chatElement)
+				} else if (repliedMessage
+					&& !haveRepliedImage
+					&& !hasRepliedImageDeleted
+					&& haveRepliedGif
+					&& !hasRepliedGifDeleted
+					&& !haveRepliedAttachment
+					&& !hasRepliedAttachmentDeleted
+					&& !haveRepliedFile
+					&& !hasRepliedFileDeleted
+				) {
+					const repliedImageContainer = document.createElement('div')
+					repliedImageContainer.setAttribute('id', repliedGifID)
+					repliedImageContainer.classList.add('image-container')
+
+					const repliedGifUrl = `${nodeUrl}/arbitrary/${repliedGifLink}?async=true`
+
+					const chatRepliedImage = document.createElement('img')
+					chatRepliedImage.classList.add('chat-replied-img')
+					chatRepliedImage.src = `${repliedGifUrl}`
+					chatRepliedImage.onerror = () => {
+						chatRepliedImage.src = '/img/img-loading.png'
+						if (repliedImageFetches < 400) {
+							setTimeout(() => {
+								repliedImageFetches = repliedImageFetches + 1
+								chatRepliedImage.src = `${repliedGifUrl}`
+							}, 750)
+						} else {
+							chatRepliedImage.src = '/img/chain.png'
+						}
+					}
+
+					repliedImageContainer.appendChild(chatRepliedImage)
+
+					repliedtodata.appendChild(repliedtoname)
+					repliedtodata.appendChild(repliedImageContainer)
+					repliedtodata.appendChild(repliedtomessage)
+
+					subcontainer2.appendChild(userinfo)
+					subcontainer2.appendChild(repliedtodata)
+					subcontainer2.appendChild(messageContainer)
+					subcontainer2.appendChild(messageTimeContainer)
+
+					subcontainer1.appendChild(avatarContainer)
+					subcontainer1.appendChild(subcontainer2)
+
+					chatElement.appendChild(subcontainer1)
+
+					chatGridContainer.appendChild(chatElement)
+				} else if (repliedMessage
+					&& !haveRepliedImage
+					&& !hasRepliedImageDeleted
+					&& haveRepliedGif
+					&& hasRepliedGifDeleted
+					&& !haveRepliedAttachment
+					&& !hasRepliedAttachmentDeleted
+					&& !haveRepliedFile
+					&& !hasRepliedFileDeleted
+				) {
+					contentDeltedText.textContent = gifDeletedString
+
+					contentDeltedInfo.appendChild(contentDeltedText)
+					contentDeltedContainer.appendChild(contentDeltedInfo)
+
+					repliedtodata.appendChild(repliedtoname)
+					repliedtodata.appendChild(contentDeltedContainer)
+					repliedtodata.appendChild(repliedtomessage)
+
+					subcontainer2.appendChild(userinfo)
+					subcontainer2.appendChild(repliedtodata)
+					subcontainer2.appendChild(messageContainer)
+					subcontainer2.appendChild(messageTimeContainer)
+
+					subcontainer1.appendChild(avatarContainer)
+					subcontainer1.appendChild(subcontainer2)
+
+					chatElement.appendChild(subcontainer1)
+
+					chatGridContainer.appendChild(chatElement)
+				} else if (repliedMessage
+					&& !haveRepliedImage
+					&& !hasRepliedImageDeleted
+					&& !haveRepliedGif
+					&& !hasRepliedGifDeleted
+					&& haveRepliedAttachment
+					&& !hasRepliedAttachmentDeleted
+					&& !haveRepliedFile
+					&& !hasRepliedFileDeleted
+				) {
+					repliedtodata.appendChild(repliedtoname)
+					repliedtodata.appendChild(repliedAttachmentContainer)
+					repliedtodata.appendChild(repliedtomessage)
+
+					subcontainer2.appendChild(userinfo)
+					subcontainer2.appendChild(repliedtodata)
+					subcontainer2.appendChild(messageContainer)
+					subcontainer2.appendChild(messageTimeContainer)
+
+					subcontainer1.appendChild(avatarContainer)
+					subcontainer1.appendChild(subcontainer2)
+
+					chatElement.appendChild(subcontainer1)
+
+					chatGridContainer.appendChild(chatElement)
+				} else if (repliedMessage
+					&& !haveRepliedImage
+					&& !hasRepliedImageDeleted
+					&& !haveRepliedGif
+					&& !hasRepliedGifDeleted
+					&& haveRepliedAttachment
+					&& hasRepliedAttachmentDeleted
+					&& !haveRepliedFile
+					&& !hasRepliedFileDeleted
+				) {
+					contentDeltedText.textContent = attachmentDeletedString
+
+					contentDeltedInfo.appendChild(contentDeltedText)
+					contentDeltedContainer.appendChild(contentDeltedInfo)
+
+					repliedtodata.appendChild(repliedtoname)
+					repliedtodata.appendChild(contentDeltedContainer)
+					repliedtodata.appendChild(repliedtomessage)
+
+					subcontainer2.appendChild(userinfo)
+					subcontainer2.appendChild(repliedtodata)
+					subcontainer2.appendChild(messageContainer)
+					subcontainer2.appendChild(messageTimeContainer)
+
+					subcontainer1.appendChild(avatarContainer)
+					subcontainer1.appendChild(subcontainer2)
+
+					chatElement.appendChild(subcontainer1)
+
+					chatGridContainer.appendChild(chatElement)
+				} else if (repliedMessage
+					&& !haveRepliedImage
+					&& !hasRepliedImageDeleted
+					&& !haveRepliedGif
+					&& !hasRepliedGifDeleted
+					&& !haveRepliedAttachment
+					&& !hasRepliedAttachmentDeleted
+					&& haveRepliedFile
+					&& !hasRepliedFileDeleted
+				) {
+					repliedtodata.appendChild(repliedtoname)
+					repliedtodata.appendChild(repliedFileContainer)
+					repliedtodata.appendChild(repliedtomessage)
+
+					subcontainer2.appendChild(userinfo)
+					subcontainer2.appendChild(repliedtodata)
+					subcontainer2.appendChild(messageContainer)
+					subcontainer2.appendChild(messageTimeContainer)
+
+					subcontainer1.appendChild(avatarContainer)
+					subcontainer1.appendChild(subcontainer2)
+
+					chatElement.appendChild(subcontainer1)
+
+					chatGridContainer.appendChild(chatElement)
+				} else if (repliedMessage
+					&& !haveRepliedImage
+					&& !hasRepliedImageDeleted
+					&& !haveRepliedGif
+					&& !hasRepliedGifDeleted
+					&& !haveRepliedAttachment
+					&& !hasRepliedAttachmentDeleted
+					&& haveRepliedFile
+					&& hasRepliedFileDeleted
+				) {
+					contentDeltedText.textContent = fileDeletedString
+
+					contentDeltedInfo.appendChild(contentDeltedText)
+					contentDeltedContainer.appendChild(contentDeltedInfo)
+
+					repliedtodata.appendChild(repliedtoname)
+					repliedtodata.appendChild(contentDeltedContainer)
+					repliedtodata.appendChild(repliedtomessage)
+
+					subcontainer2.appendChild(userinfo)
+					subcontainer2.appendChild(repliedtodata)
+					subcontainer2.appendChild(messageContainer)
+					subcontainer2.appendChild(messageTimeContainer)
+
+					subcontainer1.appendChild(avatarContainer)
+					subcontainer1.appendChild(subcontainer2)
+
+					chatElement.appendChild(subcontainer1)
+
+					chatGridContainer.appendChild(chatElement)
+				} else if (haveImage && !hasImageDeleted) {
+					const imageContainer = document.createElement('div')
+					imageContainer.setAttribute('id', messageImageID)
+					imageContainer.classList.add('image-container')
+
+					const imageUrl = `${nodeUrl}/arbitrary/${imageLink}?async=true`
+					const chatImage = document.createElement('img')
+					chatImage.classList.add('chat-img')
+					chatImage.src = `${imageUrl}`
+					chatImage.onerror = () => {
+						chatImage.src = '/img/img-loading.png'
+						if (imageFetches < 400) {
+							setTimeout(() => {
+								imageFetches = imageFetches + 1
+								chatImage.src = `${imageUrl}`
+							}, 750)
+						} else {
+							chatImage.src = '/img/chain.png'
+						}
+					}
+
+					imageContainer.appendChild(chatImage)
+
+					subcontainer2.appendChild(userinfo)
+					subcontainer2.appendChild(imageContainer)
+					subcontainer2.appendChild(messageContainer)
+					subcontainer2.appendChild(messageTimeContainer)
+
+					subcontainer1.appendChild(avatarContainer)
+					subcontainer1.appendChild(subcontainer2)
+
+					chatElement.appendChild(subcontainer1)
+
+					chatGridContainer.appendChild(chatElement)
+				} else if (haveImage && hasImageDeleted) {
+					contentDeltedText.textContent = imageDeletedString
+
+					contentDeltedInfo.appendChild(contentDeltedText)
+					contentDeltedContainer.appendChild(contentDeltedInfo)
+
+					subcontainer2.appendChild(userinfo)
+					subcontainer2.appendChild(contentDeltedContainer)
+					subcontainer2.appendChild(messageContainer)
+					subcontainer2.appendChild(messageTimeContainer)
+
+					subcontainer1.appendChild(avatarContainer)
+					subcontainer1.appendChild(subcontainer2)
+
+					chatElement.appendChild(subcontainer1)
+
+					chatGridContainer.appendChild(chatElement)
+				} else if (haveGif && !hasGifDeleted) {
+					const imageContainer = document.createElement('div')
+					imageContainer.setAttribute('id', messageGifID)
+					imageContainer.classList.add('image-container')
+
+					const gifUrl = `${nodeUrl}/arbitrary/${gifLink}?async=true`
+					const chatImage = document.createElement('img')
+					chatImage.classList.add('chat-img')
+					chatImage.src = `${gifUrl}`
+					chatImage.onerror = () => {
+						chatImage.src = '/img/img-loading.png'
+						if (imageFetches < 400) {
+							setTimeout(() => {
+								imageFetches = imageFetches + 1
+								chatImage.src = `${gifUrl}`
+							}, 750)
+						} else {
+							chatImage.src = '/img/chain.png'
+						}
+					}
+
+					imageContainer.appendChild(chatImage)
+
+					subcontainer2.appendChild(userinfo)
+					subcontainer2.appendChild(imageContainer)
+					subcontainer2.appendChild(messageContainer)
+					subcontainer2.appendChild(messageTimeContainer)
+
+					subcontainer1.appendChild(avatarContainer)
+					subcontainer1.appendChild(subcontainer2)
+
+					chatElement.appendChild(subcontainer1)
+
+					chatGridContainer.appendChild(chatElement)
+				} else if (haveGif && hasGifDeleted) {
+					contentDeltedText.textContent = gifDeletedString
+
+					contentDeltedInfo.appendChild(contentDeltedText)
+					contentDeltedContainer.appendChild(contentDeltedInfo)
+
+					subcontainer2.appendChild(userinfo)
+					subcontainer2.appendChild(contentDeltedContainer)
+					subcontainer2.appendChild(messageContainer)
+					subcontainer2.appendChild(messageTimeContainer)
+
+					subcontainer1.appendChild(avatarContainer)
+					subcontainer1.appendChild(subcontainer2)
+
+					chatElement.appendChild(subcontainer1)
+
+					chatGridContainer.appendChild(chatElement)
+				} else if (haveAttachment && !hasAttachmentDeleted) {
+					subcontainer2.appendChild(userinfo)
+					subcontainer2.appendChild(attachmentContainer)
+					subcontainer2.appendChild(messageContainer)
+					subcontainer2.appendChild(messageTimeContainer)
+
+					subcontainer1.appendChild(avatarContainer)
+					subcontainer1.appendChild(subcontainer2)
+
+					chatElement.appendChild(subcontainer1)
+
+					chatGridContainer.appendChild(chatElement)
+				} else if (haveAttachment && hasAttachmentDeleted) {
+					contentDeltedText.textContent = attachmentDeletedString
+
+					contentDeltedInfo.appendChild(contentDeltedText)
+					contentDeltedContainer.appendChild(contentDeltedInfo)
+
+					subcontainer2.appendChild(userinfo)
+					subcontainer2.appendChild(contentDeltedContainer)
+					subcontainer2.appendChild(messageContainer)
+					subcontainer2.appendChild(messageTimeContainer)
+
+					subcontainer1.appendChild(avatarContainer)
+					subcontainer1.appendChild(subcontainer2)
+
+					chatElement.appendChild(subcontainer1)
+
+					chatGridContainer.appendChild(chatElement)
+				} else if (haveFile && !hasFileDeleted) {
+					subcontainer2.appendChild(userinfo)
+					subcontainer2.appendChild(fileContainer)
+					subcontainer2.appendChild(messageContainer)
+					subcontainer2.appendChild(messageTimeContainer)
+
+					subcontainer1.appendChild(avatarContainer)
+					subcontainer1.appendChild(subcontainer2)
+
+					chatElement.appendChild(subcontainer1)
+
+					chatGridContainer.appendChild(chatElement)
+				} else if (haveFile && hasFileDeleted) {
+					contentDeltedText.textContent = fileDeletedString
+
+					contentDeltedInfo.appendChild(contentDeltedText)
+					contentDeltedContainer.appendChild(contentDeltedInfo)
+
+					subcontainer2.appendChild(userinfo)
+					subcontainer2.appendChild(contentDeltedContainer)
+					subcontainer2.appendChild(messageContainer)
+					subcontainer2.appendChild(messageTimeContainer)
+
+					subcontainer1.appendChild(avatarContainer)
+					subcontainer1.appendChild(subcontainer2)
+
+					chatElement.appendChild(subcontainer1)
+
+					chatGridContainer.appendChild(chatElement)
+				} else {
+					subcontainer2.appendChild(userinfo)
+					subcontainer2.appendChild(messageContainer)
+					subcontainer2.appendChild(messageTimeContainer)
+
+					subcontainer1.appendChild(avatarContainer)
+					subcontainer1.appendChild(subcontainer2)
+
+					chatElement.appendChild(subcontainer1)
+
+					chatGridContainer.appendChild(chatElement)
+				}
+			})
+
+			if (scroll) {
+				this.scrollChatToEnd()
+			}
+		}
 	}
 
 	timeIsoString(timestamp) {
@@ -3053,6 +4323,17 @@ class GroupManagement extends LitElement {
 	}
 
 	async joinGroup(groupId, groupName) {
+		let nGroupId = ''
+		let nGroupName = ''
+
+		if (typeof groupId === 'object' && groupId !== null) {
+			nGroupId = groupId.groupId
+			nGroupName = groupId.groupName
+		} else {
+			nGroupId = groupId
+			nGroupName = groupName
+		}
+
 		await this.unitJoinGroupFee()
 
 		this.resetDefaultSettings()
@@ -3083,8 +4364,8 @@ class GroupManagement extends LitElement {
 				params: {
 					fee: joinFeeInput,
 					registrantAddress: this.selectedAddress.address,
-					rGroupName: groupName,
-					rGroupId: groupId,
+					rGroupName: nGroupName,
+					rGroupId: nGroupId,
 					lastReference: lastRef,
 					groupdialog1: groupdialog1,
 					groupdialog2: groupdialog2
@@ -4045,6 +5326,288 @@ class GroupManagement extends LitElement {
 
 	round(number) {
 		return (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
+	}
+
+	async fetchChatMessages(chatId) {
+		const restartGroupWebSocket = () => {
+			let groupChatId = Number(chatId)
+			setTimeout(() => initGroup(groupChatId, 50))
+		}
+
+		const initGroup = (gId) => {
+			let timeoutId
+			let groupId = Number(gId)
+			let groupSocketTimeout
+			let groupSocketLink
+			let myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+			let nodeUrl = myNode.domain + ":" + myNode.port
+
+			if (window.parent.location.protocol === "https:") {
+				// WSS is over https
+				groupSocketLink = `wss://${nodeUrl}/websockets/chat/messages?txGroupId=${groupId}&encoding=BASE64&limit=1`
+			} else {
+				// WSS is over http
+				groupSocketLink = `ws://${nodeUrl}/websockets/chat/messages?txGroupId=${groupId}&encoding=BASE64&limit=1`
+			}
+
+			// Set the websocket
+			this.webSocket = new WebSocket(groupSocketLink)
+
+			// When websocket is open ping every 50ms
+			this.webSocket.onopen = () => {
+				setTimeout(pingGroupSocket, 50)
+			}
+
+			// Websocket message Event
+			this.webSocket.onmessage = async (e) => {
+				if (e.data === 'pong') {
+					clearTimeout(timeoutId)
+					groupSocketTimeout = setTimeout(pingGroupSocket, 45000)
+					return
+				}
+
+				try {
+					if (e.data) {
+						let newMessage = []
+						let newDecodedArray = []
+
+						newMessage = JSON.parse(e.data)
+
+						// Check if message is new one (as first call is last message from before created array)
+						if (newMessage[0].timestamp > this.chatMessageArray[this.chatMessageArray.length - 1].timestamp) {
+							newMessage.forEach(item => {
+								let newDecodedMessageObj = {}
+								let decodedMessage = this.decodeMessage(item.data)
+								let checkEdited = JSON.parse(decodedMessage)
+								let editedString = get('chatpage.cchange68')
+								let imageDeletedString = get('chatpage.cchange80')
+								let gifDeletedString = get('chatpage.cchange107')
+								let attachmentDeletedString = get('chatpage.cchange82')
+								let fileDeletedString = get('chatpage.cchange102')
+
+								// Check if message got edited
+								if (checkEdited.isEdited) {
+									let refSignature = ''
+									let refTimeSignature = ''
+									let refEditedMessage = ''
+									let messageEditedID = ''
+
+									refSignature = item.chatReference
+									refTimeSignature = 'time-' + item.chatReference
+									refEditedMessage = generateHTML(checkEdited.messageText, [StarterKit, Underline, Highlight])
+									messageEditedID = 'edited-' + item.chatReference
+
+									const messageEditedString = document.createElement('span')
+									messageEditedString.setAttribute('id', messageEditedID)
+									messageEditedString.classList.add('message-data-edited')
+									messageEditedString.textContent = editedString
+
+									this.shadowRoot.getElementById(refSignature).innerHTML = refEditedMessage
+									this.shadowRoot.getElementById(refTimeSignature).classList.remove('message-data-time-edited')
+									this.shadowRoot.getElementById(refTimeSignature).classList.remove('message-data-time')
+									this.shadowRoot.getElementById(refTimeSignature).classList.add('message-data-time-edited')
+
+									if (this.shadowRoot.getElementById(refTimeSignature).childNodes.length > 1) {
+										this.shadowRoot.getElementById(refTimeSignature).removeChild(messageEditedString)
+									}
+
+									this.shadowRoot.getElementById(refTimeSignature).insertBefore(messageEditedString, this.shadowRoot.getElementById(refTimeSignature).firstChild)
+
+									this.chatMessageArray.find(v => v.signature === refSignature).decodedMessage = decodedMessage
+								} else if (checkEdited.isImageDeleted) {
+									let refSignature = ''
+									let refImageSignature = ''
+									let repImageSignature = ''
+
+									refSignature = item.chatReference
+									refImageSignature = 'image-' + item.chatReference
+									repImageSignature = 'repimage-' + item.chatReference
+
+									const contentDeltedInfo = document.createElement('div')
+									contentDeltedInfo.classList.add('attachment-info')
+
+									const contentDeltedText = document.createElement('p')
+									contentDeltedText.classList.add('attachment-deleted')
+									contentDeltedText.textContent = imageDeletedString
+
+									contentDeltedInfo.appendChild(contentDeltedText)
+
+									if (this.shadowRoot.getElementById(refImageSignature)) {
+										this.shadowRoot.getElementById(refImageSignature).innerHTML = ''
+										this.shadowRoot.getElementById(refImageSignature).classList.remove('image-container')
+										this.shadowRoot.getElementById(refImageSignature).classList.add('attachment-container')
+										this.shadowRoot.getElementById(refImageSignature).appendChild(contentDeltedInfo)
+									}
+
+									if (this.shadowRoot.getElementById(repImageSignature)) {
+										this.shadowRoot.getElementById(repImageSignature).innerHTML = ''
+										this.shadowRoot.getElementById(repImageSignature).classList.remove('image-container')
+										this.shadowRoot.getElementById(repImageSignature).classList.add('attachment-container')
+										this.shadowRoot.getElementById(repImageSignature).appendChild(contentDeltedInfo)
+									}
+
+									this.chatMessageArray.find(v => v.signature === refSignature).decodedMessage = decodedMessage
+								} else if (checkEdited.isGifDeleted) {
+									let refSignature = ''
+									let refGifSignature = ''
+									let repGifSignature = ''
+
+									refSignature = item.chatReference
+									refGifSignature = 'gif-' + item.chatReference
+									repGifSignature = 'repgif-' + item.chatReference
+
+									const contentDeltedInfo = document.createElement('div')
+									contentDeltedInfo.classList.add('attachment-info')
+
+									const contentDeltedText = document.createElement('p')
+									contentDeltedText.classList.add('attachment-deleted')
+									contentDeltedText.textContent = gifDeletedString
+
+									contentDeltedInfo.appendChild(contentDeltedText)
+
+									if (this.shadowRoot.getElementById(refGifSignature)) {
+										this.shadowRoot.getElementById(refGifSignature).innerHTML = ''
+										this.shadowRoot.getElementById(refGifSignature).classList.remove('image-container')
+										this.shadowRoot.getElementById(refGifSignature).classList.add('attachment-container')
+										this.shadowRoot.getElementById(refGifSignature).appendChild(contentDeltedInfo)
+									}
+
+									if (this.shadowRoot.getElementById(repGifSignature)) {
+										this.shadowRoot.getElementById(repGifSignature).innerHTML = ''
+										this.shadowRoot.getElementById(repGifSignature).classList.remove('image-container')
+										this.shadowRoot.getElementById(repGifSignature).classList.add('attachment-container')
+										this.shadowRoot.getElementById(repGifSignature).appendChild(contentDeltedInfo)
+									}
+
+									this.chatMessageArray.find(v => v.signature === refSignature).decodedMessage = decodedMessage
+								} else if (checkEdited.isAttachmentDeleted) {
+									let refSignature = ''
+									let refAttachmentSignature = ''
+									let repAttachmentSignature = ''
+
+									refSignature = item.chatReference
+									refAttachmentSignature = 'attachment-' + item.chatReference
+									repAttachmentSignature = 'repattachment-' + item.chatReference
+
+									const contentDeltedInfo = document.createElement('div')
+									contentDeltedInfo.classList.add('attachment-info')
+
+									const contentDeltedText = document.createElement('p')
+									contentDeltedText.classList.add('attachment-deleted')
+									contentDeltedText.textContent = attachmentDeletedString
+
+									contentDeltedInfo.appendChild(contentDeltedText)
+
+									if (this.shadowRoot.getElementById(refAttachmentSignature)) {
+										this.shadowRoot.getElementById(refAttachmentSignature).innerHTML = ''
+										this.shadowRoot.getElementById(refAttachmentSignature).appendChild(contentDeltedInfo)
+									}
+
+									if (this.shadowRoot.getElementById(repAttachmentSignature)) {
+										this.shadowRoot.getElementById(repAttachmentSignature).innerHTML = ''
+										this.shadowRoot.getElementById(repAttachmentSignature).appendChild(contentDeltedInfo)
+									}
+
+									this.chatMessageArray.find(v => v.signature === refSignature).decodedMessage = decodedMessage
+								} else if (checkEdited.isFileDeleted) {
+									let refSignature = ''
+									let refFileSignature = ''
+									let repFileSignature = ''
+
+									refSignature = item.chatReference
+									refFileSignature = 'file-' + item.chatReference
+									repFileSignature = 'repfile-' + item.chatReference
+
+									const contentDeltedInfo = document.createElement('div')
+									contentDeltedInfo.classList.add('attachment-info')
+
+									const contentDeltedText = document.createElement('p')
+									contentDeltedText.classList.add('attachment-deleted')
+									contentDeltedText.textContent = fileDeletedString
+
+									contentDeltedInfo.appendChild(contentDeltedText)
+
+									const contentDeltedInfoRep = document.createElement('div')
+									contentDeltedInfoRep.classList.add('attachment-info')
+
+									const contentDeltedTextRep = document.createElement('p')
+									contentDeltedTextRep.classList.add('attachment-deleted')
+									contentDeltedTextRep.textContent = fileDeletedString
+
+									contentDeltedInfoRep.appendChild(contentDeltedTextRep)
+
+									if (this.shadowRoot.getElementById(refFileSignature)) {
+										this.shadowRoot.getElementById(refFileSignature).innerHTML = ''
+										this.shadowRoot.getElementById(refFileSignature).classList.remove('file-container')
+										this.shadowRoot.getElementById(refFileSignature).classList.add('attachment-container')
+										this.shadowRoot.getElementById(refFileSignature).appendChild(contentDeltedInfo)
+									}
+
+									if (this.shadowRoot.getElementById(repFileSignature)) {
+										this.shadowRoot.getElementById(repFileSignature).innerHTML = ''
+										this.shadowRoot.getElementById(repFileSignature).classList.remove('file-container')
+										this.shadowRoot.getElementById(repFileSignature).classList.add('attachment-container')
+										this.shadowRoot.getElementById(repFileSignature).appendChild(contentDeltedInfoRep)
+									}
+
+									this.chatMessageArray.find(v => v.signature === refSignature).decodedMessage = decodedMessage
+								} else {
+									const newMessageObj = {
+										timestamp: item.timestamp,
+										txGroupId: item.txGroupId,
+										reference: item.reference,
+										senderPublicKey: item.senderPublicKey,
+										sender: item.sender,
+										senderName: item.senderName,
+										encoding: item.encoding,
+										isText: item.isText,
+										isEncrypted: item.isEncrypted,
+										signature: item.signature
+									}
+
+									newDecodedMessageObj = { ...newMessageObj, decodedMessage }
+
+									newDecodedArray.push(newDecodedMessageObj)
+
+									this.chatMessageArray.push(newDecodedMessageObj)
+									this.renderChatMessagesGrid(newDecodedArray, true)
+								}
+							})
+						}
+					}
+				} catch (error) { /* empty */ }
+			}
+
+			// Websocket close event
+			this.webSocket.onclose = (e) => {
+				clearTimeout(groupSocketTimeout)
+				if (e.reason === 'closed preview') return
+				restartGroupWebSocket()
+			}
+
+			// Websocket error event
+			this.webSocket.onerror = () => {
+				clearTimeout(groupSocketTimeout)
+				this.webSocket.close()
+			}
+
+			// Close the WebSocket connection if no pong message is received within 5 seconds.
+			const pingGroupSocket = () => {
+				this.webSocket.send('ping')
+				timeoutId = setTimeout(() => {
+					this.webSocket.close()
+					clearTimeout(groupSocketTimeout)
+				}, 5000)
+			}
+		}
+
+		// Init the websocket
+		if (chatId !== undefined) {
+			let groupChatId = Number(chatId)
+			initGroup(groupChatId)
+		} else {
+			// ... Websocket not started
+		}
 	}
 }
 

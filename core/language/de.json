@@ -973,7 +973,10 @@
 		"gchange65": "Ersetzen Sie diese Adresse durch EIGENTUM der Gruppe übertragen!",
 		"gchange66": "Ungültige Besitzer-/neue Besitzeradresse",
 		"gchange67": "Gruppen-UPDATE erfolgreich!",
-		"gchange68": "Gruppen-Avatar festlegen"
+		"gchange68": "Gruppen-Avatar festlegen",
+		"gchange69": "Nachrichten",
+		"gchange70": "Keine Nachrichten in den letzten 24 Stunden!",
+		"gchange71": "Du bist dieser Gruppe bereits beigetreten!"
 	},
 	"puzzlepage": {
 		"pchange1": "Rätsel",
