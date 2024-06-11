@@ -2310,15 +2310,16 @@ class MultiWallet extends LitElement {
 				<div style="margin-top: 10px;">
 					<vaadin-tabs>
 						<vaadin-tab id="type" disabled><span style="color: var(--black);">${translate("walletpage.wchange6")} :</span></vaadin-tab>
-						<vaadin-tab id="payment-tab" style="cursor: pointer;" @click=${(e) => this.myTabChanged(0)}>PAYMENT</vaadin-tab>
-						<vaadin-tab id="arbitary-tab" style="cursor: pointer;" @click=${(e) => this.myTabChanged(1)}>ARBITARY</vaadin-tab>
-						<vaadin-tab id="at-tab" style="cursor: pointer;" @click=${(e) => this.myTabChanged(2)}>AT</vaadin-tab>
-						<vaadin-tab id="group-tab" style="cursor: pointer;" @click=${(e) => this.myTabChanged(3)}>GROUP</vaadin-tab>
-						<vaadin-tab id="name-tab" style="cursor: pointer;" @click=${(e) => this.myTabChanged(4)}>NAME</vaadin-tab>
-						<vaadin-tab id="asset-tab" style="cursor: pointer;" @click=${(e) => this.myTabChanged(5)}>ASSET</vaadin-tab>
-						<vaadin-tab id="poll-tab" style="cursor: pointer;" @click=${(e) => this.myTabChanged(6)}>POLL</vaadin-tab>
-						<vaadin-tab id="rewarshare-tab" style="cursor: pointer;" @click=${(e) => this.myTabChanged(7)}>REWARDSHARE</vaadin-tab>
-						<vaadin-tab id="misc-tab" style="cursor: pointer;" @click=${(e) => this.myTabChanged(8)}>MISC</vaadin-tab>
+						<vaadin-tab id="all-tab" style="cursor: pointer;" @click=${(e) => this.myTabChanged(0)}>ALL</vaadin-tab>
+						<vaadin-tab id="payment-tab" style="cursor: pointer;" @click=${(e) => this.myTabChanged(1)}>PAYMENT</vaadin-tab>
+						<vaadin-tab id="arbitary-tab" style="cursor: pointer;" @click=${(e) => this.myTabChanged(2)}>ARBITARY</vaadin-tab>
+						<vaadin-tab id="at-tab" style="cursor: pointer;" @click=${(e) => this.myTabChanged(3)}>AT</vaadin-tab>
+						<vaadin-tab id="group-tab" style="cursor: pointer;" @click=${(e) => this.myTabChanged(4)}>GROUP</vaadin-tab>
+						<vaadin-tab id="name-tab" style="cursor: pointer;" @click=${(e) => this.myTabChanged(5)}>NAME</vaadin-tab>
+						<vaadin-tab id="asset-tab" style="cursor: pointer;" @click=${(e) => this.myTabChanged(6)}>ASSET</vaadin-tab>
+						<vaadin-tab id="poll-tab" style="cursor: pointer;" @click=${(e) => this.myTabChanged(7)}>POLL</vaadin-tab>
+						<vaadin-tab id="rewarshare-tab" style="cursor: pointer;" @click=${(e) => this.myTabChanged(8)}>REWARDSHARE</vaadin-tab>
+						<vaadin-tab id="misc-tab" style="cursor: pointer;" @click=${(e) => this.myTabChanged(9)}>MISC</vaadin-tab>
 					</vaadin-tabs>
 				</div>
 			`
@@ -4249,7 +4250,8 @@ class MultiWallet extends LitElement {
 		await this.fetchWalletServer(this._selectedWallet)
 
 		this.shadowRoot.getElementById('type').selected = false
-		this.shadowRoot.getElementById('payment-tab').selected = true
+		this.shadowRoot.getElementById('all-tab').selected = true
+		this.shadowRoot.getElementById('payment-tab').selected = false
 		this.shadowRoot.getElementById('arbitary-tab').selected = false
 		this.shadowRoot.getElementById('at-tab').selected = false
 		this.shadowRoot.getElementById('group-tab').selected = false
@@ -4325,6 +4327,20 @@ class MultiWallet extends LitElement {
 	async fetchWalletDetails(coin) {
 		switch (coin) {
 			case 'qort':
+				const allTxsQort = await parentEpml.request('apiCall', {
+					url: `/transactions/search?address=${this.wallets.get('qort').wallet.address}&confirmationStatus=CONFIRMED&reverse=true
+						&limit=${this.searchLimit}
+						&offset=${this.searchOffset}
+						&txType=PAYMENT&txType=REGISTER_NAME&txType=UPDATE_NAME&txType=SELL_NAME&txType=CANCEL_SELL_NAME&txType=BUY_NAME&txType=CREATE_POLL&txType=VOTE_ON_POLL&txType=ARBITRARY&txType=ISSUE_ASSET&txType=TRANSFER_ASSET&txType=CREATE_ASSET_ORDER&txType=CANCEL_ASSET_ORDER&txType=MULTI_PAYMENT&txType=DEPLOY_AT&txType=MESSAGE&txType=AIRDROP&txType=AT&txType=CREATE_GROUP&txType=UPDATE_GROUP&txType=ADD_GROUP_ADMIN&txType=REMOVE_GROUP_ADMIN&txType=GROUP_BAN&txType=CANCEL_GROUP_BAN&txType=GROUP_KICK&txType=GROUP_INVITE&txType=CANCEL_GROUP_INVITE&txType=JOIN_GROUP&txType=LEAVE_GROUP&txType=GROUP_APPROVAL&txType=SET_GROUP&txType=UPDATE_ASSET&txType=ACCOUNT_FLAGS&txType=ENABLE_FORGING&txType=REWARD_SHARE&txType=ACCOUNT_LEVEL&txType=TRANSFER_PRIVS&txType=PRESENCE
+					`
+				})
+				const pendingAllTxsQort = await parentEpml.request('apiCall', {
+					url: `/transactions/unconfirmed?creator=${this.wallets.get('qort').wallet.base58PublicKey}&reverse=true
+						&limit=${this.searchLimit}
+						&offset=${this.searchOffset}
+						&txType=PAYMENT&txType=REGISTER_NAME&txType=UPDATE_NAME&txType=SELL_NAME&txType=CANCEL_SELL_NAME&txType=BUY_NAME&txType=CREATE_POLL&txType=VOTE_ON_POLL&txType=ARBITRARY&txType=ISSUE_ASSET&txType=TRANSFER_ASSET&txType=CREATE_ASSET_ORDER&txType=CANCEL_ASSET_ORDER&txType=MULTI_PAYMENT&txType=DEPLOY_AT&txType=MESSAGE&txType=AIRDROP&txType=AT&txType=CREATE_GROUP&txType=UPDATE_GROUP&txType=ADD_GROUP_ADMIN&txType=REMOVE_GROUP_ADMIN&txType=GROUP_BAN&txType=CANCEL_GROUP_BAN&txType=GROUP_KICK&txType=GROUP_INVITE&txType=CANCEL_GROUP_INVITE&txType=JOIN_GROUP&txType=LEAVE_GROUP&txType=GROUP_APPROVAL&txType=SET_GROUP&txType=UPDATE_ASSET&txType=ACCOUNT_FLAGS&txType=ENABLE_FORGING&txType=REWARD_SHARE&txType=ACCOUNT_LEVEL&txType=TRANSFER_PRIVS&txType=PRESENCE
+					`
+				})
 				const paymentTxsQort = await parentEpml.request('apiCall', {
 					url: `/transactions/search?address=${this.wallets.get('qort').wallet.address}&confirmationStatus=CONFIRMED&reverse=true
 						&limit=${this.searchLimit}
@@ -4501,22 +4517,24 @@ class MultiWallet extends LitElement {
 				})
 				if (this._selectedWallet == coin) {
 					if (this.visitedTab === 0) {
-						this.wallets.get(coin).transactions = pendingPaymentTxsQort.concat(paymentTxsQort)
+						this.wallets.get(coin).transactions = pendingAllTxsQort.concat(allTxsQort)
 					} else if (this.visitedTab === 1) {
-						this.wallets.get(coin).transactions = pendingArbitaryTxsQort.concat(arbitaryTxsQort)
+						this.wallets.get(coin).transactions = pendingPaymentTxsQort.concat(paymentTxsQort)
 					} else if (this.visitedTab === 2) {
-						this.wallets.get(coin).transactions = pendingAtTxsQort.concat(atTxsQort)
+						this.wallets.get(coin).transactions = pendingArbitaryTxsQort.concat(arbitaryTxsQort)
 					} else if (this.visitedTab === 3) {
-						this.wallets.get(coin).transactions = pendingGroupTxsQort.concat(groupTxsQort)
+						this.wallets.get(coin).transactions = pendingAtTxsQort.concat(atTxsQort)
 					} else if (this.visitedTab === 4) {
-						this.wallets.get(coin).transactions = pendingNameTxsQort.concat(nameTxsQort)
+						this.wallets.get(coin).transactions = pendingGroupTxsQort.concat(groupTxsQort)
 					} else if (this.visitedTab === 5) {
-						this.wallets.get(coin).transactions = pendingAssetTxsQort.concat(assetTxsQort)
+						this.wallets.get(coin).transactions = pendingNameTxsQort.concat(nameTxsQort)
 					} else if (this.visitedTab === 6) {
-						this.wallets.get(coin).transactions = pendingPollTxsQort.concat(pollTxsQort)
+						this.wallets.get(coin).transactions = pendingAssetTxsQort.concat(assetTxsQort)
 					} else if (this.visitedTab === 7) {
-						this.wallets.get(coin).transactions = pendingRewardshareTxsQort.concat(rewardshareTxsQort)
+						this.wallets.get(coin).transactions = pendingPollTxsQort.concat(pollTxsQort)
 					} else if (this.visitedTab === 8) {
+						this.wallets.get(coin).transactions = pendingRewardshareTxsQort.concat(rewardshareTxsQort)
+					} else if (this.visitedTab === 9) {
 						this.wallets.get(coin).transactions = pendingMiscTxsQort.concat(miscTxsQort)
 					}
 				}
