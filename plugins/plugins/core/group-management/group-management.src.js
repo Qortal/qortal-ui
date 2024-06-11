@@ -715,7 +715,7 @@ class GroupManagement extends LitElement {
 					<div></div>
 					<div></div>
 				</div>
-				<h2>${translate("appspage.schange41")}</h2>
+				<h2>${translate("chatpage.cchange2")}</h2>
 			</paper-dialog>
 		`
 	}
@@ -2605,21 +2605,22 @@ class GroupManagement extends LitElement {
 	}
 
 	async getNewGroupInvitesList(theGroup) {
-		let callGroupID = theGroup
 		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
 
+		let callGroupID = theGroup
 		let inviteObj = []
 		this.groupInviteMembers = []
+		this.newGroupInvitesList = []
 
 		await parentEpml.request('apiCall', {
 			url: `/groups/invites/group/${callGroupID}`
 		}).then(res => {
-			this.groupInviteMembers = res
+			this.groupInviteMembers = res.filter((item) => item.expiry > Date.now())
 		})
 
-		if (this.groupInviteMembers.length === 0) {
-
+		if (this.isEmptyArray(this.groupInviteMembers)) {
+			// Nothing to do because no open invites
 		} else {
 			this.groupInviteMembers.map(a => {
 				let callTheInviteMember = a.invitee
@@ -2703,8 +2704,14 @@ class GroupManagement extends LitElement {
 	}
 
 	closeManageGroupOwnerDialog() {
-		this.resetDefaultSettings()
+		this.manageGroupId = ''
+		this.theGroupOwner = ''
+		this.manageGroupName = ''
+		this.manageGroupCount = ''
+		this.manageGroupType = ''
 		this.shadowRoot.getElementById('manageGroupOwnerDialog').close()
+		this.resetDefaultSettings()
+
 		window.location.reload()
 	}
 
@@ -2715,13 +2722,17 @@ class GroupManagement extends LitElement {
 	}
 
 	async manageGroupOwner(groupObj) {
+		this.shadowRoot.getElementById('downloadProgressDialog').open()
+		const manageGroupDelay = ms => new Promise(res => setTimeout(res, ms))
+
+		let intervalInvites
+
 		this.manageGroupId = ''
 		this.theGroupOwner = ''
 		this.manageGroupName = ''
 		this.manageGroupCount = ''
 		this.manageGroupType = ''
 		this.manageGroupDescription = ''
-		const manageGroupDelay = ms => new Promise(res => setTimeout(res, ms))
 		this.manageGroupObj = groupObj
 		this.manageGroupId = groupObj.groupId
 		this.theGroupOwner = groupObj.owner
@@ -2729,34 +2740,48 @@ class GroupManagement extends LitElement {
 		this.manageGroupCount = groupObj.memberCount
 		this.manageGroupType = groupObj.isOpen
 		this.manageGroupDescription = groupObj.description
+
 		await this.getNewMemberList(groupObj.groupId)
 		await this.getNewBannedList(groupObj.groupId)
 		await this.getNewGroupInvitesList(groupObj.groupId)
 		await this.getNewGroupJoinList(groupObj.groupId)
 		await this.getGoName(groupObj.owner)
 		await manageGroupDelay(1000)
+
 		this.shadowRoot.getElementById('manageGroupOwnerDialog').open()
+		this.shadowRoot.getElementById('downloadProgressDialog').close()
+
+		intervalInvites = setInterval(() => { this.getNewGroupInvitesList(this.manageGroupId) }, 300000)
 	}
 
 	async manageGroupAdmin(groupObj) {
+		this.shadowRoot.getElementById('downloadProgressDialog').open()
+		const manageGroupDelay = ms => new Promise(res => setTimeout(res, ms))
+
+		let intervalInvites
+
 		this.manageGroupId = ''
 		this.theGroupOwner = ''
 		this.manageGroupName = ''
 		this.manageGroupCount = ''
 		this.manageGroupType = ''
-		const manageGroupDelay = ms => new Promise(res => setTimeout(res, ms))
 		this.manageGroupObj = groupObj
 		this.manageGroupId = groupObj.groupId
 		this.theGroupOwner = groupObj.owner
 		this.manageGroupName = groupObj.groupName
 		this.manageGroupCount = groupObj.memberCount
 		this.manageGroupType = groupObj.isOpen
+
 		await this.getNewMemberList(groupObj.groupId)
 		await this.getNewBannedList(groupObj.groupId)
 		await this.getNewGroupInvitesList(groupObj.groupId)
 		await this.getGoName(groupObj.owner)
 		await manageGroupDelay(1000)
+
 		this.shadowRoot.getElementById('manageGroupOwnerDialog').open()
+		this.shadowRoot.getElementById('downloadProgressDialog').close()
+
+		intervalInvites = setInterval(() => { this.getNewGroupInvitesList(this.manageGroupId) }, 300000)
 	}
 
 	async openJoinGroup(groupObj) {
