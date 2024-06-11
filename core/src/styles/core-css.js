@@ -1970,19 +1970,6 @@ export const qortThemeToggleStyles = css`
         height: 100%;
     }
 
-    .slider {
-        position: absolute;
-        cursor: pointer;
-        width: 100%;
-        height: 16px;
-        top: 50%;
-        transform: translateY(-50%);
-        background-color: var(--switchbackground);
-        border: 2px solid var(--switchborder);
-        border-radius: 1rem;
-        transition: all .4s ease;
-    }
-
     .icon {
         width: 32px;
         height: 32px;
@@ -1995,13 +1982,16 @@ export const qortThemeToggleStyles = css`
         transition: transform 300ms ease;
     }
 
-    :host([theme="light"]) .icon {
+    .icon {
         transform: translate(0, -50%);
     }
 
-    input:checked~.icon,
-    :host([theme="dark"]) .icon {
-        transform: translate(calc(100% - 12px), -50%);
+    .sun {
+        display: none;
+    }
+
+    :host([theme="light"]) .sun {
+        display: inline-block;
     }
 
     .moon {
@@ -2010,10 +2000,6 @@ export const qortThemeToggleStyles = css`
 
     .moon svg {
         transform: scale(0.6);
-    }
-
-    :host([theme="dark"]) .sun {
-        display: none;
     }
 
     :host([theme="dark"]) .moon {
@@ -2246,25 +2232,25 @@ export const themeToggleStyles = css`
         --item-border-selected-color: var(--nav-border-selected-color);
     }
 
-    paper-icon-button {
-        -ms-transform: rotate(120deg);
-        transform: rotate(120deg);
+    .light-mode {
+        display: none;
     }
 
     :host([theme="light"]) .light-mode {
         display: inline-block;
     }
 
-    :host([theme="light"]) .dark-mode {
-        display: none;
-    }
-
-    :host([theme="dark"]) .light-mode {
+    .dark-mode {
         display: none;
     }
 
     :host([theme="dark"]) .dark-mode {
         display: inline-block;
+    }
+
+    :host([theme="dark"]) paper-icon-button {
+        -ms-transform: rotate(120deg);
+        transform: rotate(120deg);
     }
 `
 

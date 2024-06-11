@@ -6,8 +6,8 @@
     <link rel="stylesheet" href="/font/switch-theme.css">
     <script>
         const checkBack = localStorage.getItem('qortalTheme')
-        if (checkBack === 'dark') {
-            newtheme = 'dark';
+        if (checkBack) {
+            newtheme = checkBack;
         } else {
             newtheme = 'light';
         }

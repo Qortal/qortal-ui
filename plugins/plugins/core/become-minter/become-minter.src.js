@@ -134,8 +134,8 @@ class BecomeMinter extends LitElement {
 
 		use(checkLanguage)
 
-		if (checkTheme === 'dark') {
-			this.theme = 'dark'
+		if (checkTheme) {
+			this.theme = checkTheme
 		} else {
 			this.theme = 'light'
 		}
