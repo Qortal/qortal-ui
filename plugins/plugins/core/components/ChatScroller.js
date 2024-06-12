@@ -1506,7 +1506,7 @@ class MessageTemplate extends LitElement {
 										}"
 									>
 										${isEdited ? html`<span>${edited}</span>` : ''}
-										${this.isInProgress ? html`<p>${translate('chatpage.cchange91')}</p>` : html`<message-time timestamp=${this.messageObj.timestamp}></message-time>`}
+										${this.isInProgress ? html`<p>${translate('chatpage.cchange91')}</p>` : html`${new Date(this.messageObj.timestamp).toLocaleString()}`}
 								</div>
 							</div>
 						</div>
