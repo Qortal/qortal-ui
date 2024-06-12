@@ -221,7 +221,7 @@ class GroupManagement extends LitElement {
 							await this.getChatMessageCount(data.item)
 							render(html`<span>${this.countArray.length}</span>`, root)
 						}}></vaadin-grid-column>
-						<vaadin-grid-column header="${translate("grouppage.gchange4")}" path="groupName"></vaadin-grid-column>
+						<vaadin-grid-column width="20rem" flex-grow="0" header="${translate("grouppage.gchange4")}" path="groupName"></vaadin-grid-column>
 						<vaadin-grid-column header="${translate("managegroup.mg42")}" .renderer=${(root, column, data) => {
 							if (data.item.isOpen === true) {
 								render(html`${translate("managegroup.mg44")}`, root)
@@ -252,12 +252,13 @@ class GroupManagement extends LitElement {
 				<div class="divCard">
 					<h3 style="margin: 0; margin-bottom: 1em; text-align: center;">${translate("grouppage.gchange3")}</h3>
 					<vaadin-grid theme="large" id="joinedGroupsGrid" ?hidden="${this.isEmptyArray(this.joinedGroups)}" .items="${this.joinedGroups}" aria-label="Joined Groups" all-rows-visible>
+						<vaadin-grid-sort-column width="8rem" flex-grow="0" header="${translate("managegroup.mg8")}" path="groupId"></vaadin-grid-sort-column>
 						<vaadin-grid-sort-column width="8rem" flex-grow="0" header="${translate("grouppage.gchange54")}" path="memberCount"></vaadin-grid-sort-column>
 						<vaadin-grid-column width="8rem" flex-grow="0" header="${translate("grouppage.gchange69")}" .renderer=${async (root, column, data) => {
 							await this.getChatMessageCount(data.item)
 							render(html`<span>${this.countArray.length}</span>`, root)
 						}}></vaadin-grid-column>
-						<vaadin-grid-sort-column header="${translate("grouppage.gchange4")}" path="groupName"></vaadin-grid-sort-column>
+						<vaadin-grid-sort-column width="20rem" flex-grow="0" header="${translate("grouppage.gchange4")}" path="groupName"></vaadin-grid-sort-column>
 						<vaadin-grid-sort-column header="${translate("grouppage.gchange5")}" path="description"></vaadin-grid-sort-column>
 						<vaadin-grid-column width="11rem" flex-grow="0" header="${translate("grouppage.gchange6")}" .renderer=${(root, column, data) => {
 							render(html`${this.renderRole(data.item)}`, root)
@@ -288,7 +289,7 @@ class GroupManagement extends LitElement {
 							await this.getChatMessageCount(data.item)
 							render(html`<span>${this.countArray.length}</span>`, root)
 						}}></vaadin-grid-column>
-						<vaadin-grid-column header="${translate("grouppage.gchange4")}" path="groupName"></vaadin-grid-column>
+						<vaadin-grid-column width="20rem" flex-grow="0" header="${translate("grouppage.gchange4")}" path="groupName"></vaadin-grid-column>
 						<vaadin-grid-column header="${translate("managegroup.mg42")}" .renderer=${(root, column, data) => {
 							if (data.item.isOpen === true) {
 								render(html`${translate("managegroup.mg44")}`, root)
@@ -339,8 +340,9 @@ class GroupManagement extends LitElement {
 						<vaadin-icon slot="prefix" icon="vaadin:search"></vaadin-icon>
 					</vaadin-text-field><br>
 					<vaadin-grid theme="large" id="publicGroupsGrid" .items="${this.filteredItems}" aria-label="Public Open Groups" all-rows-visible>
+						<vaadin-grid-sort-column width="8rem" flex-grow="0" header="${translate("managegroup.mg8")}" path="groupId"></vaadin-grid-sort-column>
 						<vaadin-grid-sort-column width="8rem" flex-grow="0" header="${translate("grouppage.gchange54")}" path="memberCount"></vaadin-grid-sort-column>
-						<vaadin-grid-sort-column header="${translate("grouppage.gchange4")}" path="groupName"></vaadin-grid-sort-column>
+						<vaadin-grid-sort-column width="20rem" flex-grow="0" header="${translate("grouppage.gchange4")}" path="groupName"></vaadin-grid-sort-column>
 						<vaadin-grid-sort-column header="${translate("grouppage.gchange5")}" path="description"></vaadin-grid-sort-column>
 						<vaadin-grid-sort-column header="${translate("grouppage.gchange10")}" path="owner"></vaadin-grid-sort-column>
 						<vaadin-grid-column width="11rem" flex-grow="0" header="${translate("datapage.dchange8")}" .renderer=${(root, column, data) => {
@@ -2966,7 +2968,7 @@ class GroupManagement extends LitElement {
 
 		let noMessagesString = get('grouppage.gchange70')
 		let forwardedString = get('blockpage.bcchange17')
-		let editedString = get('chatpage.cchange68')
+		let editedString = '( ' + get('chatpage.cchange68') + ' )'
 		let imageDeletedString = get('chatpage.cchange80')
 		let gifDeletedString = get('chatpage.cchange107')
 		let attachmentDeletedString = get('chatpage.cchange82')
@@ -5379,7 +5381,7 @@ class GroupManagement extends LitElement {
 								let newDecodedMessageObj = {}
 								let decodedMessage = this.decodeMessage(item.data)
 								let checkEdited = JSON.parse(decodedMessage)
-								let editedString = get('chatpage.cchange68')
+								let editedString = '( ' + get('chatpage.cchange68') + ' )'
 								let imageDeletedString = get('chatpage.cchange80')
 								let gifDeletedString = get('chatpage.cchange107')
 								let attachmentDeletedString = get('chatpage.cchange82')
