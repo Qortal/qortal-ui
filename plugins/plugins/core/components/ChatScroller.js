@@ -18,6 +18,7 @@ import './NameMenu'
 import './UserInfo'
 import './WrapperModal'
 import './ChatImage'
+import './ChatImageGif'
 import '@material/mwc-button'
 import '@material/mwc-dialog'
 import '@material/mwc-icon'
@@ -1118,15 +1119,6 @@ class MessageTemplate extends LitElement {
 
 		levelFounder = html`<level-founder checkleveladdress="${this.messageObj.sender}"></level-founder>`
 
-		if (this.messageObj.senderName) {
-			const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
-			const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-			const avatarUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${this.messageObj.senderName}/qortal_avatar?async=true`
-			avatarImg = html`<img src="${avatarUrl}" style="max-width:100%; max-height:100%;" onerror="this.onerror=null; this.src='/img/incognito.png';" />`
-		} else {
-			avatarImg = html`<img src="/img/incognito.png" style="max-width:100%; max-height:100%;" onerror="this.onerror=null;" />`
-		}
-
 		const createGif = (gif) => {
 			const gifHTMLRes = new Image()
 			gifHTMLRes.src = gif
@@ -1149,6 +1141,15 @@ class MessageTemplate extends LitElement {
 			return gifHTMLRes
 		}
 
+		if (this.messageObj.senderName) {
+			const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+			const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+			const avatarUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${this.messageObj.senderName}/qortal_avatar?async=true`
+			avatarImg = html`<img src="${avatarUrl}" style="max-width:100%; max-height:100%;" onerror="this.onerror=null; this.src='/img/incognito.png';" />`
+		} else {
+			avatarImg = html`<img src="/img/incognito.png" style="max-width:100%; max-height:100%;" onerror="this.onerror=null;" />`
+		}
+
 		if (image) {
 			const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 			const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
@@ -1157,7 +1158,7 @@ class MessageTemplate extends LitElement {
 				imageHTML = html`
 					<chat-image
 						.resource=${{name: image.name, service: image.service, identifier: image.identifier}}
-                    				.setOpenDialogImage=${(val)=> this.setOpenDialogImage(val)}
+                    				.setOpenDialogImage=${(val) => this.setOpenDialogImage(val)}
 					>
 					</chat-image>
 				`
@@ -1169,7 +1170,13 @@ class MessageTemplate extends LitElement {
 			const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
 			gifUrl = `${nodeUrl}/arbitrary/${gif.service}/${gif.name}/${gif.identifier}?async=true`
 			if (this.viewImage || this.myAddress === this.messageObj.sender) {
-				gifHTML = createGif(gifUrl)
+				gifHTML = html`
+					<chat-image-gif
+						.resource=${{name: gif.name, service: gif.service, identifier: gif.identifier}}
+                    				.setOpenDialogGif=${(val) => this.setOpenDialogGif(val)}
+					>
+					</chat-image-gif>
+				`
 				gifHTMLDialog = createGif(gifUrl)
 				gifHTMLDialog.style = 'height: auto; max-height: 80vh; width: auto; max-width: 80vw; object-fit: contain; border-radius: 5px;'
 			}
@@ -1612,7 +1619,7 @@ class MessageTemplate extends LitElement {
 			<mwc-dialog id="showDialogPublicKey" ?open=${this.openDialogImage} @closed=${() => {this.openDialogImage = false;}}>
 				<div class="dialog-header"></div>
 				<div class="dialog-container imageContainer">
-					${this.openDialogImage ? html`<img src=${imageUrl} style="height: auto; max-height: 80vh; width: auto; max-width: 80vw; object-fit: contain; border-radius: 5px;"/>` : ''}
+					${this.openDialogImage ? html`<img src=${imageUrl} style="height: auto; max-height: 80vh; width: auto; max-width: 80vw; object-fit: contain; border-radius: 5px;">` : ''}
 				</div>
 				<mwc-button slot="primaryAction" dialogAction="cancel" class="red" @click=${() => {this.openDialogImage = false;}}>
 					${translate('general.close')}
@@ -1873,6 +1880,10 @@ class MessageTemplate extends LitElement {
 
 	setOpenDialogImage(val) {
 		this.openDialogImage = val
+	}
+
+	setOpenDialogGif(val) {
+		this.openDialogGif = val
 	}
 
 	shouldUpdate(changedProperties) {
