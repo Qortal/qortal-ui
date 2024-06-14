@@ -1,6 +1,6 @@
 {
 	"name": "qortal-ui",
-	"version": "4.5.3",
+	"version": "4.5.4",
 	"description": "Qortal Project - decentralize the world - Data storage, communications, web hosting, decentralized trading, complete infrastructure for the future blockchain-based Internet",
 	"keywords": [
 		"QORT",
@@ -27,8 +27,7 @@
 		"build-electron": "electron-builder build  --publish never",
 		"deploy-electron": "electron-builder build --win --publish never",
 		"release": "NODE_ENV=production electron-builder build --publish never",
-		"publish": "electron-builder -p always",
-		"lint": "eslint './**/*.{js,mjs}'"
+		"publish": "electron-builder -p always"
 	},
 	"dependencies": {
 		"@hapi/hapi": "21.3.10",
@@ -129,12 +128,9 @@
 		"@vaadin/tooltip": "24.2.9",
 		"@zip.js/zip.js": "2.7.45",
 		"axios": "1.7.2",
-		"electron": "31.0.0",
+		"electron": "31.0.1",
 		"electron-builder": "24.13.3",
 		"epml": "0.3.3",
-		"eslint": "8.57.0",
-		"eslint-plugin-lit": "1.14.0",
-		"eslint-plugin-wc": "2.1.0",
 		"file-saver": "2.0.5",
 		"highcharts": "11.1.0",
 		"html-escaper": "3.0.3",
