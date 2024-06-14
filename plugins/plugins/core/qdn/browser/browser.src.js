@@ -1181,7 +1181,10 @@ class WebBrowser extends LitElement {
 						return await sendMessageRequest()
 					}
 					const result = await showModalAndWait(
-						actions.SEND_CHAT_MESSAGE
+						actions.SEND_CHAT_MESSAGE,
+						{
+							message: data.message
+						}
 					)
 					if (result.action === "accept") {
 						let hasPublicKey = true
