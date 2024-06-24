@@ -101,3 +101,10 @@
   local('PaytoneOne'),
   url(PaytoneOne.ttf) format('truetype');
 }
+
+@font-face {
+    font-family: 'Twemoji Country Flags';
+    src: url('TwemojiCountryFlags.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}

@@ -3,6 +3,7 @@ import { render } from 'lit/html.js'
 import { Epml } from '../../../epml'
 import { passiveSupport } from 'passive-events-support/src/utils'
 import { Editor, Extension } from '@tiptap/core'
+import { supportCountryFlagEmojis } from '../components/ChatEmojiFlags'
 import { qchatStyles } from '../components/plugins-css'
 import isElectron from 'is-electron'
 import WebWorker from 'web-worker:./computePowWorker'
@@ -24,7 +25,6 @@ import '@material/mwc-icon'
 import '@material/mwc-snackbar'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@vaadin/grid'
-import '@vaadin/scroller'
 import '@vaadin/tooltip'
 
 // Multi language support
@@ -36,6 +36,7 @@ registerTranslateConfig({
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
 passiveSupport({ events: ['touchstart'] })
+supportCountryFlagEmojis()
 
 class Chat extends LitElement {
 	static get properties() {
@@ -150,14 +151,9 @@ class Chat extends LitElement {
 							</div>
 						</div>
 					</div>
-					<vaadin-scroller
-						scroll-direction="vertical"
-						style="border-bottom: 1px solid var(--lumo-contrast-20pct); padding: var(--lumo-space-s);"
-					>
-						<ul class="list">
-							${this.isEmptyArray(this.chatHeads) ? this.renderLoadingText() : this.renderChatHead(this.chatHeads)}
-						</ul>
-					</vaadin-scroller>
+					<ul>
+						${this.isEmptyArray(this.chatHeads) ? this.renderLoadingText() : this.renderChatHead(this.chatHeads)}
+					</ul>
 				</div>
 				<div class="chat">
 					<div id="newMessageBar" class="new-message-bar hide-new-message-bar clearfix" @click=${() => this.scrollToBottom()}>
