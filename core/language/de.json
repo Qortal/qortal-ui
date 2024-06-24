@@ -1319,5 +1319,15 @@
 		"tour20": "Blocks dahinter. Möchten Sie eine Aktualisierung (Bootstrap) durchführen, um den Synchronisierungsprozess zu beschleunigen?",
 		"tour21": "Verbleibende Blöcke.",
 		"tour22": "Aktualisierung (Bootstrap) angefordert. Bitte warten."
+	},
+	"chatsettings": {
+		"cs1": "Chat-Einstellungen",
+		"cs2": "Allgemeine Chat-Einstellungen",
+		"cs3": "Zeitstempel der Chat-Nachricht",
+		"cs4": "Vorherige Zeit",
+		"cs5": "Ortszeit",
+		"cs6": "Schriftgröße der Chat-Nachricht",
+		"cs7": "Standard",
+		"cs8": "px"
 	}
 }

@@ -1319,5 +1319,15 @@
 		"tour20": "blocks behind. Would you like to refresh (bootstrap) to speed up the syncing process?",
 		"tour21": "blocks remaining.",
 		"tour22": "Refresh (bootstrap) requested. Please wait."
+	},
+	"chatsettings": {
+		"cs1": "Chat Settings",
+		"cs2": "General Chat Settings",
+		"cs3": "Chat Message Timestamp",
+		"cs4": "Time Ago",
+		"cs5": "Local Time",
+		"cs6": "Chat Message Font Size",
+		"cs7": "Standard",
+		"cs8": "px"
 	}
 }

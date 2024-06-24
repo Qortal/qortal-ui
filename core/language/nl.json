@@ -1319,5 +1319,15 @@
 		"tour20": "blokken achterstand. Wenst U te herladen ('bootstrap') om het synchronisatie-proces te versnellen?",
 		"tour21": "blokken te gaan.",
 		"tour22": "Herladen ('bootstrap') werd aangevraagd. Gelive te wachten."
+	},
+	"chatsettings": {
+		"cs1": "Chatinstellingen",
+		"cs2": "Algemene chatinstellingen",
+		"cs3": "Tijdstempel van chatbericht",
+		"cs4": "Tijd geleden",
+		"cs5": "Lokale tijd",
+		"cs6": "Lettergrootte chatbericht",
+		"cs7": "Standaard",
+		"cs8": "px"
 	}
 }

@@ -1319,5 +1319,15 @@
 		"tour20": "blokovi iza. Da li želite da osvežite (bootstrap) da biste ubrzali proces sinhronizacije?",
 		"tour21": "preostali blokovi.",
 		"tour22": "Zatraženo je osvežavanje (bootstrap). Molimo sačekajte."
+	},
+	"chatsettings": {
+		"cs1": "Podešavanja ćaskanja",
+		"cs2": "Opšta podešavanja ćaskanja",
+		"cs3": "Vremenska oznaka poruke ćaskanja",
+		"cs4": "pre vremena",
+		"cs5": "Lokalno vreme",
+		"cs6": "Veličina fonta poruke ćaskanja",
+		"cs7": "Standard",
+		"cs8": "pk"
 	}
 }

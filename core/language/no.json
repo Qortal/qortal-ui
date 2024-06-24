@@ -1319,5 +1319,15 @@
 		"tour20": "blokker bak. Vil du oppdatere (bootstrap) for å fremskynde synkroniseringsprosessen?",
 		"tour21": "blokker igjen.",
 		"tour22": "Oppdater (bootstrap) forespurt. Vennligst vent."
+	},
+	"chatsettings": {
+		"cs1": "Chatinnstillinger",
+		"cs2": "Generelle chatinnstillinger",
+		"cs3": "Tidsstempel for chatmelding",
+		"cs4": "For tid siden",
+		"cs5": "Lokal tid",
+		"cs6": "Skriftstørrelse for chatmelding",
+		"cs7": "Standard",
+		"cs8": "px"
 	}
 }

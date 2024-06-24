@@ -1319,5 +1319,15 @@
 		"tour20": "bloques detrás. ¿Le gustaría actualizar (arrancar) para acelerar el proceso de sincronización?",
 		"tour21": "bloques restantes.",
 		"tour22": "Se solicitó actualización (arranque). Espere."
+	},
+	"chatsettings": {
+		"cs1": "Configuración de chat",
+		"cs2": "Configuración general del chat",
+		"cs3": "Marca de tiempo del mensaje de chat",
+		"cs4": "Hace tiempo",
+		"cs5": "Hora local",
+		"cs6": "Tamaño de fuente del mensaje de chat",
+		"cs7": "Estándar",
+		"cs8": "px"
 	}
 }

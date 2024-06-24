@@ -241,8 +241,7 @@ class ChatScroller extends LitElement {
 			isLoadingAfter: { type: Boolean },
 			messageQueue: { type: Array },
 			loggedInUserName: { type: String },
-			loggedInUserAddress: { type: String }
-		}
+			loggedInUserAddress: { type: String }		}
 	}
 
 	static get styles() {
@@ -384,6 +383,7 @@ class ChatScroller extends LitElement {
 
 	async firstUpdated() {
 		this.changeTheme()
+
 		window.addEventListener('storage', () => {
 			const checkTheme = localStorage.getItem('qortalTheme')
 
@@ -1015,7 +1015,14 @@ class MessageTemplate extends LitElement {
 			addSeenMessage: { attribute: false },
 			chatId: { type: String },
 			isInProgress: { type: Boolean },
-			id: { type: String }
+			id: { type: String },
+			timeId: { type: String },
+			isAgo: { type: Boolean },
+			isIso: { type: Boolean },
+			isBoth: { type: Boolean },
+			fontSize: { type: String },
+			messageFontSize: { type: String },
+			replyFontSize: { type: String }
 		}
 	}
 
@@ -1045,6 +1052,13 @@ class MessageTemplate extends LitElement {
 		this.openDeleteGif = false
 		this.openDeleteAttachment = false
 		this.openDeleteFile = false
+		this.timeId = localStorage.getItem('timestampForChats') ? localStorage.getItem('timestampForChats') : 'ago'
+		this.isAgo = false
+		this.isIso = false
+		this.isBoth = false
+		this.fontSize = localStorage.getItem('fontsizeForChats') ? localStorage.getItem('fontsizeForChats') : 'font16'
+		this.messageFontSize = ''
+		this.replyFontSize = ''
 	}
 
 	render() {
@@ -1066,6 +1080,7 @@ class MessageTemplate extends LitElement {
 		let version = 0
 		let isForwarded = false
 		let isEdited = false
+
 
 		try {
 			const parsedMessageObj = JSON.parse(this.messageObj.decodedMessage)
@@ -1182,11 +1197,54 @@ class MessageTemplate extends LitElement {
 			}
 		}
 
-		nameMenu = html`<span class="${this.messageObj.sender === this.myAddress && 'message-data-my-name'}">${this.messageObj.senderName ? this.messageObj.senderName : cropAddress(this.messageObj.sender)}</span>`
+		nameMenu = html`
+			<div id="namesize" style=${this.messageFontSize}>
+				<span class="${this.messageObj.sender === this.myAddress && 'message-data-my-name'}">
+					${this.messageObj.senderName ? this.messageObj.senderName : cropAddress(this.messageObj.sender)}
+				</span>
+			</div>
+		`
 
-		forwarded = html`<span class="${this.messageObj.sender === this.myAddress && 'message-data-forward'}">${translate('blockpage.bcchange17')}</span>`
+		forwarded = html`
+			<span class="${this.messageObj.sender === this.myAddress && 'message-data-forward'}">
+				${translate('blockpage.bcchange17')}
+			</span>
+		`
 
-		edited = html`<span class="edited-message-style">${translate('chatpage.cchange68')} <message-time timestamp=${(this.messageObj.editedTimestamp === undefined ? Date.now() : this.messageObj.editedTimestamp)}></message-time></span>`
+		if (this.timeId === 'ago') {
+			this.isAgo = true
+			this.isIso = false
+			this.isBoth = false
+		} else if (this.timeId === 'iso') {
+			this.isAgo = false
+			this.isIso = true
+			this.isBoth = false
+		} else if (this.timeId === 'both') {
+			this.isAgo = false
+			this.isIso = false
+			this.isBoth = true
+		}
+
+		if (this.fontSize === 'font16') {
+			this.messageFontSize = "font-size: 16px"
+			this.replyFontSize = "font-size: 14px"
+		} else if (this.fontSize === 'font18') {
+			this.messageFontSize = "font-size: 18px"
+			this.replyFontSize = "font-size: 16px"
+		} else if (this.fontSize === 'font20') {
+			this.messageFontSize = "font-size: 20px"
+			this.replyFontSize = "font-size: 18px"
+		} else if (this.fontSize === 'font22') {
+			this.messageFontSize = "font-size: 22px"
+			this.replyFontSize = "font-size: 20px"
+		}
+
+		edited = html`
+			<span class="edited-message-style">
+				${translate('chatpage.cchange68')}
+				<message-time timestamp=${(this.messageObj.editedTimestamp === undefined ? Date.now() : this.messageObj.editedTimestamp)}></message-time>
+			</span>
+		`
 
 		if (repliedToData) {
 			try {
@@ -1212,7 +1270,16 @@ class MessageTemplate extends LitElement {
 		}
 
 		return hideit ? html`<li class="clearfix"></li>` : html`
-			<li class="clearfix message-parent" style="${ this.isSingleMessageInGroup === true && this.isLastMessageInGroup === false && reactions.length === 0 ? 'padding-bottom: 0;' : null} ${this.isFirstMessage && 'margin-top: 20px;'}">
+			<li
+				class="clearfix message-parent"
+				style="${
+					this.isSingleMessageInGroup === true
+					&& this.isLastMessageInGroup === false
+					&& reactions.length === 0 ?
+					'padding-bottom: 0;' : null
+				}
+				${this.isFirstMessage && 'margin-top: 20px;'}"
+			>
 				<div>
 					<div class="message-container" style="${this.isSingleMessageInGroup === true && this.isLastMessageInGroup === false && 'margin-bottom: 0'}">
 						<div class=${`message-subcontainer1 ${this.isInProgress ? 'message-sending' : ''}`}>
@@ -1238,20 +1305,46 @@ class MessageTemplate extends LitElement {
 									message-subcontainer2
 									${this.myAddress === this.messageObj.sender && 'message-myBg'}
 									${
-										((this.isFirstMessage === true && this.isSingleMessageInGroup === false) || (this.isSingleMessageInGroup === true && this.isLastMessageInGroup === true)) && this.myAddress !== this.messageObj.sender ? 'message-triangle'
-										: ((this.isFirstMessage === true && this.isSingleMessageInGroup === false) || (this.isSingleMessageInGroup === true && this.isLastMessageInGroup === true)) && this.myAddress === this.messageObj.sender ? 'message-myTriangle'
+										(
+											(this.isFirstMessage === true && this.isSingleMessageInGroup === false)
+											|| (this.isSingleMessageInGroup === true && this.isLastMessageInGroup === true)
+										) && this.myAddress !== this.messageObj.sender ?
+											'message-triangle'
+										: (
+											(this.isFirstMessage === true && this.isSingleMessageInGroup === false)
+											|| (this.isSingleMessageInGroup === true && this.isLastMessageInGroup === true)
+										) && this.myAddress === this.messageObj.sender ?
+											'message-myTriangle'
 										: null
 									}
 								`}"
-								style="${
-									this.isSingleMessageInGroup === true && this.isLastMessageInGroup === false ? 'margin-bottom: 0;' : null}
+								style="
 									${
-										this.isFirstMessage === false && this.isSingleMessageInGroup === true && this.isLastMessageInGroup === false ? 'border-radius: 8px 25px 25px 8px;'
-										: this.isFirstMessage === true && this.isSingleMessageInGroup === true && this.isLastMessageInGroup === false ? 'border-radius: 27px 25px 25px 12px;'
-										: this.isFirstMessage === false && this.isSingleMessageInGroup === true && this.isLastMessageInGroup === true ? 'border-radius: 10px 25px 25px 0;'
-										: this.isFirstMessage === true && this.isSingleMessageInGroup === false && this.isLastMessageInGroup === true ? 'border-radius: 25px 25px 25px 0px;'
+										this.isSingleMessageInGroup === true
+										&& this.isLastMessageInGroup === false ?
+											'margin-bottom: 0;'
 										: null
-								}"
+									}
+									${
+										this.isFirstMessage === false
+											&& this.isSingleMessageInGroup === true
+											&& this.isLastMessageInGroup === false ?
+											'border-radius: 8px 25px 25px 8px;'
+										: this.isFirstMessage === true
+											&& this.isSingleMessageInGroup === true
+											&& this.isLastMessageInGroup === false ?
+											'border-radius: 27px 25px 25px 12px;'
+										: this.isFirstMessage === false
+											&& this.isSingleMessageInGroup === true
+											&& this.isLastMessageInGroup === true ?
+											'border-radius: 10px 25px 25px 0;'
+										: this.isFirstMessage === true
+											&& this.isSingleMessageInGroup === false
+											&& this.isLastMessageInGroup === true ?
+											'border-radius: 25px 25px 25px 0px;'
+										: null
+									}
+								"
 							>
 								<div class="message-user-info">
 									${this.isFirstMessage ?
@@ -1285,20 +1378,35 @@ class MessageTemplate extends LitElement {
 								</div>
 								${repliedToData &&
 									html`
-										<div class="original-message" @click=${() => {this.goToRepliedMessage(repliedToData, this.messageObj);}}>
-											<p style=${'cursor: pointer; margin: 0 0 5px 0;'} class=${this.myAddress !== repliedToData.sender ? 'original-message-sender' : 'message-data-my-name'}>
+										<div
+											id="replyNameSize"
+											class="original-message"
+											style=${this.replyFontSize}
+											@click=${() => {this.goToRepliedMessage(repliedToData, this.messageObj);}}
+										>
+											<p
+												style=${'cursor: pointer; margin: 0 0 5px 0;'}
+												class=${
+													this.myAddress !== repliedToData.sender ?
+													'original-message-sender' : 'message-data-my-name'
+												}
+											>
 												${repliedToData.senderName ? repliedToData.senderName : cropAddress(repliedToData.sender)}
 											</p>
 											<p class="replied-message">
 												${version && version.toString() === '1' ?
 													html`
-														${repliedToData.decodedMessage.messageText}
+														<div id="replyFontSize" style=${this.replyFontSize}>
+															${repliedToData.decodedMessage.messageText}
+														</div>
 													`
 													: ''
 												}
 												${+version > 1 && repliedToMessageText ?
 													html`
-														${unsafeHTML(repliedToMessageText)}
+														<div id="replyFontSize" style=${this.replyFontSize}>
+															${unsafeHTML(repliedToMessageText)}
+														</div>
 													`
 													: ''
 												}
@@ -1313,7 +1421,17 @@ class MessageTemplate extends LitElement {
 											class=${[`image-container`, !this.isImageLoaded ? 'defaultSize' : '',].join(' ')}
 											style=${this.isFirstMessage && 'margin-top: 10px;'}
 										>
-											<div style="display: flex; width: 100%; height: 100%; justify-content: center; align-items: center; cursor: pointer; color: var(--black);">
+											<div
+												style="
+													display: flex;
+													width: 100%;
+													height: 100%;
+													justify-content: center;
+													align-items: center;
+													cursor: pointer;
+													color: var(--black);
+												"
+											>
 												${translate('chatpage.cchange40')}
 											</div>
 										</div>
@@ -1356,7 +1474,17 @@ class MessageTemplate extends LitElement {
 											class=${[`image-container`, !this.isGifoaded ? 'defaultSize' : '', ].join(' ')}
 											style=${this.isFirstMessage && 'margin-top: 10px;'}
 										>
-											<div style="display: flex; width: 100%; height: 100%; justify-content: center; align-items: center; cursor: pointer; color: var(--black);">
+											<div
+												style="
+													display: flex;
+													width: 100%;
+													height: 100%;
+													justify-content: center;
+													align-items: center;
+													cursor: pointer;
+													color: var(--black);
+												"
+											>
 												${translate('gifs.gchange25')}
 											</div>
 										</div>
@@ -1365,7 +1493,12 @@ class MessageTemplate extends LitElement {
 								}
 								${gif && !isGifDeleted && (this.viewImage || this.myAddress === this.messageObj.sender) ?
 									html`
-										<div class=${[`image-container`, !this.isGifLoaded ? 'defaultSize' : '',].join(' ')} style=${this.isFirstMessage && 'margin-top: 10px;'}>
+										<div
+											class=${
+												[`image-container`, !this.isGifLoaded ? 'defaultSize' : '',].join(' ')
+											}
+											style=${this.isFirstMessage && 'margin-top: 10px;'}
+										>
 											${gifHTML}
 											${this.myAddress === this.messageObj.sender ?
 												html`
@@ -1486,16 +1619,22 @@ class MessageTemplate extends LitElement {
 								<div id="messageContent" class="message" style=${image && replacedMessage !== '' && 'margin-top: 15px;'}>
 									${+version > 1 ? messageVersion2WithLink ?
 										html`
-											${messageVersion2WithLink}
+											<div id="fontsize" style=${this.messageFontSize}>
+												${messageVersion2WithLink}
+											<div>
 										`
 										: html`
-											${unsafeHTML(messageVersion2)}
+											<div id="fontsize" style=${this.messageFontSize}>
+												${unsafeHTML(messageVersion2)}
+											<div>
 										`
 										: ''
 									}
 									${version && version.toString() === '1' ?
 										html`
-											${unsafeHTML(this.emojiPicker.parse(replacedMessage))}
+											<div id="fontsize" style=${this.messageFontSize}>
+												${unsafeHTML(this.emojiPicker.parse(replacedMessage))}
+											<div>
 										`
 										: ''
 									}
@@ -1508,12 +1647,40 @@ class MessageTemplate extends LitElement {
 									<div
 										style=${isEdited ? 'justify-content: space-between;' : 'justify-content: flex-end;'}
 										class="${
-											(this.isFirstMessage === false && this .isSingleMessageInGroup === true && this.isLastMessageInGroup === true) ||
-											(this.isFirstMessage === true && this.isSingleMessageInGroup === false && this.isLastMessageInGroup === true) ? 'message-data-time' : 'message-data-time-hidden'
+											(this.isFirstMessage === false
+												&& this .isSingleMessageInGroup === true
+												&& this.isLastMessageInGroup === true
+											) ||
+											(this.isFirstMessage === true
+												&& this.isSingleMessageInGroup === false
+												&& this.isLastMessageInGroup === true
+											) ? 'message-data-time' : 'message-data-time-hidden'
 										}"
 									>
 										${isEdited ? html`<span>${edited}</span>` : ''}
-										${this.isInProgress ? html`<p>${translate('chatpage.cchange91')}</p>` : html`${new Date(this.messageObj.timestamp).toLocaleString()}`}
+										${this.isInProgress ? html`
+											<p>${translate('chatpage.cchange91')}</p>
+											` : this.isAgo ? html`
+												<div id="timeformat">
+													<span>
+														<message-time timestamp=${this.messageObj.timestamp}></message-time>
+													</span>
+												</div>
+											` : this.isIso ? html`
+												<div id="timeformat">
+													<span>
+														${new Date(this.messageObj.timestamp).toLocaleString()}
+													</span>
+												</div>
+											` : this.isBoth ? html`
+												<div id="timeformat">
+													<span>
+														${new Date(this.messageObj.timestamp).toLocaleString()}
+														( <message-time timestamp=${this.messageObj.timestamp}></message-time> )
+													</span>
+												</div>
+											` : ''
+										}
 								</div>
 							</div>
 						</div>
@@ -1719,6 +1886,140 @@ class MessageTemplate extends LitElement {
 	}
 
 	firstUpdated() {
+		window.addEventListener('storage', () => {
+			if (localStorage.getItem('timestampForChats') !== this.timeId) {
+				this.timeId = localStorage.getItem('timestampForChats')
+
+				if (this.timeId === 'ago') {
+					this.isAgo = true
+					this.isIso = false
+					this.isBoth = false
+					const setTimeFormatAgo = this.shadowRoot.querySelectorAll('#timeformat')
+					setTimeFormatAgo.forEach((replaceToAgo) => {
+						replaceToAgo.innerHTML = `
+							<span>
+								<message-time timestamp=${this.messageObj.timestamp}></message-time>
+							</span>
+						`
+					})
+				} else if (this.timeId === 'iso') {
+					this.isAgo = false
+					this.isIso = true
+					this.isBoth = false
+					const setTimeFormatIso = this.shadowRoot.querySelectorAll('#timeformat')
+					setTimeFormatIso.forEach((replaceToIso) => {
+						replaceToIso.innerHTML = `
+							<span>
+								${new Date(this.messageObj.timestamp).toLocaleString()}
+							</span>
+						`
+					})
+				} else if (this.timeId === 'both') {
+					this.isAgo = false
+					this.isIso = false
+					this.isBoth = true
+					const setTimeFormatBoth = this.shadowRoot.querySelectorAll('#timeformat')
+					setTimeFormatBoth.forEach((replaceToBoth) => {
+						replaceToBoth.innerHTML = `
+							<span>
+								${new Date(this.messageObj.timestamp).toLocaleString()}
+								( <message-time timestamp=${this.messageObj.timestamp}></message-time> )
+							</span>
+						`
+					})
+				}
+			}
+
+			if (localStorage.getItem('fontsizeForChats') !== this.messageFontSize) {
+				this.messageFontSize = localStorage.getItem('fontsizeForChats')
+				if (this.messageFontSize === 'font16') {
+					const setFontSize16 = this.shadowRoot.querySelectorAll('#fontsize')
+					setFontSize16.forEach((replaceFontSizeTo16) => {
+						replaceFontSizeTo16.removeAttribute("style")
+						replaceFontSizeTo16.setAttribute("style", "font-size: 16px;")
+					})
+					const setNameSize16 = this.shadowRoot.querySelectorAll('#namesize')
+					setNameSize16.forEach((replaceNameSizeTo16) => {
+						replaceNameSizeTo16.removeAttribute("style")
+						replaceNameSizeTo16.setAttribute("style", "font-size: 16px;")
+					})
+					const setReplyFontSize16 = this.shadowRoot.querySelectorAll('#replyFontSize')
+					setReplyFontSize16.forEach((replaceReplayFontSizeTo16) => {
+						replaceReplayFontSizeTo16.removeAttribute("style")
+						replaceReplayFontSizeTo16.setAttribute("style", "font-size: 14px;")
+					})
+					const setReplyNameSize16 = this.shadowRoot.querySelectorAll('#replyNameSize')
+					setReplyNameSize16.forEach((replaceReplayNameSizeTo16) => {
+						replaceReplayNameSizeTo16.removeAttribute("style")
+						replaceReplayNameSizeTo16.setAttribute("style", "font-size: 14px;")
+					})
+				} else if (this.messageFontSize === 'font18') {
+					const setFontSize18 = this.shadowRoot.querySelectorAll('#fontsize')
+					setFontSize18.forEach((replaceFontSizeTo18) => {
+						replaceFontSizeTo18.removeAttribute("style")
+						replaceFontSizeTo18.setAttribute("style", "font-size: 18px;")
+					})
+					const setNameSize18 = this.shadowRoot.querySelectorAll('#namesize')
+					setNameSize18.forEach((replaceNameSizeTo18) => {
+						replaceNameSizeTo18.removeAttribute("style")
+						replaceNameSizeTo18.setAttribute("style", "font-size: 18px;")
+					})
+					const setReplyFontSize18 = this.shadowRoot.querySelectorAll('#replyFontSize')
+					setReplyFontSize18.forEach((replaceReplayFontSizeTo18) => {
+						replaceReplayFontSizeTo18.removeAttribute("style")
+						replaceReplayFontSizeTo18.setAttribute("style", "font-size: 16px;")
+					})
+					const setReplyNameSize18 = this.shadowRoot.querySelectorAll('#replyNameSize')
+					setReplyNameSize18.forEach((replaceReplayNameSizeTo18) => {
+						replaceReplayNameSizeTo18.removeAttribute("style")
+						replaceReplayNameSizeTo18.setAttribute("style", "font-size: 16px;")
+					})
+				} else if (this.messageFontSize === 'font20') {
+					const setFontSize20 = this.shadowRoot.querySelectorAll('#fontsize')
+					setFontSize20.forEach((replaceFontSizeTo20) => {
+						replaceFontSizeTo20.removeAttribute("style")
+						replaceFontSizeTo20.setAttribute("style", "font-size: 20px;")
+					})
+					const setNameSize20 = this.shadowRoot.querySelectorAll('#namesize')
+					setNameSize20.forEach((replaceNameSizeTo20) => {
+						replaceNameSizeTo20.removeAttribute("style")
+						replaceNameSizeTo20.setAttribute("style", "font-size: 20px;")
+					})
+					const setReplyFontSize20 = this.shadowRoot.querySelectorAll('#replyFontSize')
+					setReplyFontSize20.forEach((replaceReplayFontSizeTo20) => {
+						replaceReplayFontSizeTo20.removeAttribute("style")
+						replaceReplayFontSizeTo20.setAttribute("style", "font-size: 18px;")
+					})
+					const setReplyNameSize20 = this.shadowRoot.querySelectorAll('#replyNameSize')
+					setReplyNameSize20.forEach((replaceReplayNameSizeTo20) => {
+						replaceReplayNameSizeTo20.removeAttribute("style")
+						replaceReplayNameSizeTo20.setAttribute("style", "font-size: 18px;")
+					})
+				} else if (this.messageFontSize === 'font22') {
+					const setFontSize22 = this.shadowRoot.querySelectorAll('#fontsize')
+					setFontSize22.forEach((replaceFontSizeTo22) => {
+						replaceFontSizeTo22.removeAttribute("style")
+						replaceFontSizeTo22.setAttribute("style", "font-size: 22px;")
+					})
+					const setNameSize22 = this.shadowRoot.querySelectorAll('#namesize')
+					setNameSize22.forEach((replaceNameSizeTo22) => {
+						replaceNameSizeTo22.removeAttribute("style")
+						replaceNameSizeTo22.setAttribute("style", "font-size: 22px;")
+					})
+					const setReplyFontSize22 = this.shadowRoot.querySelectorAll('#replyFontSize')
+					setReplyFontSize22.forEach((replaceReplayFontSizeTo22) => {
+						replaceReplayFontSizeTo22.removeAttribute("style")
+						replaceReplayFontSizeTo22.setAttribute("style", "font-size: 20px;")
+					})
+					const setReplyNameSize22 = this.shadowRoot.querySelectorAll('#replyNameSize')
+					setReplyNameSize22.forEach((replaceReplayNameSizeTo22) => {
+						replaceReplayNameSizeTo22.removeAttribute("style")
+						replaceReplayNameSizeTo22.setAttribute("style", "font-size: 20px;")
+					})
+				}
+			}
+		})
+
 		const autoSeeChatList = window.parent.reduxStore.getState().app.autoLoadImageChats
 
 		if (autoSeeChatList.includes(this.chatId) || this.listSeenMessages.includes(this.messageObj.signature)) {

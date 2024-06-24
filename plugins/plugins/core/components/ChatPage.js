@@ -34,12 +34,14 @@ import './ChatLeaveGroup'
 import './ChatGroupSettings'
 import './ChatRightPanel'
 import './ChatRightPanelResources'
+import './ChatRightPanelSettings'
 import './ChatSearchResults'
 import '@material/mwc-button'
 import '@material/mwc-dialog'
 import '@material/mwc-icon'
 import '@polymer/paper-dialog/paper-dialog.js'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
+import '@vaadin/tooltip'
 
 // Multi language support
 import { get, translate } from '../../../../core/translate'
@@ -108,6 +110,7 @@ class ChatPage extends LitElement {
 			groupMembers: { type: Array },
 			shifted: { type: Boolean },
 			shiftedResources: { type: Boolean },
+			shiftedSettings: { type: Boolean },
 			groupInfo: { type: Object },
 			setActiveChatHeadUrl: { attribute: false },
 			userFound: { type: Array },
@@ -200,6 +203,7 @@ class ChatPage extends LitElement {
 		this.groupMembers = []
 		this.shifted = false
 		this.shiftedResources = false
+		this.shiftedSettings = false
 		this.groupInfo = {}
 		this.pageNumber = 1
 		this.userFoundModalOpen = false
@@ -258,6 +262,8 @@ class ChatPage extends LitElement {
 							}
 						</div>
 						<div style="display: flex; height: 100%; align-items: center">
+							<mwc-icon id="chatsettings" class="top-bar-icon" @click=${this._toggleSettings} style="margin: 0px 10px">settings</mwc-icon>
+							<vaadin-tooltip for="chatsettings" text=${translate("chatsettings.cs1")} position="start"></vaadin-tooltip>
 							${(!this.isReceipient && +this._chatId !== 0) ?
 								html`
 									<mwc-icon class="top-bar-icon" @click=${this.copyJoinGroupLinkToClipboard} style="margin: 0px 10px">link</mwc-icon>
@@ -661,7 +667,12 @@ class ChatPage extends LitElement {
 											}}
 										>
 										${this.forwardActiveChatHeadUrl.selected ?
-											(html`<div class="user-verified"><p >${translate("chatpage.cchange38")}</p><vaadin-icon icon="vaadin:check-circle-o" slot="icon"></vaadin-icon></div>`)
+											(html`
+												<div class="user-verified">
+													<p>${translate("chatpage.cchange38")}</p>
+													<vaadin-icon icon="vaadin:check-circle-o" slot="icon"></vaadin-icon>
+												</div>
+											`)
 											: (html`<vaadin-icon @click=${this.userSearch} slot="icon" icon="vaadin:open-book" class="search-icon"></vaadin-icon>`)
 										}
 									</div>
@@ -695,7 +706,9 @@ class ChatPage extends LitElement {
 												return html`
 													<chat-select
 														activeChatHeadUrl=${this.forwardActiveChatHeadUrl.url}
-														.setActiveChatHeadUrl=${(val) => {this.forwardActiveChatHeadUrl = {...this.forwardActiveChatHeadUrl, url: val}; this.userFound = [];}}
+														.setActiveChatHeadUrl=${
+															(val) => {this.forwardActiveChatHeadUrl = {...this.forwardActiveChatHeadUrl, url: val}; this.userFound = [];}
+														}
 														chatInfo=${JSON.stringify(item)}
 													>
 													</chat-select>
@@ -780,12 +793,26 @@ class ChatPage extends LitElement {
 					>
 					</chat-right-panel-resources>
 				</div>
+				<div class="chat-right-panel ${this.shiftedSettings ? "movedin" : "movedout"}" ${animate()}>
+					<chat-right-panel-settings
+						.toggle=${(val) => this._toggleSettings(val)}
+					>
+					</chat-right-panel-settings>
+				</div>
 			</div>
 		`
 	}
 
 	async firstUpdated() {
 		this.changeTheme()
+
+		if (localStorage.getItem('timestampForChats') === null) {
+			localStorage.setItem('timestampForChats', 'ago')
+		}
+
+		if (localStorage.getItem('fontsizeForChats') === null) {
+			localStorage.setItem('fontsizeForChats', 'font16')
+		}
 
 		window.addEventListener('storage', () => {
 			const checkLanguage = localStorage.getItem('qortalLanguage')
@@ -835,6 +862,11 @@ class ChatPage extends LitElement {
 
 	_toggleResources(value) {
 		this.shiftedResources = value === (false || true) ? value : !this.shiftedResources
+		this.requestUpdate()
+	}
+
+	_toggleSettings(value) {
+		this.shiftedSettings = value === (false || true) ? value : !this.shiftedSettings
 		this.requestUpdate()
 	}
 
@@ -1376,7 +1408,12 @@ class ChatPage extends LitElement {
 			await this.getUpdateComplete()
 
 			const marginElements = Array.from(this.shadowRoot.querySelector('chat-scroller').shadowRoot.querySelectorAll('message-template'))
-			const findMessage2 = marginElements.find((item) => item.messageObj.signature === message.signature) || marginElements.find((item) => item.messageObj.originalSignature === message.signature) || marginElements.find((item) => item.messageObj.signature === message.originalSignature) || marginElements.find((item) => item.messageObj.originalSignature === message.originalSignature)
+			const findMessage2 = marginElements.find((item) =>
+					item.messageObj.signature === message.signature) || marginElements.find(
+						(item) => item.messageObj.originalSignature === message.signature
+					)
+					|| marginElements.find((item) => item.messageObj.signature === message.originalSignature)
+					|| marginElements.find((item) => item.messageObj.originalSignature === message.originalSignature)
 			if (findMessage2) {
 				findMessage2.scrollIntoView({ block: 'center' })
 			}

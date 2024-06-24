@@ -1319,5 +1319,15 @@
 		"tour20": "blokkeja takana. Haluatko päivittää (bootstrap) nopeuttaaksesi synkronointiprosessia?",
 		"tour21": "jäljellä olevat lohkot.",
 		"tour22": "Pyydellään päivitystä (bootstrap). Odota."
+	},
+	"chatsettings": {
+		"cs1": "Pikaviestiasetukset",
+		"cs2": "Yleiset chat-asetukset",
+		"cs3": "Pikaviestin aikaleima",
+		"cs4": "Aika sitten",
+		"cs5": "Paikallinen aika",
+		"cs6": "Chat-viestin kirjasinkoko",
+		"cs7": "Vakio",
+		"cs8": "px"
 	}
 }

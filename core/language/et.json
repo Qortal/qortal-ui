@@ -1319,5 +1319,15 @@
 		"tour20": "blokeerib taga. Kas soovite sünkroonimisprotsessi kiirendamiseks värskendada (bootstrap)?",
 		"tour21": "jäänud plokke.",
 		"tour22": "Taotleb värskendamist (bootstrap). Palun oodake."
+	},
+	"chatsettings": {
+		"cs1": "Vestluse seaded",
+		"cs2": "Üldised vestluse seaded",
+		"cs3": "Vestlussõnumi ajatempel",
+		"cs4": "Aeg tagasi",
+		"cs5": "Kohalik aeg",
+		"cs6": "Vestlussõnumi fondi suurus",
+		"cs7": "Standardne",
+		"cs8": "px"
 	}
 }

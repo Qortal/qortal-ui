@@ -1319,5 +1319,15 @@
 		"tour20": "blocos atrás. Gostaria de atualizar (inicializar) para acelerar o processo de sincronização?",
 		"tour21": "blocos restantes.",
 		"tour22": "Atualização (bootstrap) solicitada. Aguarde."
+	},
+	"chatsettings": {
+		"cs1": "Configurações de bate-papo",
+		"cs2": "Configurações gerais de bate-papo",
+		"cs3": "Data e hora da mensagem de bate-papo",
+		"cs4": "Tempo atrás",
+		"cs5": "Hora Local",
+		"cs6": "Tamanho da fonte da mensagem de bate-papo",
+		"cs7": "Padrão",
+		"cs8": "px"
 	}
 }
