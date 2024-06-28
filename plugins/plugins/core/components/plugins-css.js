@@ -14203,8 +14203,10 @@ export const multiWalletStyles = css`
     }
 
     .qrcode-pos {
-        margin-top: -175px;
+        margin-top: -190px;
+	margin-right: 20px;
         float: right;
+	border: 1px solid var(--black);
     }
 
     .send-pos {
