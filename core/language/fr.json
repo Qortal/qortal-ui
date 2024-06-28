@@ -1319,5 +1319,15 @@
 		"tour20": "blocs derrière. Souhaitez-vous actualiser (bootstrap) pour accélérer le processus de synchronisation ?",
 		"tour21": "blocs restants.",
 		"tour22": "Actualisation (bootstrap) demandée. Veuillez patienter."
+	},
+	"chatsettings": {
+		"cs1": "Paramètres de discussion",
+		"cs2": "Paramètres généraux de discussion",
+		"cs3": "Horodatage du message de discussion",
+		"cs4": "Il y a du temps",
+		"cs5": "Heure locale",
+		"cs6": "Taille de la police des messages de discussion",
+		"cs7": "Standard",
+		"cs8": "px"
 	}
 }

@@ -1319,5 +1319,15 @@
 		"tour20": "blocchi dietro. Vuoi aggiornare (bootstrap) per accelerare il processo di sincronizzazione?",
 		"tour21": "blocchi rimanenti.",
 		"tour22": "Aggiornamento (bootstrap) richiesto. Attendi prego."
+	},
+	"chatsettings": {
+		"cs1": "Impostazioni chat",
+		"cs2": "Impostazioni generali della chat",
+		"cs3": "Timestamp del messaggio di chat",
+		"cs4": "Tempo fa",
+		"cs5": "Ora locale",
+		"cs6": "Dimensione carattere messaggio chat",
+		"cs7": "Standard",
+		"cs8": "px"
 	}
 }

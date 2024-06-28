@@ -48,6 +48,8 @@ class LoginSection extends connect(store)(LitElement) {
 			backedUpWalletJSON: { type: Object },
 			backedUpSeedLoading: { type: Boolean },
 			nodeConfig: { type: Object },
+			names: { type: Array },
+			namesAvatar: { type: String },
 			theme: { type: String, reflect: true }
 		}
 	}
@@ -66,6 +68,8 @@ class LoginSection extends connect(store)(LitElement) {
 		this.selectedWallet = {}
 		this.loginErrorMessage = ''
 		this.saveInBrowser = false
+		this.names = []
+		this.namesAvatar = ''
 		this.theme = localStorage.getItem('qortalTheme') ? localStorage.getItem('qortalTheme') : 'light'
 
 		this.loginOptions = [
@@ -311,7 +315,7 @@ class LoginSection extends connect(store)(LitElement) {
 						</div>
 						<div page="unlockStored" id="unlockStoredPage">
 							<div style="text-align:center;">
-								<mwc-icon id='accountIcon' style="padding-bottom: 24px; color: var(--black);">account_circle</mwc-icon>
+								${this.namesAvatar}
 								<br>
 								<span style="font-size:14px; font-weight: 100; font-family: 'Roboto Mono', monospace; color: var(--black);">${this.selectedWallet.address0}</span>
 							</div>
@@ -417,9 +421,38 @@ class LoginSection extends connect(store)(LitElement) {
 		return html`${translate("login.lp8")}`
 	}
 
+	renderLoginAvatar(renderAddress) {
+		const avatarNode = store.getState().app.nodeConfig.knownNodes[store.getState().app.nodeConfig.node]
+		const avatarUrl = avatarNode.protocol + '://' + avatarNode.domain + ':' + avatarNode.port
+		const namesUrl = `${avatarUrl}/names/address/${renderAddress}?limit=0&reverse=true`
+
+		this.namesAvatar = ''
+
+		if (this.isEmptyArray(this.names)) {
+			fetch(namesUrl).then(response => {
+				return response.json()
+			}).then(data => {
+				this.names = data
+				if (this.isEmptyArray(this.names)) {
+					this.namesAvatar = html`<mwc-icon id='accountIcon' style="padding-bottom: 24px; color: var(--black);">account_circle</mwc-icon>`
+				} else {
+					const url = `${avatarUrl}/arbitrary/THUMBNAIL/${this.names[0].name}/qortal_avatar?async=true`
+					this.namesAvatar = html`
+						<img style="width: 48px; height: 48px; border-radius: 25%; padding-bottom: 16px;" src="${url}" onerror="this.src='/img/incognito.png';" />
+						<br>
+						<span style="font-size:16px; font-weight: 400; font-family: 'Roboto Mono', monospace; color: var(--black);">${this.names[0].name}</span>
+						<br>
+					`
+				}
+                	})
+		}
+	}
+
 	selectWallet(wallet) {
 		this.selectedWallet = wallet
 		this.selectedPage = 'unlockStored'
+		this.names = []
+		this.renderLoginAvatar(this.selectedWallet.address0)
 	}
 
 	toDeleteWallet(deleteAddress) {
@@ -667,6 +700,11 @@ class LoginSection extends connect(store)(LitElement) {
 		this.hasStoredWallets = Object.keys(store.getState().user.storedWallets).length > 0
 		this.selectedPage = this.hasStoredWallets ? 'storedWallet' : 'loginOptions'
 		this.shadowRoot.querySelector('#deleteWalletDialog').close()
+	}
+
+	isEmptyArray(arr) {
+		if (!arr) { return true }
+		return arr.length === 0
 	}
 }
 

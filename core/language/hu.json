@@ -1319,5 +1319,15 @@
 		"tour20": "blokkok mögött. Szeretne frissíteni (bootstrap) a szinkronizálási folyamat felgyorsítása érdekében?",
 		"tour21": "még blokkok.",
 		"tour22": "Frissítés (bootstrap) kérve. Kérjük, várjon."
+	},
+	"chatsettings": {
+		"cs1": "Csevegés beállításai",
+		"cs2": "Általános csevegési beállítások",
+		"cs3": "Csevegési üzenet időbélyege",
+		"cs4": "Idővel ezelőtt",
+		"cs5": "Helyi idő",
+		"cs6": "Csevegési üzenet betűmérete",
+		"cs7": "Normál",
+		"cs8": "px"
 	}
 }

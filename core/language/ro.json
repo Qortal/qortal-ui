@@ -1319,5 +1319,15 @@
 		"tour20": "se blochează în urmă. Doriți să reîmprospătați (bootstrap) pentru a accelera procesul de sincronizare?",
 		"tour21": "blocuri rămase.",
 		"tour22": "Reîmprospătare (bootstrap) solicitată. Vă rugăm să așteptați."
+	},
+	"chatsettings": {
+		"cs1": "Setări chat",
+		"cs2": "Setări generale de chat",
+		"cs3": "Marca temporală a mesajului de chat",
+		"cs4": "Timp în urmă",
+		"cs5": "Ora locală",
+		"cs6": "Dimensiunea fontului mesajului de chat",
+		"cs7": "Standard",
+		"cs8": "px"
 	}
 }

@@ -1319,5 +1319,15 @@
 		"tour20": "bloki za sobą. Czy chcesz odświeżyć (bootstrap), aby przyspieszyć proces synchronizacji?",
 		"tour21": "pozostałe bloki.",
 		"tour22": "Zażądano odświeżenia (bootstrap). Proszę czekać."
+	},
+	"chatsettings": {
+		"cs1": "Ustawienia czatu",
+		"cs2": "Ogólne ustawienia czatu",
+		"cs3": "Sygnatura czasowa wiadomości czatu",
+		"cs4": "Czas temu",
+		"cs5": "Czas lokalny",
+		"cs6": "Rozmiar czcionki wiadomości czatu",
+		"cs7": "Standardowy",
+		"cs8": "px"
 	}
 }
