@@ -6,6 +6,7 @@ const createTransaction = api.createTransaction
 const processTransaction = api.processTransaction
 const tradeBotCreateRequest = api.tradeBotCreateRequest
 const tradeBotRespondRequest = api.tradeBotRespondRequest
+const tradeBotRespondMultipleRequest = api.tradeBotRespondMultipleRequest
 const signTradeBotTxn = api.signTradeBotTxn
 const deleteTradeOffer = api.deleteTradeOffer
 const cancelAllOffers = api.cancelAllOffers
@@ -153,6 +154,21 @@ export const routes = {
 
 		try {
 			response = await tradeBotRespondRequest(req.data)
+		} catch (e) {
+			console.error(e)
+			console.error(e.message)
+
+			response = e.message
+		}
+
+		return response
+	},
+
+	tradeBotRespondMultipleRequest: async (req) => {
+		let response
+
+		try {
+			response = await tradeBotRespondMultipleRequest(req.data)
 		} catch (e) {
 			console.error(e)
 			console.error(e.message)

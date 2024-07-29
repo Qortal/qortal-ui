@@ -30,6 +30,7 @@ import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@vaadin/grid'
 import '@vaadin/grid/vaadin-grid-sorter'
 import '@vaadin/password-field'
+import '@vaadin/grid/vaadin-grid-selection-column.js'
 
 // Multi language support
 import { get, registerTranslateConfig, translate, use } from '../../../../core/translate'
@@ -498,6 +499,10 @@ class TradePortal extends LitElement {
 
 		this._openOrdersGrid = this.shadowRoot.getElementById('openOrdersGrid')
 
+		this._openOrdersGrid.addEventListener("selected-items-changed", function(event){
+			_this.fillBuyForm(event.detail.value);
+		});
+
 		this._openOrdersGrid.querySelector('#priceColumn').headerRenderer = function (root) {
 			const priceString = get("tradepage.tchange9")
 			root.innerHTML = '<vaadin-grid-sorter path="price" direction="asc">' + priceString + ' (' + _this.listedCoins.get(_this.selectedCoin).coinCode + ')</vaadin-grid-sorter>'
@@ -751,13 +756,14 @@ class TradePortal extends LitElement {
 							aria-label="Open Orders"
 							.items="${this.listedCoins.get(this.selectedCoin).openFilteredOrders}"
 						>
+							<vaadin-grid-selection-column></vaadin-grid-selection-column>
 							<vaadin-grid-column
 								auto-width
 								resizable
 								header="${translate("tradepage.tchange8")} (QORT)"
 								id="qortAmountColumn"
 								.renderer=${(root, column, data) => {
-									render(html`<span style="cursor: pointer;" @click="${() => this.fillBuyForm(data)}">${this.round(data.item.qortAmount)}</span>`, root)
+									render(html`<span style="cursor: pointer;" >${this.round(data.item.qortAmount)}</span>`, root)
 								}}
 							>
 							</vaadin-grid-column>
@@ -767,7 +773,7 @@ class TradePortal extends LitElement {
 								header="${translate("tradepage.tchange9")} (${this.listedCoins.get(this.selectedCoin).coinCode})"
 								id="priceColumn"
 								.renderer=${(root, column, data) => {
-									render(html`<span style="cursor: pointer;" @click="${() => this.fillBuyForm(data)}">${this.round(data.item.price)}</span>`, root)
+									render(html`<span style="cursor: pointer;" >${this.round(data.item.price)}</span>`, root)
 								}}
 							>
 							</vaadin-grid-column>
@@ -777,7 +783,7 @@ class TradePortal extends LitElement {
 								header="${translate("tradepage.tchange10")} (${this.listedCoins.get(this.selectedCoin).coinCode})"
 								id="foreignAmountColumn"
 								.renderer=${(root, column, data) => {
-									render(html`<span style="cursor: pointer;" @click="${() => this.fillBuyForm(data)}">${data.item.foreignAmount}</span>`, root)
+									render(html`<span style="cursor: pointer;" >${data.item.foreignAmount}</span>`, root)
 								}}
 							>
 							</vaadin-grid-column>
@@ -1552,13 +1558,25 @@ class TradePortal extends LitElement {
 		this.isLoadingMyOpenOrders = false
 	}
 
-	fillBuyForm(sellerRequest) {
-		this.shadowRoot.getElementById('buyAmountInput').value = parseFloat(sellerRequest.item.qortAmount)
-		this.shadowRoot.getElementById('buyPriceInput').value = this.round(parseFloat(sellerRequest.item.foreignAmount) / parseFloat(sellerRequest.item.qortAmount))
-		this.shadowRoot.getElementById('buyTotalInput').value = parseFloat(sellerRequest.item.foreignAmount)
-		this.shadowRoot.getElementById('qortalAtAddress').value = sellerRequest.item.qortalAtAddress
-		const buyFunds = this.round(parseFloat(sellerRequest.item.foreignAmount))
+	fillBuyForm(sellerRequests) {
+		let qortalATAddresses = [];
+		let qortAmount = 0;
+		let foreignAmount = 0;
+
+		sellerRequests.forEach((item, index) => {
+			qortalATAddresses.push(item.qortalAtAddress);
+			qortAmount += parseFloat(item.qortAmount);
+			foreignAmount += parseFloat(item.foreignAmount);
+		})
+
+		this.shadowRoot.getElementById('buyAmountInput').value = qortAmount
+		this.shadowRoot.getElementById('buyPriceInput').value = qortAmount > 0 ? this.round(foreignAmount / qortAmount) : 0
+		this.shadowRoot.getElementById('buyTotalInput').value = foreignAmount
+		this.shadowRoot.getElementById('qortalAtAddress').value = qortalATAddresses
+
+		const buyFunds = this.round(foreignAmount)
 		const haveFunds = this.round(parseFloat(this.listedCoins.get(this.selectedCoin).balance))
+
 		if (Number(haveFunds) > Number(buyFunds)) {
 			this.buyBtnDisable = false
 			this.autoBuyWarning = false
@@ -1568,7 +1586,6 @@ class TradePortal extends LitElement {
 			this.autoBuyWarning = true
 			this.displayTabContent('buy')
 		}
-
 	}
 
 	processOfferingTrade(offer) {
@@ -2330,8 +2347,8 @@ class TradePortal extends LitElement {
 		}
 
 		const makeRequest = async () => {
-			return await parentEpml.request('tradeBotRespondRequest', {
-				atAddress: qortalAtAddress,
+			return await parentEpml.request('tradeBotRespondMultipleRequest', {
+				addresses: qortalAtAddress.split(','),
 				foreignKey: _foreignKey,
 				receivingAddress: this.selectedAddress.address
 			})

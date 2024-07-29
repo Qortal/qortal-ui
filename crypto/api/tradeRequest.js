@@ -4,6 +4,7 @@ import TradeBotRespondRequest from './transactions/trade-portal/tradebot/TradeBo
 import signTradeBotTransaction from './transactions/trade-portal/tradebot/signTradeBotTransaction'
 import DeleteTradeOffer from './transactions/trade-portal/tradeoffer/DeleteTradeOffer'
 import { request } from './fetch-request'
+import TradeBotRespondMultipleRequest from "./transactions/trade-portal/tradebot/TradeBotRespondMultipleRequest";
 
 // TradeBotCreateRequest
 export const tradeBotCreateRequest = (requestObject) => {
@@ -26,6 +27,21 @@ export const tradeBotRespondRequest = (requestObject) => {
 	const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 
 	return request(`/crosschain/tradebot/respond?apiKey=${myNode.apiKey}`, {
+		method: 'POST',
+		headers: {
+			'Accept': 'application/json',
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(txn)
+	})
+}
+
+// TradeBotRespondRequest
+export const tradeBotRespondMultipleRequest = (requestObject) => {
+	const txn = new TradeBotRespondMultipleRequest().createTransaction(requestObject)
+	const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+
+	return request(`/crosschain/tradebot/respondmultiple?apiKey=${myNode.apiKey}`, {
 		method: 'POST',
 		headers: {
 			'Accept': 'application/json',
