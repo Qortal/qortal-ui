@@ -793,7 +793,7 @@ class TradePortal extends LitElement {
 								header="${translate("tradepage.tchange13")}"
 								id="qortalCreatorColumn"
 								.renderer=${(root, column, data) => {
-									render(html`<span style="cursor: pointer;" @click="${() => this.fillBuyForm(data)}">${data.item.qortalCreator}</span>`, root)
+									render(html`<span style="cursor: pointer;" >${data.item.qortalCreator}</span>`, root)
 								}}
 							>
 							</vaadin-grid-column>
