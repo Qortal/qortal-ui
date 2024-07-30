@@ -1552,6 +1552,14 @@ class TradePortal extends LitElement {
 		this.isLoadingOpenTrades = false
 	}
 
+	reSelectOpenOrders() {
+		const qortalATAddressesString = this.shadowRoot.getElementById('qortalAtAddress').value;
+		const qortalATAddresses = qortalATAddressesString.split(',');
+		const itemsToSelect = this.tradesPresenceCleaned.filter((order) => qortalATAddresses.includes(order.qortalAtAddress));
+		this._openOrdersGrid.selectedItems = [...itemsToSelect];
+		this.fillBuyForm(itemsToSelect);
+	}
+
 	async reRenderMyOpenOrders() {
 		this.requestUpdate()
 		await this.updateComplete
@@ -2665,6 +2673,7 @@ class TradePortal extends LitElement {
 					filterPresenceList()
 					this.listedCoins.get(message.data.relatedCoin).openFilteredOrders = this.tradesPresenceCleaned
 					this.reRenderOpenFilteredOrders()
+					this.reSelectOpenOrders()
 					return null
 				default:
 					break
