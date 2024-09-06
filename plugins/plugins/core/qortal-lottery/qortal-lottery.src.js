@@ -80,7 +80,7 @@ class QortalLottery extends LitElement {
 		this.sendQortLoading = false
 		this.openLotteriesLoading = false
 		this.closedLotteriesLoading = false
-		this.sendQortFee = 0
+		this.sendQortFee = 0.01
 		this.errorMessage = ''
 		this.successMessage = ''
 		this.isValidAmount = false
@@ -451,7 +451,7 @@ class QortalLottery extends LitElement {
 	async openPlayLotteryDialog(dataObj) {
 		this.balance = 0
 		await this.getWalletBalance()
-		this.sendQortFee = 0
+		this.sendQortFee = 0.01
 		await this.getQortPaymentFee()
 		this.lotteryAtAddress = ''
 		this.lotteryEnterAmount = 0
@@ -468,7 +468,7 @@ class QortalLottery extends LitElement {
 		}
 
 		const checkMyQortAmount = this.round(parseFloat(this.lotteryEnterAmount))
-		const checkMyFunds = this.round(parseFloat(this.balance - 0.01100000))
+		const checkMyFunds = this.round(parseFloat(this.balance - this.sendQortFee))
 
 		if (Number(checkMyFunds) >= Number(checkMyQortAmount)) {
 			this.btnDisable = false
@@ -587,7 +587,7 @@ class QortalLottery extends LitElement {
 		} else {
 			const checkQortAmountInput = this.shadowRoot.getElementById('amountInput').value
 			const checkQortAmount = this.round(parseFloat(checkQortAmountInput))
-			const myFunds = this.round(parseFloat(this.balance - 0.01100000))
+			const myFunds = this.round(parseFloat(this.balance - this.sendQortFee))
 			if (Number(myFunds) >= Number(checkQortAmount)) {
 				this.shadowRoot.getElementById('amountInput').value = checkQortAmountInput
 				this.btnDisable = false
@@ -618,7 +618,7 @@ class QortalLottery extends LitElement {
 					} else {
 						const checkQortAmountInput = this.shadowRoot.getElementById('amountInput').value
 						const checkQortAmount = this.round(parseFloat(checkQortAmountInput))
-						const myFunds = this.round(parseFloat(this.balance - 0.01100000))
+						const myFunds = this.round(parseFloat(this.balance - this.sendQortFee))
 						if (Number(myFunds) >= Number(checkQortAmount)) {
 							this.shadowRoot.getElementById('amountInput').value = checkQortAmountInput
 							this.btnDisable = false
@@ -636,7 +636,7 @@ class QortalLottery extends LitElement {
 			} else {
 				const checkQortAmountInput = this.shadowRoot.getElementById('amountInput').value
 				const checkQortAmount = this.round(parseFloat(checkQortAmountInput))
-				const myFunds = this.round(parseFloat(this.balance - 0.01100000))
+				const myFunds = this.round(parseFloat(this.balance - this.sendQortFee))
 				if (Number(myFunds) >= Number(checkQortAmount)) {
 					this.shadowRoot.getElementById('amountInput').value = checkQortAmountInput
 					this.btnDisable = false
@@ -651,7 +651,7 @@ class QortalLottery extends LitElement {
 	}
 
 	async sendQort() {
-		this.sendQortFee = 0
+		this.sendQortFee = 0.01
 		await this.getQortPaymentFee()
 
 		const sendFee = this.sendQortFee
@@ -661,7 +661,7 @@ class QortalLottery extends LitElement {
 		this.sendQortLoading = true
 		this.btnDisable = true
 
-		if (parseFloat(amount) + parseFloat(0.011) > parseFloat(this.balance)) {
+		if (parseFloat(amount) + parseFloat(sendFee) > parseFloat(this.balance)) {
 			this.sendQortLoading = false
 			this.btnDisable = false
 			let snack1string = get("walletpage.wchange26")

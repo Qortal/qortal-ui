@@ -73,8 +73,8 @@ class NamesMarket extends LitElement {
 		this.recipientPublicKey = ''
 		this.btnDisable = false
 		this.isLoading = false
-		this.cancelSellFee = 0.001
-		this.buyFee = 0.001
+		this.cancelSellFee = 0.01
+		this.buyFee = 0.01
 		this.toCancelSellName = ''
 		this.toBuyName = ''
 		this.toBuyPrice = ''

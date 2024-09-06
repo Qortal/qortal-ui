@@ -146,7 +146,7 @@ export class TipUser extends LitElement {
 			this.btnDisable = false
 		}
 
-		if (parseFloat(amount) + parseFloat(0.011) > parseFloat(this.walletBalance)) {
+		if (parseFloat(amount) + parseFloat(this.qortPaymentFee) > parseFloat(this.walletBalance)) {
 			resetState()
 			const snack1string = get("chatpage.cchange51")
 			parentEpml.request('showSnackBar', `${snack1string}`)
