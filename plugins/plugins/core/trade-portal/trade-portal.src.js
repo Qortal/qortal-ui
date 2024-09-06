@@ -500,7 +500,7 @@ class TradePortal extends LitElement {
 		this._openOrdersGrid = this.shadowRoot.getElementById('openOrdersGrid')
 
 		this._openOrdersGrid.addEventListener("selected-items-changed", function(event){
-			_this.fillBuyForm(event.detail.value);
+			_this.fillBuyFormMultiple(event.detail.value);
 		});
 
 		this._openOrdersGrid.querySelector('#priceColumn').headerRenderer = function (root) {
@@ -738,6 +738,25 @@ class TradePortal extends LitElement {
 		`
 	}
 
+	coinGridSelection() {
+
+		if(this.selectedCoin == 'PIRATECHAIN') {
+			return html``
+		}
+		else {
+			return html`
+				<vaadin-grid-selection-column></vaadin-grid-selection-column>
+			`
+		}
+	}
+
+	clickHandler(data) {
+
+		if(this.selectedCoin == 'PIRATECHAIN') {
+			this.fillBuyFormSingle(data)
+		}
+	}
+
 	openTradesTemplate() {
 		return html`
 			<div class="open-trades myhover">
@@ -756,14 +775,14 @@ class TradePortal extends LitElement {
 							aria-label="Open Orders"
 							.items="${this.listedCoins.get(this.selectedCoin).openFilteredOrders}"
 						>
-							<vaadin-grid-selection-column></vaadin-grid-selection-column>
+						${this.coinGridSelection()}
 							<vaadin-grid-column
 								auto-width
 								resizable
 								header="${translate("tradepage.tchange8")} (QORT)"
 								id="qortAmountColumn"
 								.renderer=${(root, column, data) => {
-									render(html`<span style="cursor: pointer;" >${this.round(data.item.qortAmount)}</span>`, root)
+									render(html`<span style="cursor: pointer;" @click="${() => this.clickHandler(data)}">${this.round(data.item.qortAmount)}</span>`, root)
 								}}
 							>
 							</vaadin-grid-column>
@@ -773,7 +792,7 @@ class TradePortal extends LitElement {
 								header="${translate("tradepage.tchange9")} (${this.listedCoins.get(this.selectedCoin).coinCode})"
 								id="priceColumn"
 								.renderer=${(root, column, data) => {
-									render(html`<span style="cursor: pointer;" >${this.round(data.item.price)}</span>`, root)
+									render(html`<span style="cursor: pointer;" @click="${() => this.clickHandler(data)}">${this.round(data.item.price)}</span>`, root)
 								}}
 							>
 							</vaadin-grid-column>
@@ -783,7 +802,7 @@ class TradePortal extends LitElement {
 								header="${translate("tradepage.tchange10")} (${this.listedCoins.get(this.selectedCoin).coinCode})"
 								id="foreignAmountColumn"
 								.renderer=${(root, column, data) => {
-									render(html`<span style="cursor: pointer;" >${data.item.foreignAmount}</span>`, root)
+									render(html`<span style="cursor: pointer;" @click="${() => this.clickHandler(data)}">${data.item.foreignAmount}</span>`, root)
 								}}
 							>
 							</vaadin-grid-column>
@@ -793,7 +812,7 @@ class TradePortal extends LitElement {
 								header="${translate("tradepage.tchange13")}"
 								id="qortalCreatorColumn"
 								.renderer=${(root, column, data) => {
-									render(html`<span style="cursor: pointer;" >${data.item.qortalCreator}</span>`, root)
+									render(html`<span style="cursor: pointer;" @click="${() => this.clickHandler(data)}">${data.item.qortalCreator}</span>`, root)
 								}}
 							>
 							</vaadin-grid-column>
@@ -1557,7 +1576,7 @@ class TradePortal extends LitElement {
 		const qortalATAddresses = qortalATAddressesString.split(',');
 		const itemsToSelect = this.tradesPresenceCleaned.filter((order) => qortalATAddresses.includes(order.qortalAtAddress));
 		this._openOrdersGrid.selectedItems = [...itemsToSelect];
-		this.fillBuyForm(itemsToSelect);
+		this.fillBuyFormMultiple(itemsToSelect);
 	}
 
 	async reRenderMyOpenOrders() {
@@ -1566,7 +1585,16 @@ class TradePortal extends LitElement {
 		this.isLoadingMyOpenOrders = false
 	}
 
-	fillBuyForm(sellerRequests) {
+	fillBuyFormSingle(sellerRequest) {
+		this.shadowRoot.getElementById('buyAmountInput').value = parseFloat(sellerRequest.item.qortAmount)
+		this.shadowRoot.getElementById('buyPriceInput').value = this.round(parseFloat(sellerRequest.item.foreignAmount) / parseFloat(sellerRequest.item.qortAmount))
+		this.shadowRoot.getElementById('buyTotalInput').value = parseFloat(sellerRequest.item.foreignAmount)
+		this.shadowRoot.getElementById('qortalAtAddress').value = sellerRequest.item.qortalAtAddress
+		const buyFunds = this.round(parseFloat(sellerRequest.item.foreignAmount))
+		this.fillBuyForm(buyFunds)
+	}
+
+	fillBuyFormMultiple(sellerRequests) {
 		let qortalATAddresses = [];
 		let qortAmount = 0;
 		let foreignAmount = 0;
@@ -1583,6 +1611,10 @@ class TradePortal extends LitElement {
 		this.shadowRoot.getElementById('qortalAtAddress').value = qortalATAddresses
 
 		const buyFunds = this.round(foreignAmount)
+		this.fillBuyForm(buyFunds)
+	}
+
+	fillBuyForm(buyFunds) {
 		const haveFunds = this.round(parseFloat(this.listedCoins.get(this.selectedCoin).balance))
 
 		if (Number(haveFunds) > Number(buyFunds)) {
@@ -2355,11 +2387,21 @@ class TradePortal extends LitElement {
 		}
 
 		const makeRequest = async () => {
-			return await parentEpml.request('tradeBotRespondMultipleRequest', {
-				addresses: qortalAtAddress.split(','),
-				foreignKey: _foreignKey,
-				receivingAddress: this.selectedAddress.address
-			})
+
+			if( this.selectedCoin == 'PIRATECHAIN') {
+				return await parentEpml.request('tradeBotRespondRequest', {
+					atAddress: qortalAtAddress,
+					foreignKey: _foreignKey,
+					receivingAddress: this.selectedAddress.address
+				})
+			}
+			else {
+				return await parentEpml.request('tradeBotRespondMultipleRequest', {
+					addresses: qortalAtAddress.split(','),
+					foreignKey: _foreignKey,
+					receivingAddress: this.selectedAddress.address
+				})
+			}
 		}
 
 		const manageResponse = (response) => {
@@ -2673,7 +2715,9 @@ class TradePortal extends LitElement {
 					filterPresenceList()
 					this.listedCoins.get(message.data.relatedCoin).openFilteredOrders = this.tradesPresenceCleaned
 					this.reRenderOpenFilteredOrders()
-					this.reSelectOpenOrders()
+					if( this.selectedCoin != 'PIRATECHAIN') {
+						this.reSelectOpenOrders()
+					}
 					return null
 				default:
 					break
