@@ -1,5 +1,5 @@
 export { request } from './fetch-request'
 export { transactionTypes as transactions } from './transactions/transactions'
 export { processTransaction, processTransactionVersion2, createTransaction, computeChatNonce, signChatTransaction, signArbitraryTransaction, signArbitraryWithFeeTransaction } from './createTransaction'
-export { tradeBotCreateRequest, tradeBotRespondRequest, signTradeBotTxn, deleteTradeOffer, sendBtc, sendLtc, sendDoge, sendDgb, sendRvn, sendArrr } from './tradeRequest'
+export { tradeBotCreateRequest, tradeBotRespondRequest, tradeBotRespondMultipleRequest, signTradeBotTxn, deleteTradeOffer, sendBtc, sendLtc, sendDoge, sendDgb, sendRvn, sendArrr } from './tradeRequest'
 export { cancelAllOffers } from './transactions/trade-portal/tradeoffer/cancelAllOffers'
