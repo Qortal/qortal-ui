@@ -54,9 +54,9 @@ class LevelFounder extends LitElement {
 	}
 
 	renderFounder() {
-		let adressfounder = this.memberInfo.flags
+		let addressfounder = this.memberInfo.flags
 
-		if (adressfounder === 1) {
+		if (addressfounder === 1) {
 			return html`
 				<span id="founderTooltip" class="badge">F</span>
 				<paper-tooltip class="custom" for="founderTooltip" position="top">FOUNDER</paper-tooltip>
@@ -67,13 +67,13 @@ class LevelFounder extends LitElement {
 	}
 
 	renderLevel() {
-		let adresslevel = this.memberInfo.level
+		let addresslevel = this.memberInfo.level
 
-		return adresslevel ?
+		return addresslevel ?
 			html`
-				<img id="level-img" src=${`/img/badges/level-${adresslevel}.png`} alt=${`badge-${adresslevel}`} class="message-data-level" />
+				<img id="level-img" src=${`/img/badges/level-${addresslevel}.png`} alt=${`badge-${addresslevel}`} class="message-data-level" />
 				<paper-tooltip class="level-img-tooltip" for="level-img" position="top">
-					${translate("mintingpage.mchange27")} ${adresslevel}
+					${translate("mintingpage.mchange27")} ${addresslevel}
 				</paper-tooltip>
 			`
 			: ''

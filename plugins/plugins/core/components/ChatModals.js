@@ -20,7 +20,7 @@ class ChatModals extends LitElement {
 			hidePrivateMessageModal: { type: Function },
 			hideBlockUserModal: { type: Function },
 			toblockaddress: { type: String, attribute: true },
-			chatBlockedAdresses: { type: Array }
+			chatBlockedAddresses: { type: Array }
 		}
 	}
 
@@ -33,7 +33,7 @@ class ChatModals extends LitElement {
 		this.isLoading = false
 		this.hidePrivateMessageModal = () => { }
 		this.hideBlockUserModal = () => { }
-		this.chatBlockedAdresses = []
+		this.chatBlockedAddresses = []
 	}
 
 	render() {
@@ -313,11 +313,11 @@ class ChatModals extends LitElement {
 		}, 500)
 	}
 
-	async getChatBlockedAdresses() {
-		const chatBlockedAdresses = await parentEpml.request('apiCall', {
+	async getchatBlockedAddresses() {
+		const chatBlockedAddresses = await parentEpml.request('apiCall', {
 			url: `/lists/blockedAddresses?apiKey=${this.getApiKey()}`
 		})
-		this.chatBlockedAdresses = chatBlockedAdresses
+		this.chatBlockedAddresses = chatBlockedAddresses
 	}
 
 	async chatBlockAddress() {
@@ -339,8 +339,8 @@ class ChatModals extends LitElement {
 		})
 
 		if (ret === true) {
-			this.chatBlockedAdresses = this.chatBlockedAdresses.filter(item => item != address)
-			this.chatBlockedAdresses.push(address)
+			this.chatBlockedAddresses = this.chatBlockedAddresses.filter(item => item != address)
+			this.chatBlockedAddresses.push(address)
 			this.getChatBlockedList()
 			this.hideBlockUserModal()
 			let err1string = get("blockpage.bcchange2")
