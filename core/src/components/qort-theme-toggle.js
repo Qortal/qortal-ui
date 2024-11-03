@@ -20,7 +20,12 @@ class QortThemeToggle extends LitElement {
 
 	render() {
 		return html`
-			<input type="checkbox" @change=${() => this.toggleTheme()}/>
+			<input 
+				type="checkbox" 
+				role="switch" 
+				aria-label="Dark theme" 
+				@change=${() => this.toggleTheme()}
+			/>
 			<div class="slider"></div>
 			<div class="icon">
 				<span class="sun">${svgSun}</span>
