@@ -180,36 +180,36 @@ class WebBrowser extends LitElement {
 
 	render() {
 		return html`
-    			<div id="websitesWrapper" style="width:auto; padding:10px; background: var(--white);">
-    				<div class="layout horizontal center">
-    					<div class="address-bar">
-    						<mwc-button @click=${() => this.goBack()} title="${translate('general.back')}" class="address-bar-button">
+				<div id="websitesWrapper" style="width:auto; padding:10px; background: var(--white);">
+					<div class="layout horizontal center">
+						<div class="address-bar">
+							<mwc-button @click=${() => this.goBack()} title="${translate('general.back')}" class="address-bar-button">
 							<mwc-icon>arrow_back_ios</mwc-icon>
 						</mwc-button>
-    						<mwc-button @click=${() => this.goForward()} title="${translate('browserpage.bchange1')}" class="address-bar-button">
+							<mwc-button @click=${() => this.goForward()} title="${translate('browserpage.bchange1')}" class="address-bar-button">
 							<mwc-icon>arrow_forward_ios</mwc-icon>
 						</mwc-button>
-    						<mwc-button @click=${() => this.refresh()} title="${translate('browserpage.bchange2')}" class="address-bar-button">
+							<mwc-button @click=${() => this.refresh()} title="${translate('browserpage.bchange2')}" class="address-bar-button">
 							<mwc-icon>refresh</mwc-icon>
 						</mwc-button>
-    						<mwc-button @click=${() => this.goBackToList()} title="${translate('browserpage.bchange3')}" class="address-bar-button">
+							<mwc-button @click=${() => this.goBackToList()} title="${translate('browserpage.bchange3')}" class="address-bar-button">
 							<mwc-icon>home</mwc-icon>
 						</mwc-button>
-    						<input @keydown=${this._handleKeyDown} style="width: 550px; color: var(--black);" id="address" type="text" value="${this.displayUrl}"></input>
-    						${this.renderFullScreen()}
-    						<mwc-button @click=${() => this.delete()} title="${translate('browserpage.bchange4')} ${this.service} ${this.name} ${translate('browserpage.bchange5')}" class="address-bar-button float-right">
+							<input @keydown=${this._handleKeyDown} style="width: 550px; color: var(--black);" id="address" type="text" value="${this.displayUrl}"></input>
+							${this.renderFullScreen()}
+							<mwc-button @click=${() => this.delete()} title="${translate('browserpage.bchange4')} ${this.service} ${this.name} ${translate('browserpage.bchange5')}" class="address-bar-button float-right">
 							<mwc-icon>delete</mwc-icon>
 						</mwc-button>
-    						${this.renderBlockUnblockButton()}
-    						${this.renderFollowUnfollowButton()}
-    					</div>
-    					<div class="iframe-container">
-    						<iframe id="browser-iframe" src="${this.url}" sandbox="allow-scripts allow-same-origin allow-forms allow-downloads allow-modals" allow="fullscreen">
-    							<span style="color: var(--black);">${translate('browserpage.bchange6')}</span>
-    						</iframe>
-    					</div>
-    				</div>
-    			</div>
+							${this.renderBlockUnblockButton()}
+							${this.renderFollowUnfollowButton()}
+						</div>
+						<div class="iframe-container">
+							<iframe id="browser-iframe" src="${this.url}" sandbox="allow-scripts allow-same-origin allow-forms allow-downloads allow-modals" allow="fullscreen">
+								<span style="color: var(--black);">${translate('browserpage.bchange6')}</span>
+							</iframe>
+						</div>
+					</div>
+				</div>
 		`
 	}
 
@@ -286,24 +286,50 @@ class WebBrowser extends LitElement {
 					}
 				}
 
-				case actions.GET_API_KEY: {
-    				let res1 = await showModalAndWait(
-            			actions.GET_API_KEY,
-            			{
-                			service: this.service,
-                			name: this.name
-            			}
-        			);
-    				if (res1 && res1.action === 'accept') {
-        				let apiKey = this.getApiKey();
-        				response = JSON.stringify({ apiKey });
-        				break;
-    				} else {
-        				const data = {};
-        				data['error'] = "User declined to share API key";
-        				response = JSON.stringify(data);
-        				break;
-    				}
+				case actions.ADMIN_ACTION: {
+					let type = data.type;
+					let res1 = await showModalAndWait(
+						actions.ADMIN_ACTION,
+						{
+							service: this.service,
+							name: this.name,
+							type: type
+						}
+					);
+					if (res1 && res1.action === 'accept') {
+						try {
+							// Determine the API endpoint based on the type
+							let apiEndpoint = '';
+							switch (type.toLowerCase()) {
+								case 'stop':
+									apiEndpoint = '/admin/stop';
+									break;
+								case 'restart':
+									apiEndpoint = '/admin/restart';
+									break;
+								case 'bootstrap':
+									apiEndpoint = '/admin/bootstrap';
+									break;
+								default:
+									throw new Error(`Unknown admin action type: ${type}`);
+							}
+							// Send the API request
+							let apiResponse = await parentEpml.request('apiCall', {
+								type: 'api',
+								url: `${apiEndpoint}?apiKey=${this.getApiKey()}`
+							});
+							response = JSON.stringify(apiResponse);
+						} catch (error) {
+							const data = {};
+							data['error'] = `Error performing admin action: ${error.message}`;
+							response = JSON.stringify(data);
+						}
+					} else {
+						const data = {};
+						data['error'] = `User declined admin action: ${type}`;
+						response = JSON.stringify(data);
+					}
+					break;
 				}
 
 				case actions.ENCRYPT_DATA: {
@@ -1918,13 +1944,13 @@ class WebBrowser extends LitElement {
 					const requiredFields = ['coin','type']
 					const missingFields = []
 
-          			requiredFields.forEach((field) => {
+		  			requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
 						}
 					})
 
-          			if (missingFields.length > 0) {
+		  			if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
 						const errorMsg = `Missing fields: ${missingFieldsString}`
 						let data = {}
@@ -3821,12 +3847,12 @@ async function showModalAndWait(type, data) {
 							</div>
 						` : ''}
 
-						${type === actions.GET_API_KEY ? `
-    						<div class="modal-subcontainer">
-        						<p class="modal-paragraph">${`<span class="capitalize-first">${data.service.toLowerCase()}</span> wants to access your API key.`}</p>
-        						<p class="modal-paragraph">Allow ${data.service.toLowerCase()} to access your API key?</p>
-        						<p class="modal-paragraph">Please confirm your approval.</p>
-    						</div>
+						${type === actions.ADMIN_ACTION ? `
+							<div class="modal-subcontainer">
+								<p class="modal-paragraph">${`<span class="capitalize-first">${data.service.toLowerCase()}</span> wants to perform an admin action.`}</p>
+								<p class="modal-paragraph">Allow ${data.service.toLowerCase()} to ${data.type} your node?</p>
+								<p class="modal-paragraph">Please confirm your approval.</p>
+							</div>
 						` : ''}
 
 						${type === actions.PUBLISH_MULTIPLE_QDN_RESOURCES ? `
