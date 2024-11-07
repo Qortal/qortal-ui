@@ -111,3 +111,6 @@ export const GET_FRIENDS_LIST = 'GET_FRIENDS_LIST'
 
 // OPEN_PROFILE
 export const OPEN_PROFILE = 'OPEN_PROFILE'
+
+// GET_API_KEY
+export const GET_API_KEY = 'GET_API_KEY'

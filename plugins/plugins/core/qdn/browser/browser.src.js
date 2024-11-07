@@ -286,6 +286,26 @@ class WebBrowser extends LitElement {
 					}
 				}
 
+				case actions.GET_API_KEY: {
+    				let res1 = await showModalAndWait(
+            			actions.GET_API_KEY,
+            			{
+                			service: this.service,
+                			name: this.name
+            			}
+        			);
+    				if (res1 && res1.action === 'accept') {
+        				let apiKey = this.getApiKey();
+        				response = JSON.stringify({ apiKey });
+        				break;
+    				} else {
+        				const data = {};
+        				data['error'] = "User declined to share API key";
+        				response = JSON.stringify(data);
+        				break;
+    				}
+				}
+
 				case actions.ENCRYPT_DATA: {
 					try {
 						let dataSentBack = {}
@@ -3799,6 +3819,14 @@ async function showModalAndWait(type, data) {
 									<mwc-checkbox style="margin-right: -15px;" id="authButton" ?checked=${window.parent.reduxStore.getState().app.qAPPAutoAuth}></mwc-checkbox>
 								</div>
 							</div>
+						` : ''}
+
+						${type === actions.GET_API_KEY ? `
+    						<div class="modal-subcontainer">
+        						<p class="modal-paragraph">${`<span class="capitalize-first">${data.service.toLowerCase()}</span> wants to access your API key.`}</p>
+        						<p class="modal-paragraph">Allow ${data.service.toLowerCase()} to access your API key?</p>
+        						<p class="modal-paragraph">Please confirm your approval.</p>
+    						</div>
 						` : ''}
 
 						${type === actions.PUBLISH_MULTIPLE_QDN_RESOURCES ? `
