@@ -742,7 +742,8 @@
 		"bchange51": "Per inviare le modifiche non dimenticare di fare clic su 'Aggiorna profilo'",
 		"bchange52": "Concedi a questa applicazione il permesso di ottenere informazioni sul tuo portafoglio?",
 		"bchange53": "Consenti sempre che la tua lista amici venga recuperata automaticamente da tutte le app",
-		"bchange54": "Concedi a questa applicazione il permesso di accedere alla tua lista di amici?"
+		"bchange54": "Concedi a questa applicazione il permesso di accedere alla tua lista di amici?",
+		"bchange55": "Concedi a questa applicazione il permesso di inviare questo comando?"
 	},
 	"datapage": {
 		"dchange1": "Gestione dati",

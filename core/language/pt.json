@@ -742,7 +742,8 @@
 		"bchange51": "Para enviar as alterações não esqueça de clicar em 'Atualizar perfil'",
 		"bchange52": "Você dá permissão a este aplicativo para obter informações da sua carteira?",
 		"bchange53": "Sempre permita que sua lista de amigos seja recuperada automaticamente por todos os aplicativos",
-		"bchange54": "Você dá permissão a este aplicativo para acessar sua lista de amigos?"
+		"bchange54": "Você dá permissão a este aplicativo para acessar sua lista de amigos?",
+		"bchange55": "Você dá permissão a este aplicativo para enviar este comando?"
 	},
 	"datapage": {
 		"dchange1": "Gerenciamento de Dados",

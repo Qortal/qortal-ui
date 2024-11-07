@@ -3849,9 +3849,12 @@ async function showModalAndWait(type, data) {
 
 						${type === actions.ADMIN_ACTION ? `
 							<div class="modal-subcontainer">
-								<p class="modal-paragraph">${`<span class="capitalize-first">${data.service.toLowerCase()}</span> wants to perform an admin action.`}</p>
-								<p class="modal-paragraph">Allow ${data.service.toLowerCase()} to ${data.type} your node?</p>
-								<p class="modal-paragraph">Please confirm your approval.</p>
+								<p class="modal-paragraph">
+									${data.type === 'stop' ? get("nodepage.nchange31") : ''}
+									${data.type === 'restart' ? get("nodepage.nchange33") : ''}
+									${data.type === 'bootstrap' ? get("tour.tour18") : ''}
+								</p>
+								<p class="modal-paragraph">${get("browserpage.bchange55")}</p>
 							</div>
 						` : ''}
 

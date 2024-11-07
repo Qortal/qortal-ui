@@ -742,7 +742,8 @@
 		"bchange51": "Vergeet niet te klikken op 'Profiel bijwerken' om de wijziging door te voeren.",
 		"bchange52": "Geeft U deze applicatie toelating om uw portefeuille-info op te vragen?",
 		"bchange53": "Maak de vriendenlijst automatisch opvraagbaar voor alle apps",
-		"bchange54": "Geeft U deze applicatie toegang tot uw vriendenlijst?"
+		"bchange54": "Geeft U deze applicatie toegang tot uw vriendenlijst?",
+		"bchange55": "Geeft U deze applicatie toelating om dit commando te verzenden?"
 	},
 	"datapage": {
 		"dchange1": "Data-beheer",

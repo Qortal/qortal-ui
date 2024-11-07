@@ -742,7 +742,8 @@
 		"bchange51": "For å sende inn endringene, ikke glem å klikke på 'Oppdater profil'",
 		"bchange52": "Gir du dette programmet tillatelse til å få lommebokinformasjon?",
 		"bchange53": "La alltid vennelisten din hentes automatisk av alle apper",
-		"bchange54": "Gir du dette programmet tillatelse til å få tilgang til vennelisten din?"
+		"bchange54": "Gir du dette programmet tillatelse til å få tilgang til vennelisten din?",
+		"bchange55": "Gir du denne applikasjonen tillatelse til å sende denne kommandoen?"
 	},
 	"datapage": {
 		"dchange1": "Data-administrasjon",

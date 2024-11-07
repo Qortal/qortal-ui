@@ -742,7 +742,8 @@
 		"bchange51": "To submit the changes don't forget to click on 'Update profile'",
 		"bchange52": "Do you give this application permission to get your wallet information?",
 		"bchange53": "Always allow your friends list to be retrieved automatically by all apps",
-		"bchange54": "Do you give this application permission to access your friends list?"
+		"bchange54": "Do you give this application permission to access your friends list?",
+		"bchange55": "Do you give this application permission to send this command?"
 	},
 	"datapage": {
 		"dchange1": "Data Management",

@@ -742,7 +742,8 @@
 		"bchange51": "Za slanje promjena ne zaboravite kliknuti 'Ažuriraj profil'",
 		"bchange52": "Dajete li ovoj aplikaciji dopuštenje da dobije podatke o vašem novčaniku?",
 		"bchange53": "Uvijek dopusti da sve aplikacije automatski dohvate tvoj popis prijatelja",
-		"bchange54": "Dajete li ovoj aplikaciji dopuštenje za pristup vašem popisu prijatelja?"
+		"bchange54": "Dajete li ovoj aplikaciji dopuštenje za pristup vašem popisu prijatelja?",
+		"bchange55": "Dajete li ovoj aplikaciji dopuštenje da pošalje ovu naredbu?"
 	},
 	"datapage": {
 		"dchange1": "Upravljanje podacima",
