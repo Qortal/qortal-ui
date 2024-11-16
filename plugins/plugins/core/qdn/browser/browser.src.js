@@ -1627,27 +1627,27 @@ class WebBrowser extends LitElement {
 						switch (coin) {
 							case 'QORT':
 								userWallet['address'] = window.parent.reduxStore.getState().app.selectedAddress.address
-								userWallet['publickey'] = window.parent.reduxStore.getState().app.selectedAddress.base58PublicKey
+								userWallet['publicKey'] = window.parent.reduxStore.getState().app.selectedAddress.base58PublicKey
 								break
 							case 'BTC':
 								userWallet['address'] = window.parent.reduxStore.getState().app.selectedAddress.btcWallet.address
-								userWallet['publickey'] = window.parent.reduxStore.getState().app.selectedAddress.btcWallet.derivedMasterPublicKey
+								userWallet['publicKey'] = window.parent.reduxStore.getState().app.selectedAddress.btcWallet.derivedMasterPublicKey
 								break
 							case 'LTC':
 								userWallet['address'] = window.parent.reduxStore.getState().app.selectedAddress.ltcWallet.address
-								userWallet['publickey'] = window.parent.reduxStore.getState().app.selectedAddress.ltcWallet.derivedMasterPublicKey
+								userWallet['publicKey'] = window.parent.reduxStore.getState().app.selectedAddress.ltcWallet.derivedMasterPublicKey
 								break
 							case 'DOGE':
 								userWallet['address'] = window.parent.reduxStore.getState().app.selectedAddress.dogeWallet.address
-								userWallet['publickey'] = window.parent.reduxStore.getState().app.selectedAddress.dogeWallet.derivedMasterPublicKey
+								userWallet['publicKey'] = window.parent.reduxStore.getState().app.selectedAddress.dogeWallet.derivedMasterPublicKey
 								break
 							case 'DGB':
 								userWallet['address'] = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet.address
-								userWallet['publickey'] = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet.derivedMasterPublicKey
+								userWallet['publicKey'] = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet.derivedMasterPublicKey
 								break
 							case 'RVN':
 								userWallet['address'] = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet.address
-								userWallet['publickey'] = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet.derivedMasterPublicKey
+								userWallet['publicKey'] = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet.derivedMasterPublicKey
 								break
 							case 'ARRR':
 								userWallet['address'] = arrrAddress
@@ -1791,7 +1791,7 @@ class WebBrowser extends LitElement {
 						let coin = data.coin
 						let walletKeys = this.getUserWallet(coin)
 						let _url = `/crosschain/` + data.coin.toLowerCase() + `/addressinfos?apiKey=${this.getApiKey()}`
-						let _body = { xpub58: walletKeys['publickey'] }
+						let _body = { xpub58: walletKeys['publicKey'] }
 						try {
 							this.loader.show()
 							const bodyToString = JSON.stringify(_body)
@@ -3434,27 +3434,27 @@ class WebBrowser extends LitElement {
 		switch (coin) {
 			case 'QORT':
 				userWallet['address'] = window.parent.reduxStore.getState().app.selectedAddress.address
-				userWallet['publickey'] = window.parent.reduxStore.getState().app.selectedAddress.base58PublicKey
+				userWallet['publicKey'] = window.parent.reduxStore.getState().app.selectedAddress.base58PublicKey
 				break
 			case 'BTC':
 				userWallet['address'] = window.parent.reduxStore.getState().app.selectedAddress.btcWallet.address
-				userWallet['publickey'] = window.parent.reduxStore.getState().app.selectedAddress.btcWallet.derivedMasterPublicKey
+				userWallet['publicKey'] = window.parent.reduxStore.getState().app.selectedAddress.btcWallet.derivedMasterPublicKey
 				break
 			case 'LTC':
 				userWallet['address'] = window.parent.reduxStore.getState().app.selectedAddress.ltcWallet.address
-				userWallet['publickey'] = window.parent.reduxStore.getState().app.selectedAddress.ltcWallet.derivedMasterPublicKey
+				userWallet['publicKey'] = window.parent.reduxStore.getState().app.selectedAddress.ltcWallet.derivedMasterPublicKey
 				break
 			case 'DOGE':
 				userWallet['address'] = window.parent.reduxStore.getState().app.selectedAddress.dogeWallet.address
-				userWallet['publickey'] = window.parent.reduxStore.getState().app.selectedAddress.dogeWallet.derivedMasterPublicKey
+				userWallet['publicKey'] = window.parent.reduxStore.getState().app.selectedAddress.dogeWallet.derivedMasterPublicKey
 				break
 			case 'DGB':
 				userWallet['address'] = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet.address
-				userWallet['publickey'] = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet.derivedMasterPublicKey
+				userWallet['publicKey'] = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet.derivedMasterPublicKey
 				break
 			case 'RVN':
 				userWallet['address'] = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet.address
-				userWallet['publickey'] = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet.derivedMasterPublicKey
+				userWallet['publicKey'] = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet.derivedMasterPublicKey
 				break
 			case 'ARRR':
 				break
