@@ -74,7 +74,7 @@ class SearchModal extends LitElement {
 	openUserInfo() {
 		const checkvalue = this.shadowRoot.getElementById('searchContent').value
 
-		if (checkvalue.length < 3) {
+		if (checkvalue.length < 1) {
 			let snackbar1string = get("publishpage.pchange20")
 			let snackbar2string = get("welcomepage.wcchange4")
 
