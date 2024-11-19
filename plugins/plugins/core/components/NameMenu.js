@@ -19,7 +19,7 @@ class NameMenu extends LitElement {
 		return {
 			toblockaddress: { type: String, attribute: true },
 			nametodialog: { type: String, attribute: true },
-			chatBlockedAdresses: { type: Array },
+			chatBlockedAddresses: { type: Array },
 			selectedAddress: { type: Object },
 			config: { type: Object },
 			myAddress: { type: Object, reflect: true },
@@ -36,7 +36,7 @@ class NameMenu extends LitElement {
 
 	constructor() {
 		super()
-		this.chatBlockedAdresses = []
+		this.chatBlockedAddresses = []
 		this.selectedAddress = window.parent.reduxStore.getState().app.selectedAddress.address
 		this.myAddress = {}
 		this.balance = 1
@@ -94,10 +94,10 @@ class NameMenu extends LitElement {
 	}
 
 	firstUpdated() {
-		this.getChatBlockedAdresses()
+		this.getchatBlockedAddresses()
 
 		setInterval(() => {
-			this.getChatBlockedAdresses()
+			this.getchatBlockedAddresses()
 		}, 60000)
 
 		window.onclick = function (event) {
@@ -185,8 +185,8 @@ class NameMenu extends LitElement {
 		}, 500)
 	}
 
-	async getChatBlockedAdresses() {
-		this.chatBlockedAdresses = await parentEpml.request('apiCall', {
+	async getchatBlockedAddresses() {
+		this.chatBlockedAddresses = await parentEpml.request('apiCall', {
 			url: `/lists/blockedAddresses?apiKey=${this.getApiKey()}`
 		})
 	}
@@ -210,8 +210,8 @@ class NameMenu extends LitElement {
 		})
 
 		if (ret === true) {
-			this.chatBlockedAdresses = this.chatBlockedAdresses.filter(item => item != address)
-			this.chatBlockedAdresses.push(address)
+			this.chatBlockedAddresses = this.chatBlockedAddresses.filter(item => item != address)
+			this.chatBlockedAddresses.push(address)
 			this.getChatBlockedList()
 			this.closeMenu()
 			this.shadowRoot.querySelector('#blockNameDialog').close()

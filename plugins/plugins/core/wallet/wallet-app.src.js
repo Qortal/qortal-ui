@@ -3148,9 +3148,9 @@ class MultiWallet extends LitElement {
 		this.shadowRoot.querySelector('#arrrBookDialog').close()
 	}
 
-	removeQortAddress(adressObj) {
+	removeQortAddress(addressObj) {
 		const theQortalAddressBook = 'addressbookQort-' + this.bookQortalAddress
-		const addressToRemove = adressObj
+		const addressToRemove = addressObj
 		this.newQortBookFilter = []
 		this.newQortBookFilter = this.qortBook.filter((item) => item.address !== addressToRemove)
 		const myNewObj = JSON.stringify(this.newQortBookFilter)
@@ -3159,9 +3159,9 @@ class MultiWallet extends LitElement {
 		this.qortBook = JSON.parse(localStorage.getItem(theQortalAddressBook) || "[]")
 	}
 
-	removeBtcAddress(adressObj) {
+	removeBtcAddress(addressObj) {
 		const theBitcoinAddressBook = 'addressbookBtc-' + this.bookBitcoinAddress
-		const addressToRemove = adressObj
+		const addressToRemove = addressObj
 		this.newBtcBookFilter = []
 		this.newBtcBookFilter = this.btcBook.filter((item) => item.address !== addressToRemove)
 		const myNewObj = JSON.stringify(this.newBtcBookFilter)
@@ -3170,9 +3170,9 @@ class MultiWallet extends LitElement {
 		this.btcBook = JSON.parse(localStorage.getItem(theBitcoinAddressBook) || "[]")
 	}
 
-	removeLtcAddress(adressObj) {
+	removeLtcAddress(addressObj) {
 		const theLitecoinAddressBook = 'addressbookLtc-' + this.bookLitecoinAddress
-		const addressToRemove = adressObj
+		const addressToRemove = addressObj
 		this.newLtcBookFilter = []
 		this.newLtcBookFilter = this.ltcBook.filter((item) => item.address !== addressToRemove)
 		const myNewObj = JSON.stringify(this.newLtcBookFilter)
@@ -3181,9 +3181,9 @@ class MultiWallet extends LitElement {
 		this.ltcBook = JSON.parse(localStorage.getItem(theLitecoinAddressBook) || "[]")
 	}
 
-	removeDogeAddress(adressObj) {
+	removeDogeAddress(addressObj) {
 		const theDogecoinAddressBook = 'addressbookDoge-' + this.bookDogecoinAddress
-		const addressToRemove = adressObj
+		const addressToRemove = addressObj
 		this.newDogeBookFilter = []
 		this.newDogeBookFilter = this.dogeBook.filter((item) => item.address !== addressToRemove)
 		const myNewObj = JSON.stringify(this.newDogeBookFilter)
@@ -3192,9 +3192,9 @@ class MultiWallet extends LitElement {
 		this.dogeBook = JSON.parse(localStorage.getItem(theDogecoinAddressBook) || "[]")
 	}
 
-	removeDgbAddress(adressObj) {
+	removeDgbAddress(addressObj) {
 		const theDigibyteAddressBook = 'addressbookDgb-' + this.bookDigibyteAddress
-		const addressToRemove = adressObj
+		const addressToRemove = addressObj
 		this.newDgbBookFilter = []
 		this.newDgbBookFilter = this.dgbBook.filter((item) => item.address !== addressToRemove)
 		const myNewObj = JSON.stringify(this.newDgbBookFilter)
@@ -3203,9 +3203,9 @@ class MultiWallet extends LitElement {
 		this.dgbBook = JSON.parse(localStorage.getItem(theDigibyteAddressBook) || "[]")
 	}
 
-	removeRvnAddress(adressObj) {
+	removeRvnAddress(addressObj) {
 		const theRavencoinAddressBook = 'addressbookRvn-' + this.bookRavencoinAddress
-		const addressToRemove = adressObj
+		const addressToRemove = addressObj
 		this.newRvnBookFilter = []
 		this.newRvnBookFilter = this.rvnBook.filter((item) => item.address !== addressToRemove)
 		const myNewObj = JSON.stringify(this.newRvnBookFilter)
@@ -3214,9 +3214,9 @@ class MultiWallet extends LitElement {
 		this.rvnBook = JSON.parse(localStorage.getItem(theRavencoinAddressBook) || "[]")
 	}
 
-	removeArrrAddress(adressObj) {
+	removeArrrAddress(addressObj) {
 		const thePiratechainAddressBook = 'addressbookArrr-' + this.bookPiratechainAddress
-		const addressToRemove = adressObj
+		const addressToRemove = addressObj
 		this.newArrrBookFilter = []
 		this.newArrrBookFilter = this.arrrBook.filter((item) => item.address !== addressToRemove)
 		const myNewObj = JSON.stringify(this.newArrrBookFilter)
