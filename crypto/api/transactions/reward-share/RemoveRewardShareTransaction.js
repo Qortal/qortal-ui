@@ -1,7 +1,6 @@
 import TransactionBase from '../TransactionBase'
 import publicKeyToAddress from '../../wallet/publicKeyToAddress'
 import { Base58 } from '../../deps/deps'
-import { DYNAMIC_FEE_TIMESTAMP } from '../../constants'
 
 export default class RemoveRewardShareTransaction extends TransactionBase {
 	constructor() {
@@ -35,11 +34,7 @@ export default class RemoveRewardShareTransaction extends TransactionBase {
 		const _address = publicKeyToAddress(this._keyPair.publicKey)
 		this._recipient = recipient instanceof Uint8Array ? recipient : this.constructor.Base58.decode(recipient)
 
-		if (new Date(this._timestamp).getTime() >= DYNAMIC_FEE_TIMESTAMP) {
-			this.fee = _address === recipient ? 0 : 0.01
-		} else {
-			this.fee = _address === recipient ? 0 : 0.001
-		}
+		this.fee = _address === recipient ? 0 : 0.01
 	}
 
 	set percentageShare(share) {
