@@ -742,7 +742,8 @@
 		"bchange51": "Aby przesłać zmiany, nie zapomnij kliknąć 'Aktualizuj profil'",
 		"bchange52": "Czy dajesz tej aplikacji pozwolenie na uzyskanie informacji o Twoim portfelu?",
 		"bchange53": "Zawsze zezwalaj na automatyczne pobieranie listy znajomych przez wszystkie aplikacje",
-		"bchange54": "Czy dajesz tej aplikacji uprawnienia dostępu do listy znajomych?"
+		"bchange54": "Czy dajesz tej aplikacji uprawnienia dostępu do listy znajomych?",
+		"bchange55": "Czy dajesz tej aplikacji pozwolenie na wysłanie tego polecenia?"
 	},
 	"datapage": {
 		"dchange1": "Zarządzanie danymi",

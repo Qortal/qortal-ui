@@ -742,7 +742,8 @@
 		"bchange51": "Älä unohda napsauttaa Päivitä profiili lähettääksesi muutokset",
 		"bchange52": "Sallitko tämän sovelluksen saada lompakkosi tiedot?",
 		"bchange53": "Anna aina kaikkien sovellusten ladata ystäväluettelosi automaattisesti",
-		"bchange54": "Sallitko tämän sovelluksen käyttää ystäväluetteloasi?"
+		"bchange54": "Sallitko tämän sovelluksen käyttää ystäväluetteloasi?",
+		"bchange55": "Sallitko tämän sovelluksen lähettää tämän komennon?"
 	},
 	"datapage": {
 		"dchange1": "Tiedonhallinta",

@@ -742,7 +742,8 @@
 		"bchange51": "Pentru a trimite modificările nu uitați să faceți clic pe Actualizați profilul",
 		"bchange52": "Dați această aplicație permisiunea de a obține informațiile despre portofel?",
 		"bchange53": "Permiteți întotdeauna ca lista de prieteni să fie preluată automat de toate aplicațiile",
-		"bchange54": "Acordați acestei aplicații permisiunea de a vă accesa lista de prieteni?"
+		"bchange54": "Acordați acestei aplicații permisiunea de a vă accesa lista de prieteni?",
+		"bchange55": "Oferiți acestei aplicații permisiunea de a trimite această comandă?"
 	},
 	"datapage": {
 		"dchange1": "Gestionare date",

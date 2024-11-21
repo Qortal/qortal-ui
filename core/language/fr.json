@@ -742,7 +742,8 @@
 		"bchange51": "Pour soumettre les modifications n'oubliez pas de cliquer sur 'Mettre à jour le profil'",
 		"bchange52": "Autorisez-vous cette application à obtenir les informations de votre portefeuille ?",
 		"bchange53": "Toujours autoriser la récupération automatique de votre liste d'amis par toutes les applications",
-		"bchange54": "Autorisez-vous cette application à accéder à votre liste d'amis ?"
+		"bchange54": "Autorisez-vous cette application à accéder à votre liste d'amis ?",
+		"bchange55": "Autorisez-vous cette application à envoyer cette commande ?"
 	},
 	"datapage": {
 		"dchange1": "Gestion de données",

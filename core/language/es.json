@@ -742,7 +742,8 @@
 		"bchange51": "Para enviar los cambios no olvides hacer clic en 'Actualizar perfil'",
 		"bchange52": "¿Le das permiso a esta aplicación para obtener la información de tu billetera?",
 		"bchange53": "Permitir siempre que todas las aplicaciones recuperen automáticamente tu lista de amigos",
-		"bchange54": "¿Le das permiso a esta aplicación para acceder a tu lista de amigos?"
+		"bchange54": "¿Le das permiso a esta aplicación para acceder a tu lista de amigos?",
+		"bchange55": "¿Le das permiso a esta aplicación para enviar este comando?"
 	},
 	"datapage": {
 		"dchange1": "Gestión de datos",

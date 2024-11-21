@@ -742,7 +742,8 @@
 		"bchange51": "Um die Änderungen zu übermitteln, vergessen Sie nicht, auf ‚Profil aktualisieren‘ zu klicken",
 		"bchange52": "Erteilen Sie dieser Anwendung die Berechtigung, Ihre Wallet-Informationen abzurufen?",
 		"bchange53": "Erlaube immer, dass deine Freundesliste automatisch von allen Apps abgerufen wird",
-		"bchange54": "Erteilen Sie dieser Anwendung die Berechtigung, auf Ihre Freundesliste zuzugreifen?"
+		"bchange54": "Erteilen Sie dieser Anwendung die Berechtigung, auf Ihre Freundesliste zuzugreifen?",
+		"bchange55": "Geben Sie dieser Anwendung die Erlaubnis, diesen Befehl zu senden?"
 	},
 	"datapage": {
 		"dchange1": "Datenmanagement",
