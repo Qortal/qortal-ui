@@ -742,7 +742,8 @@
 		"bchange51": "A módosítások elküldéséhez ne felejtsen el a 'Profil frissítése' gombra kattintani",
 		"bchange52": "Engedélyt ad ennek az alkalmazásnak a pénztárca adatainak lekérésére?",
 		"bchange53": "Mindig engedélyezze, hogy az összes alkalmazás automatikusan lekérje a barátlistáját",
-		"bchange54": "Engedélyt ad ennek az alkalmazásnak, hogy hozzáférjen a barátlistájához?"
+		"bchange54": "Engedélyt ad ennek az alkalmazásnak, hogy hozzáférjen a barátlistájához?",
+		"bchange55": "Engedélyt ad ennek az alkalmazásnak, hogy elküldje ezt a parancsot?"
 	},
 	"datapage": {
 		"dchange1": "Adatkezelés",

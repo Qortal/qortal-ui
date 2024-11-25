@@ -742,7 +742,8 @@
 		"bchange51": "Muudatuste esitamiseks ärge unustage klõpsata Uuenda profiili",
 		"bchange52": "Kas annate sellele rakendusele loa oma rahakoti teabe hankimiseks?",
 		"bchange53": "Luba alati oma sõprade loendit kõikidel rakendustel automaatselt laadida",
-		"bchange54": "Kas annate sellele rakendusele loa juurdepääsuks oma sõbraloendile?"
+		"bchange54": "Kas annate sellele rakendusele loa juurdepääsuks oma sõbraloendile?",
+		"bchange55": "Kas annad sellele rakendusele loa selle käsu saatmiseks?"
 	},
 	"datapage": {
 		"dchange1": "Andmete haldamine",
