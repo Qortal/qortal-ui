@@ -2310,7 +2310,7 @@ class MultiWallet extends LitElement {
 				<div style="margin-top: 10px;">
 					<vaadin-tabs>
 						<vaadin-tab id="type" disabled><span style="color: var(--black);">${translate("walletpage.wchange6")} :</span></vaadin-tab>
-						<vaadin-tab id="payment-tab" style="cursor: pointer;" @click=${(e) => this.myTabChanged(0)}>ALL</vaadin-tab>
+						<vaadin-tab id="all-tab" style="cursor: pointer;" @click=${(e) => this.myTabChanged(0)}>ALL</vaadin-tab>
 						<vaadin-tab id="payment-tab" style="cursor: pointer;" @click=${(e) => this.myTabChanged(1)}>PAYMENT</vaadin-tab>
 						<vaadin-tab id="arbitrary-tab" style="cursor: pointer;" @click=${(e) => this.myTabChanged(2)}>ARBITRARY</vaadin-tab>
 						<vaadin-tab id="at-tab" style="cursor: pointer;" @click=${(e) => this.myTabChanged(3)}>AT</vaadin-tab>
