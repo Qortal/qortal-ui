@@ -287,49 +287,87 @@ class WebBrowser extends LitElement {
 				}
 
 				case actions.ADMIN_ACTION: {
-					let type = data.type;
+					let type = data.type
+					let value = data.value // Extract value from data
 					let res1 = await showModalAndWait(
 						actions.ADMIN_ACTION,
 						{
 							service: this.service,
 							name: this.name,
-							type: type
+							type: type,
+							value: value // Pass value to the modal
 						}
-					);
+					)
 					if (res1 && res1.action === 'accept') {
 						try {
 							// Determine the API endpoint based on the type
-							let apiEndpoint = '';
+							let apiEndpoint = ''
+							let method = 'GET' // Default method
+							let includeValueInBody = false // Flag to include value in body
 							switch (type.toLowerCase()) {
 								case 'stop':
-									apiEndpoint = '/admin/stop';
-									break;
+									apiEndpoint = '/admin/stop'
+									break
 								case 'restart':
-									apiEndpoint = '/admin/restart';
-									break;
+									apiEndpoint = '/admin/restart'
+									break
 								case 'bootstrap':
-									apiEndpoint = '/admin/bootstrap';
-									break;
+									apiEndpoint = '/admin/bootstrap'
+									break
+								case 'addmintingaccount':
+									apiEndpoint = '/admin/mintingaccounts'
+									method = 'POST'
+									includeValueInBody = true
+									break
+								case 'removemintingaccount':
+									apiEndpoint = '/admin/mintingaccounts'
+									method = 'DELETE'
+									includeValueInBody = true
+									break
+								case 'forcesync':
+									apiEndpoint = '/admin/forcesync'
+									method = 'POST'
+									includeValueInBody = true
+									break
+								case 'addpeer':
+									apiEndpoint = '/peers'
+									method = 'POST'
+									includeValueInBody = true
+									break
+								case 'removepeer':
+									apiEndpoint = '/peers'
+									method = 'DELETE'
+									includeValueInBody = true
+									break
 								default:
-									throw new Error(`Unknown admin action type: ${type}`);
+									throw new Error(`Unknown admin action type: ${type}`)
+							}
+							// Set up options for the API call
+							let options = {
+								url: `${apiEndpoint}?apiKey=${this.getApiKey()}`,
+								method: method
+							}
+							// Include value in body if required
+							if (includeValueInBody) {
+								options.headers = {
+									'Content-Type': 'text/plain'
+								}
+								options.body = value // Include the peer or minting account value
 							}
 							// Send the API request
-							let apiResponse = await parentEpml.request('apiCall', {
-								type: 'api',
-								url: `${apiEndpoint}?apiKey=${this.getApiKey()}`
-							});
-							response = JSON.stringify(apiResponse);
+							let apiResponse = await parentEpml.request('apiCall', options)
+							response = JSON.stringify(apiResponse)
 						} catch (error) {
-							const data = {};
-							data['error'] = `Error performing admin action: ${error.message}`;
-							response = JSON.stringify(data);
+							const data = {}
+							data['error'] = `Error performing admin action: ${error.message}`
+							response = JSON.stringify(data)
 						}
 					} else {
-						const data = {};
-						data['error'] = `User declined admin action: ${type}`;
-						response = JSON.stringify(data);
+						const data = {}
+						data['error'] = `User declined admin action: ${type}`
+						response = JSON.stringify(data)
 					}
-					break;
+					break
 				}
 
 				case actions.ENCRYPT_DATA: {
@@ -1960,8 +1998,8 @@ class WebBrowser extends LitElement {
 					}
 
 					try {
-						let coin = data.coin;
-						let type = data.type;
+						let coin = data.coin
+						let type = data.type
 						response = await parentEpml.request('apiCall', {
 							type: 'api',
 							method: 'GET',
@@ -2000,9 +2038,9 @@ class WebBrowser extends LitElement {
 					}
 
 					try {
-						let coin = data.coin;
-						let type = data.type;
-						let value = data.value;
+						let coin = data.coin
+						let type = data.type
+						let value = data.value
 						response = await parentEpml.request('apiCall', {
 							type: 'api',
 							method: 'POST',
@@ -2042,7 +2080,7 @@ class WebBrowser extends LitElement {
 					}
 
 					try {
-						let coin = data.coin.toLowerCase();
+						let coin = data.coin.toLowerCase()
 
 						response = await parentEpml.request('apiCall', {
 							type: 'api',
@@ -2082,10 +2120,10 @@ class WebBrowser extends LitElement {
 					}
 
 					try {
-						let coin = data.coin;
-						let host = data.host;
-						let port = data.port;
-						let type = data.type;
+						let coin = data.coin
+						let host = data.host
+						let port = data.port
+						let type = data.type
 
 						const body = {
 							hostName: host,
@@ -2134,10 +2172,10 @@ class WebBrowser extends LitElement {
 					}
 
 					try {
-						let coin = data.coin;
-						let host = data.host;
-						let port = data.port;
-						let type = data.type;
+						let coin = data.coin
+						let host = data.host
+						let port = data.port
+						let type = data.type
 
 						const body = {
 							hostName: host,
@@ -2186,10 +2224,10 @@ class WebBrowser extends LitElement {
 					}
 
 					try {
-						let coin = data.coin;
-						let host = data.host;
-						let port = data.port;
-						let type = data.type;
+						let coin = data.coin
+						let host = data.host
+						let port = data.port
+						let type = data.type
 
 						const body = {
 							hostName: host,
@@ -3853,7 +3891,13 @@ async function showModalAndWait(type, data) {
 									${data.type === 'stop' ? get("nodepage.nchange31") : ''}
 									${data.type === 'restart' ? get("nodepage.nchange33") : ''}
 									${data.type === 'bootstrap' ? get("tour.tour18") : ''}
+									${data.type === 'addmintingaccount' ? `${get("nodepage.nchange8")}: ${get("nodepage.nchange9")}` : ''}
+									${data.type === 'removemintingaccount' ? `${get("nodepage.nchange12")}: ${get("nodepage.nchange9")}` : ''}
+									${data.type === 'forcesync' ? get("nodepage.nchange23") : ''}
+									${data.type === 'addpeer' ? `${get("nodepage.nchange8")}: ${get("nodepage.nchange17")}` : ''}
+									${data.type === 'removepeer' ? `${get("nodepage.nchange12")}: ${get("nodepage.nchange17")}` : ''}
 								</p>
+								${data.value ? `<p class="modal-paragraph">${data.value}</p>` : ''}
 								<p class="modal-paragraph">${get("browserpage.bchange55")}</p>
 							</div>
 						` : ''}
