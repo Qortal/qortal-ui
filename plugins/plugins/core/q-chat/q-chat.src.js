@@ -367,10 +367,6 @@ class Chat extends LitElement {
 					}
 					target = target.parentNode
 				}
-
-				// If it doesn't, show the default Electron context menu
-				event.preventDefault()
-				window.parent.electronAPI.showMyMenu()
 			})
 		}
 

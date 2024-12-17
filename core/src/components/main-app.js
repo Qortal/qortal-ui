@@ -31,8 +31,6 @@ class MainApp extends connect(store)(LitElement) {
 		if (!isElectron()) {
 		} else {
 			window.addEventListener('contextmenu', (event) => {
-				event.preventDefault()
-				window.electronAPI.showMyMenu()
 			})
 		}
 	}

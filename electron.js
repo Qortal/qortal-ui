@@ -3,6 +3,7 @@ const {
 	BrowserWindow,
 	ipcMain,
 	Menu,
+	MenuItem,
 	Notification,
 	Tray,
 	dialog,
@@ -1133,6 +1134,42 @@ function createWindow() {
 	myWindow.once('ready-to-show', myWindow.show)
 	myWindow.loadURL('http://localhost:12388/app')
 
+	myWindow.webContents.on('context-menu', (event, params) => {
+		event.preventDefault()
+		const menu = new Menu()
+		// Add each spelling suggestion (if any)
+		if (params.dictionarySuggestions && params.dictionarySuggestions.length > 0) {
+			for (const suggestion of params.dictionarySuggestions) {
+				menu.append(new MenuItem({
+					label: suggestion,
+					click: () => myWindow.webContents.replaceMisspelling(suggestion)
+				}))
+			}
+		}
+		// Allow users to add the misspelled word to the dictionary if there is one
+		if (params.misspelledWord) {
+			menu.append(
+				new MenuItem({
+					label: 'Add to dictionary',
+					click: () => myWindow.webContents.session.addWordToSpellCheckerDictionary(params.misspelledWord)
+				})
+			)
+		}
+		// Add a separator if we added suggestions or add-to-dictionary items
+		if ((params.dictionarySuggestions && params.dictionarySuggestions.length > 0) || params.misspelledWord) {
+			menu.append(new MenuItem({ type: 'separator' }))
+		}
+		// Now add your existing menu items (like copy, paste, etc.)
+		menu.append(new MenuItem({ role: 'undo' }))
+		menu.append(new MenuItem({ role: 'redo' }))
+		menu.append(new MenuItem({ type: 'separator' }))
+		menu.append(new MenuItem({ role: 'cut' }))
+		menu.append(new MenuItem({ role: 'copy' }))
+		menu.append(new MenuItem({ role: 'paste' }))
+		menu.append(new MenuItem({ role: 'selectAll' }))
+		menu.popup({ window: myWindow })
+	})
+
 	// Save current window config when closing
 	myWindow.on('close', () => {
 		// Save current maximized state
@@ -1362,57 +1399,6 @@ if (!isLock) {
 
 	ipcMain.on('start-core-electron', (event) => {
 		checkOsPlatform()
-	})
-
-	ipcMain.on('show-my-menu', (event) => {
-		let homePageOptions = Menu.buildFromTemplate([
-			{
-				label: i18n.__("electron_translate_35"),
-				role: 'copy'
-			},
-			{
-				label: i18n.__("electron_translate_36"),
-				role: 'paste'
-			},
-			{
-				type: "separator"
-			},
-			{
-				label: i18n.__("electron_translate_37"),
-				submenu: [
-					{
-						label: i18n.__("electron_translate_38"),
-						role: 'zoomIn'
-					},
-					{
-						label: i18n.__("electron_translate_39"),
-						role: 'zoomOut'
-					},
-					{
-						label: i18n.__("electron_translate_40"),
-						role: 'resetZoom'
-					},
-					{
-						type: 'separator'
-					},
-					{
-						label: i18n.__("electron_translate_41"),
-						role: 'togglefullscreen'
-					}
-				]
-			},
-			{
-				type: "separator"
-			},
-			{
-				label: i18n.__("electron_translate_42"),
-				click: function () {
-					createNewWindow()
-				},
-			}
-		])
-
-		homePageOptions.popup(myWindow)
 	})
 
 	autoUpdater.on('update-available', (event) => {
