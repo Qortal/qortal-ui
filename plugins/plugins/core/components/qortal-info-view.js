@@ -329,8 +329,6 @@ class QortalInfoView extends LitElement {
 
 	firstUpdated() {
 		window.addEventListener('contextmenu', (event) => {
-			event.preventDefault()
-			window.parent.electronAPI.showMyMenu()
 		})
 	}
 

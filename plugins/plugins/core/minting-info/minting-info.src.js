@@ -252,8 +252,6 @@ class MintingInfo extends LitElement {
 		if (!isElectron()) {
 		} else {
 			window.addEventListener('contextmenu', (event) => {
-				event.preventDefault()
-				window.parent.electronAPI.showMyMenu()
 			})
 		}
 
