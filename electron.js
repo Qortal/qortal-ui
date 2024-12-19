@@ -1167,6 +1167,11 @@ function createWindow() {
 		menu.append(new MenuItem({ role: 'copy' }))
 		menu.append(new MenuItem({ role: 'paste' }))
 		menu.append(new MenuItem({ role: 'selectAll' }))
+		menu.append(new MenuItem({ type: 'separator' }))
+		menu.append(new MenuItem({
+			label: i18n.__("electron_translate_42"),
+			click: function () {createNewWindow()}
+		}))
 		menu.popup({ window: myWindow })
 	})
 
