@@ -5,6 +5,14 @@ import { passiveSupport } from 'passive-events-support/src/utils'
 import { Editor, Extension } from '@tiptap/core'
 import { supportCountryFlagEmojis } from '../components/ChatEmojiFlags'
 import { qchatStyles } from '../components/plugins-css'
+import {
+	decryptGroupData,
+	uint8ArrayToBase64,
+	base64ToUint8Array,
+	uint8ArrayToObject,
+	validateSecretKey
+} from '../components/GroupEncryption'
+import Base58 from '../../../../crypto/api/deps/Base58'
 import isElectron from 'is-electron'
 import WebWorker from 'web-worker:./computePowWorker'
 import StarterKit from '@tiptap/starter-kit'
@@ -429,8 +437,108 @@ class Chat extends LitElement {
 	}
 
 	async setActiveChatHeadUrl(url) {
-		this.activeChatHeadUrl = url
-		this.requestUpdate()
+		await this.getSymKeyFile(url)
+	}
+
+	async getSymKeyFile(url) {
+		this.secretKeys = {}
+		this.groupAdmins = {}
+
+		let data
+		let supArray = []
+		let gAdmin = ''
+		let gAddress = ''
+		let currentGroupId = url.substring(6)
+		let symIdentifier = 'symmetric-qchat-group-' + currentGroupId
+		let locateString = "Downloading and decrypt keys ! Please wait..."
+
+		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+		const getNameUrl = `${nodeUrl}/arbitrary/resources?service=DOCUMENT_PRIVATE&identifier=${symIdentifier}&limit=1&reverse=false`
+		const getAdminUrl = `${nodeUrl}/groups/members/${currentGroupId}?onlyAdmins=true&limit=20`
+
+		if (localStorage.getItem("symKeysCurrent") === null) {
+			localStorage.setItem("symKeysCurrent", "")
+		}
+
+		supArray = await fetch(getNameUrl).then(response => {
+			return response.json()
+		})
+
+		if (this.isEmptyArray(supArray) || currentGroupId === 0) {
+			this.activeChatHeadUrl = url
+			this.requestUpdate()
+		} else {
+			parentEpml.request('showSnackBar', `${locateString}`)
+
+			supArray.map(item => {
+				gAdmin = item.name
+			})
+
+			const addressUrl = `${nodeUrl}/names/${gAdmin}`
+
+			let addressObject = await fetch(addressUrl).then(response => {
+				return response.json()
+			})
+
+			gAddress = addressObject.owner
+
+			let adminRes = await fetch(getAdminUrl).then(response => {
+				return response.json()
+			})
+
+			this.groupAdmins = adminRes.members
+
+			const adminExists = (adminAddress) => {
+				return this.groupAdmins.some(function(checkAdmin) {
+					return checkAdmin.member === adminAddress
+				})
+			}
+
+			if (adminExists(gAddress)) {
+				const dataUrl = `${nodeUrl}/arbitrary/DOCUMENT_PRIVATE/${gAdmin}/${symIdentifier}?encoding=base64&rebuild=true&async=true`
+				const res = await fetch(dataUrl)
+
+				data = await res.text()
+
+				const decryptedKey = await this.decryptGroupEncryption(data)
+				const dataint8Array = base64ToUint8Array(decryptedKey.data)
+				const decryptedKeyToObject = uint8ArrayToObject(dataint8Array)
+
+				if (!validateSecretKey(decryptedKeyToObject)) {
+					throw new Error("SecretKey is not valid")
+				}
+
+				localStorage.removeItem("symKeysCurrent")
+				localStorage.setItem("symKeysCurrent", "")
+				let oldSymIdentifier = JSON.parse(localStorage.getItem("symKeysCurrent") || "[]")
+				oldSymIdentifier.push(decryptedKeyToObject)
+				localStorage.setItem("symKeysCurrent", JSON.stringify(oldSymIdentifier))
+
+				let arraySecretKeys = JSON.parse(localStorage.getItem("symKeysCurrent") || "[]")
+
+				this.secretKeys = arraySecretKeys[0]
+				this.activeChatHeadUrl = url
+				this.requestUpdate()
+			} else {
+				this.activeChatHeadUrl = url
+				this.requestUpdate()
+			}
+		}
+
+	}
+
+	async decryptGroupEncryption(data) {
+		try {
+			const privateKey = Base58.encode(window.parent.reduxStore.getState().app.wallet._addresses[0].keyPair.privateKey)
+			const encryptedData = decryptGroupData(data, privateKey)
+			return {
+				data: uint8ArrayToBase64(encryptedData.decryptedData),
+				count: encryptedData.count
+			}
+		} catch (error) {
+			console.log("Error:", error.message)
+		}
 	}
 
 	resetChatEditor() {
