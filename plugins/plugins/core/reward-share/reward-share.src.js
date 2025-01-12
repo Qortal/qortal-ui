@@ -346,7 +346,7 @@ class RewardShare extends LitElement {
 					getTxnRequestResponse(myTransaction)
 				}
 			} else if (accountDetails.address === recipientAddress) {
-				if (accountDetails.level >= 1 && accountDetails.level <= 4) {
+				if (accountDetails.level <= 4) {
 					this.error = false
 					this.message = ''
 					let myTransaction = await makeTransactionRequest(lastRef)
@@ -504,7 +504,7 @@ class RewardShare extends LitElement {
 					getTxnRequestResponse(myTransaction)
 				}
 			} else if (accountDetails.address === recipientAddress) {
-				if (accountDetails.level >= 1 && accountDetails.level <= 4) {
+				if (accountDetails.level <= 4) {
 					this.error = false
 					this.message = ''
 					let myTransaction = await makeTransactionRequest(lastRef)
