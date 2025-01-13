@@ -468,7 +468,7 @@
 		"rchange6": "Recipient",
 		"rchange7": "Action",
 		"rchange8": "Type",
-		"rchange9": "Levels 1 - 4 can only create a Self-Share (minting) keys. Only Level 5 or above can create a Reward Share!",
+		"rchange9": "Levels 0 - 4 can only create a Self-Share (minting) keys. Only Level 5 or above can create a Reward Share!",
 		"rchange10": "Recipient's Public Key",
 		"rchange11": "Reward Share percentage",
 		"rchange12": "Executing Requested Command...",
