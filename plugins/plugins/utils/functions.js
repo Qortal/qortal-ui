@@ -164,10 +164,10 @@ export const replaceMessagesEdited = async ({ decodedMessages, parentEpml, isRec
 	}
 
 	const sortedMessages = decodedMessages.sort((a, b) => b.timestamp - a.timestamp)
-	const result = sortedMessages.filter(({decodedMessage}) => !name.includes('isReaction'))
+	const withoutHubReactions = sortedMessages.filter(({decodedMessage}) => !decodedMessage.includes('isReaction'))
 
 	// Execute the functions with concurrency limit
-	const updatedMessages = await executeWithConcurrencyLimit(result, findUpdatedMessage)
+	const updatedMessages = await executeWithConcurrencyLimit(withoutHubReactions, findUpdatedMessage)
 	addToUpdateMessageHashmap(updatedMessages)
 
 	return updatedMessages

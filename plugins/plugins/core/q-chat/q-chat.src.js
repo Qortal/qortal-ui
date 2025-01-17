@@ -451,6 +451,7 @@ class Chat extends LitElement {
 		let currentGroupId = url.substring(6)
 		let symIdentifier = 'symmetric-qchat-group-' + currentGroupId
 		let locateString = "Downloading and decrypt keys ! Please wait..."
+		let keysToOld = "Wait until an admin re-encrypts the keys. Only unencrypted messages will be displayed."
 
 		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
@@ -502,24 +503,31 @@ class Chat extends LitElement {
 				data = await res.text()
 
 				const decryptedKey = await this.decryptGroupEncryption(data)
-				const dataint8Array = base64ToUint8Array(decryptedKey.data)
-				const decryptedKeyToObject = uint8ArrayToObject(dataint8Array)
 
-				if (!validateSecretKey(decryptedKeyToObject)) {
-					throw new Error("SecretKey is not valid")
+				if (decryptedKey === undefined) {
+					parentEpml.request('showSnackBar', `${keysToOld}`)
+					this.activeChatHeadUrl = url
+					this.requestUpdate()
+				} else {
+					const dataint8Array = base64ToUint8Array(decryptedKey.data)
+					const decryptedKeyToObject = uint8ArrayToObject(dataint8Array)
+
+					if (!validateSecretKey(decryptedKeyToObject)) {
+						throw new Error("SecretKey is not valid")
+					}
+
+					localStorage.removeItem("symKeysCurrent")
+					localStorage.setItem("symKeysCurrent", "")
+					let oldSymIdentifier = JSON.parse(localStorage.getItem("symKeysCurrent") || "[]")
+					oldSymIdentifier.push(decryptedKeyToObject)
+					localStorage.setItem("symKeysCurrent", JSON.stringify(oldSymIdentifier))
+
+					let arraySecretKeys = JSON.parse(localStorage.getItem("symKeysCurrent") || "[]")
+
+					this.secretKeys = arraySecretKeys[0]
+					this.activeChatHeadUrl = url
+					this.requestUpdate()
 				}
-
-				localStorage.removeItem("symKeysCurrent")
-				localStorage.setItem("symKeysCurrent", "")
-				let oldSymIdentifier = JSON.parse(localStorage.getItem("symKeysCurrent") || "[]")
-				oldSymIdentifier.push(decryptedKeyToObject)
-				localStorage.setItem("symKeysCurrent", JSON.stringify(oldSymIdentifier))
-
-				let arraySecretKeys = JSON.parse(localStorage.getItem("symKeysCurrent") || "[]")
-
-				this.secretKeys = arraySecretKeys[0]
-				this.activeChatHeadUrl = url
-				this.requestUpdate()
 			} else {
 				this.activeChatHeadUrl = url
 				this.requestUpdate()

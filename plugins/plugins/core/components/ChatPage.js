@@ -2257,9 +2257,10 @@ class ChatPage extends LitElement {
 	}
 
 	async addToUpdateMessageHashmap(array) {
+		const withoutHubReactions = array.filter(({decodedMessage}) => !decodedMessage.includes('isReaction'))
 		const newObj = {}
 
-		array.forEach((item) => {
+		withoutHubReactions.forEach((item) => {
 			const signature = item.originalSignature || item.signature
 			newObj[signature] = item
 		})
