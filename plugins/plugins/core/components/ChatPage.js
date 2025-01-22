@@ -15,6 +15,7 @@ import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
 import Placeholder from '@tiptap/extension-placeholder'
 import Highlight from '@tiptap/extension-highlight'
+import Mention from '@tiptap/extension-mention'
 import WebWorker from 'web-worker:./computePowWorker.js'
 import WebWorkerFile from 'web-worker:./computePowWorkerFile.js'
 import WebWorkerSortMessages from 'web-worker:./webworkerSortMessages.js'
@@ -344,7 +345,7 @@ class ChatPage extends LitElement {
 												}
 												${+this.repliedToMessageObj.version > 1 ?
 													html`
-														<span style="color: var(--black);">${unsafeHTML(generateHTML(this.repliedToMessageObj.message, [StarterKit, Underline, Highlight]))}</span>
+														<span style="color: var(--black);">${unsafeHTML(generateHTML(this.repliedToMessageObj.message, [StarterKit, Underline, Highlight, Mention]))}</span>
 													`
 													: ''
 												}
@@ -361,7 +362,7 @@ class ChatPage extends LitElement {
 											<vaadin-icon class="reply-icon" icon="vaadin:pencil" slot="icon"></vaadin-icon>
 											<div class="repliedTo-message">
 												<p class="senderName">${translate("chatpage.cchange25")}</p>
-												<span style="color: var(--black);">${unsafeHTML(generateHTML(this.editedMessageObj.message, [StarterKit, Underline, Highlight]))}</span>
+												<span style="color: var(--black);">${unsafeHTML(generateHTML(this.editedMessageObj.message, [StarterKit, Underline, Highlight, Mention]))}</span>
 											</div>
 											<vaadin-icon class="close-icon" icon="vaadin:close-big" slot="icon" @click=${() => this.closeEditMessageContainer()}></vaadin-icon>
 										</div>
@@ -1070,6 +1071,7 @@ class ChatPage extends LitElement {
 				StarterKit,
 				Underline,
 				Highlight,
+				Mention,
 				Placeholder.configure({
 					placeholder: `${placeholderString}`
 				}),
@@ -1108,6 +1110,7 @@ class ChatPage extends LitElement {
 				StarterKit,
 				Underline,
 				Highlight,
+				Mention,
 				Placeholder.configure({
 					placeholder: `${placeholderString}`
 				}),
@@ -1143,6 +1146,7 @@ class ChatPage extends LitElement {
 				StarterKit,
 				Underline,
 				Highlight,
+				Mention,
 				Placeholder.configure({
 					placeholder: `${placeholderString}`
 				}),
@@ -1178,6 +1182,7 @@ class ChatPage extends LitElement {
 				StarterKit,
 				Underline,
 				Highlight,
+				Mention,
 				Placeholder.configure({
 					placeholder: `${placeholderString}`
 				}),
@@ -1213,6 +1218,7 @@ class ChatPage extends LitElement {
 				StarterKit,
 				Underline,
 				Highlight,
+				Mention,
 				Placeholder.configure({
 					placeholder: `${placeholderString}`
 				}),

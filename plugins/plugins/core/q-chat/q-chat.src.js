@@ -19,6 +19,7 @@ import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
 import Placeholder from '@tiptap/extension-placeholder'
 import Highlight from '@tiptap/extension-highlight'
+import Mention from '@tiptap/extension-mention'
 import ShortUniqueId from 'short-unique-id'
 import snackbar from '../components/snackbar'
 import '../components/ChatWelcomePage'
@@ -577,6 +578,7 @@ class Chat extends LitElement {
 				StarterKit,
 				Underline,
 				Highlight,
+				Mention,
 				Placeholder.configure({
 					placeholder: 'Write something …'
 				}),
