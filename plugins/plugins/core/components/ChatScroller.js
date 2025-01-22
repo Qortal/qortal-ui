@@ -9,6 +9,7 @@ import { chatStyles } from './plugins-css'
 import isElectron from 'is-electron'
 import axios from 'axios'
 import Highlight from '@tiptap/extension-highlight'
+import Mention from '@tiptap/extension-mention'
 import ShortUniqueId from 'short-unique-id'
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
@@ -1086,7 +1087,7 @@ class MessageTemplate extends LitElement {
 			const parsedMessageObj = JSON.parse(this.messageObj.decodedMessage)
 
 			if (+parsedMessageObj.version > 1 && parsedMessageObj.messageText) {
-				messageVersion2 = generateHTML(parsedMessageObj.messageText, [StarterKit, Underline, Highlight])
+				messageVersion2 = generateHTML(parsedMessageObj.messageText, [StarterKit, Underline, Highlight, Mention])
 				messageVersion2WithLink = processText(messageVersion2)
 			}
 
@@ -1256,7 +1257,7 @@ class MessageTemplate extends LitElement {
 
 		if (repliedToData && repliedToData.decodedMessage && repliedToData.decodedMessage.messageText) {
 			try {
-				repliedToMessageText = generateHTML(repliedToData.decodedMessage.messageText, [StarterKit, Underline, Highlight])
+				repliedToMessageText = generateHTML(repliedToData.decodedMessage.messageText, [StarterKit, Underline, Highlight, Mention])
 			} catch (error) { /* empty */ }
 		}
 

@@ -480,7 +480,8 @@ class NodeManagement extends LitElement {
 	updateMintingAccounts() {
 		this.mintingAccounts = []
 		parentEpml.request('apiCall', {
-			url: `/admin/mintingaccounts`
+			url: `/admin/mintingaccounts?apiKey=${this.getApiKey()}`,
+			method: 'GET'
 		}).then((res) => {
 			this.mintingAccounts = res
 		})
