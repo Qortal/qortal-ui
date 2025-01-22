@@ -456,7 +456,7 @@ class Chat extends LitElement {
 
 		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-		const getNameUrl = `${nodeUrl}/arbitrary/resources?service=DOCUMENT_PRIVATE&identifier=${symIdentifier}&limit=1&reverse=false`
+		const getNameUrl = `${nodeUrl}/arbitrary/resources?service=DOCUMENT_PRIVATE&identifier=${symIdentifier}&limit=1&reverse=true`
 		const getAdminUrl = `${nodeUrl}/groups/members/${currentGroupId}?onlyAdmins=true&limit=20`
 
 		if (localStorage.getItem("symKeysCurrent") === null) {

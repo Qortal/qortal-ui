@@ -2872,7 +2872,7 @@ class GroupManagement extends LitElement {
 		const symIdentifier = 'symmetric-qchat-group-' + groupId
 		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-		const getNameUrl = `${nodeUrl}/arbitrary/resources?service=DOCUMENT_PRIVATE&identifier=${symIdentifier}&limit=1&reverse=false`
+		const getNameUrl = `${nodeUrl}/arbitrary/resources?service=DOCUMENT_PRIVATE&identifier=${symIdentifier}&limit=1&reverse=true`
 		const getAdminUrl = `${nodeUrl}/groups/members/${groupId}?onlyAdmins=true&limit=20`
 
 		supArray = await fetch(getNameUrl).then(response => {
