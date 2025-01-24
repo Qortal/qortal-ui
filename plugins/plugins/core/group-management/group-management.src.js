@@ -2870,6 +2870,10 @@ class GroupManagement extends LitElement {
 		let gAdmin = ''
 		let gAddress = ''
 		let keysToOld = "Wait until an admin re-encrypts the keys. Only unencrypted messages will be displayed."
+		let retryDownload = "Retry downloading and decrypt keys in 5 seconds! Please wait..."
+		let failDownload = "Error downloading and decrypt keys! Only unencrypted messages will be displayed. Please try again later..."
+		let all_ok = false
+		let counter = 0
 
 		const symIdentifier = 'symmetric-qchat-group-' + groupId
 		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
@@ -2920,10 +2924,26 @@ class GroupManagement extends LitElement {
 			}
 
 			if (adminExists(gAddress)) {
+				const sleep = (t) => new Promise(r => setTimeout(r, t))
 				const dataUrl = `${nodeUrl}/arbitrary/DOCUMENT_PRIVATE/${gAdmin}/${symIdentifier}?encoding=base64&rebuild=true&async=true`
 				const res = await fetch(dataUrl)
 
-				data = await res.text()
+				do {
+					counter++
+
+					if (!res.ok) {
+						parentEpml.request('showSnackBar', `${retryDownload}`)
+						await sleep(5000)
+					} else {
+						data = await res.text()
+						all_ok = true
+					}
+
+					if (counter > 10) {
+						parentEpml.request('showSnackBar', `${failDownload}`)
+						return
+					}
+				} while (!all_ok)
 
 				const decryptedKey = await this.decryptGroupEncryption(data)
 
