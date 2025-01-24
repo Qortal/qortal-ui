@@ -2,6 +2,8 @@ import { html, LitElement } from 'lit'
 import { Epml } from '../../../../epml'
 import { Loader, publishData } from '../../../utils/classes'
 import { QORT_DECIMALS } from '../../../../../crypto/api/constants'
+import nacl from '../../../../../crypto/api/deps/nacl-fast'
+import utils from '../../../../../crypto/api/deps/utils'
 import { mimeToExtensionMap } from '../../components/qdn-action-constants'
 import {
 	base64ToUint8Array,
@@ -368,6 +370,114 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(data)
 					}
 					break
+				}
+
+				case actions.SIGN_TRANSACTION: {
+					// Provide a default response string
+					let response = '{"error": "Request could not be fulfilled"}';
+					try {
+						// 1) Validate required fields
+						const requiredFields = ['unsignedBytes'];
+						const missingFields = [];
+						requiredFields.forEach((field) => {
+							if (!data[field]) {
+								missingFields.push(field);
+							}
+						});
+						if (missingFields.length > 0) {
+							const missingFieldsString = missingFields.join(', ');
+							response = JSON.stringify({ error: `Missing fields: ${missingFieldsString}` });
+						} else {
+							// 2) Decode transaction
+							const shouldProcess = !!data.process; // or (data.process || false)
+							const decodeResponse = await parentEpml.request('apiCall', {
+								url: `/transactions/decode?ignoreValidityChecks=false&apiKey=${this.getApiKey()}`,
+								method: 'POST',
+								headers: { 'Content-Type': 'application/json' },
+								body: data.unsignedBytes
+							});
+							if (!decodeResponse || decodeResponse.error) {
+								const errMsg = (decodeResponse && decodeResponse.message) 
+									? decodeResponse.message
+									: 'Failed to decode transaction';
+								response = JSON.stringify({ error: errMsg });
+							} else {
+								// 3) Prompt the user (similar to SEND_COIN, etc.)
+								const signTxModal = await showModalAndWait(actions.SIGN_TRANSACTION, {
+									decodedTxType: decodeResponse.type,
+									shouldProcess
+								});
+								if (signTxModal.action === 'reject') {
+									// User declined
+									response = JSON.stringify({ error: 'User declined request' });
+								} else {
+									// 4) Convert the transaction
+									const convertResponse = await parentEpml.request('apiCall', {
+										url: `/transactions/convert?apiKey=${this.getApiKey()}`,
+										method: 'POST',
+										headers: { 'Content-Type': 'application/json' },
+										body: data.unsignedBytes
+									});
+									if (!convertResponse || typeof convertResponse !== 'string') {
+										response = JSON.stringify({ error: 'Failed to convert transaction bytes' });
+									} else {
+										// 5) Retrieve key pair (adapt to your UI)
+										const seed32 = window.parent.reduxStore.getState().app.selectedAddress.seed;
+										const base58PubKey = window.parent.reduxStore.getState().app.selectedAddress.base58PublicKey;
+										const publicKey32 = window.parent.Base58.decode(base58PubKey);
+										const fullSecretKey = new Uint8Array(64);
+										fullSecretKey.set(seed32, 0);            // first 32 bytes = seed
+										fullSecretKey.set(publicKey32, 32);      // next 32 bytes = decoded public key
+										// 6) Sign the converted bytes
+										const convertedBytes = window.parent.Base58.decode(convertResponse);
+										const bytesForSigning = new Uint8Array(Object.values(convertedBytes));
+										const originalBytes = window.parent.Base58.decode(data.unsignedBytes);
+										const originalBytesBuffer = new Uint8Array(Object.values(originalBytes));
+										const signature = nacl.sign.detached(bytesForSigning, fullSecretKey);
+										const signedCombined = utils.appendBuffer(originalBytesBuffer, signature);
+										const signedBytesBase58 = window.parent.Base58.encode(signedCombined);
+										// 7) If user does not want to process, just return signed bytes
+										if (!shouldProcess) {
+											response = JSON.stringify(signedBytesBase58);
+										} else {
+											// 8) Otherwise, process transaction on-chain
+											const processResult = await parentEpml.request('apiCall', {
+												url: `/transactions/process?apiKey=${this.getApiKey()}`,
+												method: 'POST',
+												headers: { 'Content-Type': 'text/plain' },
+												body: signedBytesBase58
+											});
+											if (!processResult || !processResult.signature) {
+												const msg = (processResult && processResult.message)
+								    				? processResult.message
+								    				: 'Transaction was not able to be processed';
+												response = JSON.stringify({ error: msg });
+											} else {
+												response = JSON.stringify(processResult);
+											}
+										}
+									}
+								}
+							}
+						}
+					} catch (error) {
+						// If anything fails in the try
+						response = JSON.stringify({ error: error.message || 'Failed to sign transaction' });
+					}
+					// 9) Post the final response back to the web app
+					let responseObj;
+					try {
+						responseObj = JSON.parse(response);
+					} catch (e) {
+						responseObj = response; // If not valid JSON
+					}
+					if (responseObj.error != null) {
+						event.ports[0].postMessage({ result: null, error: responseObj });
+					} else {
+						event.ports[0].postMessage({ result: responseObj, error: null });
+					}
+					// Only one break for the entire case
+					break;
 				}
 
 				case actions.ENCRYPT_DATA: {
@@ -3899,6 +4009,20 @@ async function showModalAndWait(type, data) {
 								</p>
 								${data.value ? `<p class="modal-paragraph">${data.value}</p>` : ''}
 								<p class="modal-paragraph">${get("browserpage.bchange55")}</p>
+							</div>
+						` : ''}
+
+						${type === actions.SIGN_TRANSACTION ? `
+							<div class="modal-subcontainer">
+								<p class="modal-paragraph">
+									This application wants to SIGN ${data.shouldProcess ? 'AND PROCESS' : ''} a transaction.
+								</p>
+								<p class="modal-paragraph">
+									<strong>Transaction Type:</strong> ${data.decodedTxType}
+								</p>
+								<p class="modal-paragraph">
+									Read the transaction carefully before accepting!
+								</p>
 							</div>
 						` : ''}
 
