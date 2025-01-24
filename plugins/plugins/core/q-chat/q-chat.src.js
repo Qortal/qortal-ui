@@ -447,6 +447,7 @@ class Chat extends LitElement {
 
 		let data
 		let supArray = []
+		let allSymKeys = []
 		let gAdmin = ''
 		let gAddress = ''
 		let currentGroupId = url.substring(6)
@@ -456,7 +457,7 @@ class Chat extends LitElement {
 
 		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-		const getNameUrl = `${nodeUrl}/arbitrary/resources?service=DOCUMENT_PRIVATE&identifier=${symIdentifier}&limit=1&reverse=true`
+		const getNameUrl = `${nodeUrl}/arbitrary/resources?service=DOCUMENT_PRIVATE&identifier=${symIdentifier}&limit=0&reverse=true`
 		const getAdminUrl = `${nodeUrl}/groups/members/${currentGroupId}?onlyAdmins=true&limit=20`
 
 		if (localStorage.getItem("symKeysCurrent") === null) {
@@ -473,9 +474,20 @@ class Chat extends LitElement {
 		} else {
 			parentEpml.request('showSnackBar', `${locateString}`)
 
-			supArray.map(item => {
-				gAdmin = item.name
+			supArray.forEach(item => {
+				const symInfoObj = {
+					name: item.name,
+					identifier: item.identifier,
+					timestamp: item.updated ? item.updated : item.created
+				}
+				allSymKeys.push(symInfoObj)
 			})
+
+			let allSymKeysSorted = allSymKeys.sort(function(a, b) {
+				return b.timestamp - a.timestamp
+			})
+
+			gAdmin = allSymKeysSorted[0].name
 
 			const addressUrl = `${nodeUrl}/names/${gAdmin}`
 

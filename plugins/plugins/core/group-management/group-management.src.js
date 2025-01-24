@@ -2866,13 +2866,15 @@ class GroupManagement extends LitElement {
 
 		let data
 		let supArray = []
+		let allSymKeys = []
 		let gAdmin = ''
 		let gAddress = ''
+		let keysToOld = "Wait until an admin re-encrypts the keys. Only unencrypted messages will be displayed."
 
 		const symIdentifier = 'symmetric-qchat-group-' + groupId
 		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-		const getNameUrl = `${nodeUrl}/arbitrary/resources?service=DOCUMENT_PRIVATE&identifier=${symIdentifier}&limit=1&reverse=true`
+		const getNameUrl = `${nodeUrl}/arbitrary/resources?service=DOCUMENT_PRIVATE&identifier=${symIdentifier}&limit=0&reverse=true`
 		const getAdminUrl = `${nodeUrl}/groups/members/${groupId}?onlyAdmins=true&limit=20`
 
 		supArray = await fetch(getNameUrl).then(response => {
@@ -2882,9 +2884,20 @@ class GroupManagement extends LitElement {
 		if (this.isEmptyArray(supArray) || groupId === 0) {
 			console.log("No Symetric Key")
 		} else {
-			supArray.map(item => {
-				gAdmin = item.name
+			supArray.forEach(item => {
+				const symInfoObj = {
+					name: item.name,
+					identifier: item.identifier,
+					timestamp: item.updated ? item.updated : item.created
+				}
+				allSymKeys.push(symInfoObj)
 			})
+
+			let allSymKeysSorted = allSymKeys.sort(function(a, b) {
+				return b.timestamp - a.timestamp
+			})
+
+			gAdmin = allSymKeysSorted[0].name
 
 			const addressUrl = `${nodeUrl}/names/${gAdmin}`
 
@@ -2913,14 +2926,19 @@ class GroupManagement extends LitElement {
 				data = await res.text()
 
 				const decryptedKey = await this.decryptGroupEncryption(data)
-				const dataint8Array = base64ToUint8Array(decryptedKey.data)
-				const decryptedKeyToObject = uint8ArrayToObject(dataint8Array)
 
-				if (!validateSecretKey(decryptedKeyToObject)) {
-					throw new Error("SecretKey is not valid")
+				if (decryptedKey === undefined) {
+					parentEpml.request('showSnackBar', `${keysToOld}`)
+				} else {
+					const dataint8Array = base64ToUint8Array(decryptedKey.data)
+					const decryptedKeyToObject = uint8ArrayToObject(dataint8Array)
+
+					if (!validateSecretKey(decryptedKeyToObject)) {
+						throw new Error("SecretKey is not valid")
+					}
+
+					this.secretKeys = decryptedKeyToObject
 				}
-
-				this.secretKeys = decryptedKeyToObject
 			}
 		}
 	}
@@ -3080,7 +3098,7 @@ class GroupManagement extends LitElement {
 		let getEditedArray = await parentEpml.request('apiCall', {
 			url: `/chat/messages?txGroupId=${involved}&haschatreference=true&encoding=BASE64&limit=0&reverse=false`
 		})
-										
+
 		chaEditedArray = getEditedArray
 
 		// Replace messages which got edited in the chatMessageArray
@@ -3143,7 +3161,7 @@ class GroupManagement extends LitElement {
 		if (this.shadowRoot.getElementById('chat-container').innerHTML === '') {
 			this.shadowRoot.getElementById('chat-container').innerHTML = ''
 		}
-		
+
 		if (this.isEmptyArray(renderArray)) {
 			const chatEmpty = document.createElement('div')
 			chatEmpty.classList.add('no-messages')
