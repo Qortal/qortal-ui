@@ -22,6 +22,7 @@ import WebWorkerChat from 'web-worker:./computePowWorker.js'
 import '@material/mwc-button'
 import '@material/mwc-icon'
 import '@material/mwc-checkbox'
+import Base58 from '../../../../../crypto/api/deps/Base58'
 import nacl from '../../../../../crypto/api/deps/nacl-fast'
 
 // Multi language support
