@@ -12,6 +12,7 @@ import {
 	uint8ArrayStartsWith,
 	uint8ArrayToBase64
 } from '../../components/qdn-action-encryption'
+import { processTransactionVersion2 } from '../../../../../crypto/api/createTransaction'
 import { webBrowserStyles, webBrowserModalStyles } from '../../components/plugins-css'
 import * as actions from '../../components/qdn-action-types'
 import isElectron from 'is-electron'
@@ -19,11 +20,11 @@ import ShortUniqueId from 'short-unique-id'
 import FileSaver from 'file-saver'
 import WebWorker from 'web-worker:./computePowWorkerFile.js'
 import WebWorkerChat from 'web-worker:./computePowWorker.js'
+import Base58 from '../../../../../crypto/api/deps/Base58'
+import nacl from '../../../../../crypto/api/deps/nacl-fast'
 import '@material/mwc-button'
 import '@material/mwc-icon'
 import '@material/mwc-checkbox'
-import Base58 from '../../../../../crypto/api/deps/Base58'
-import nacl from '../../../../../crypto/api/deps/nacl-fast'
 
 // Multi language support
 import { get, registerTranslateConfig, translate, use } from '../../../../../core/translate'
@@ -86,7 +87,7 @@ class WebBrowser extends LitElement {
 		this.loader = new Loader()
 
 		// Build initial display URL
-		let displayUrl = ''
+		let displayUrl
 
 		if (this.dev === 'FRAMEWORK') {
 			displayUrl = 'qortal://app/development'
@@ -2307,7 +2308,13 @@ class WebBrowser extends LitElement {
 						body: body
 					})
 
-					if (!resp.ok) throw new Error("Failed to decode transaction")
+					if (!resp.ok) {
+						const errorMsg = "Failed to decode transaction"
+						let data = {}
+						data['error'] = errorMsg
+						response = JSON.stringify(data)
+						break
+					}
 
 					const decodedData = await resp.json()
 
@@ -2364,17 +2371,25 @@ class WebBrowser extends LitElement {
 						const signedBytes = utils.appendBuffer(arbitraryBytesBuffer, signature)
 						const signedBytesToBase58 = Base58.encode(signedBytes)
 
-						if(!shouldProcess){
-							return signedBytesToBase58
+						if(!shouldProcess) {
+							const errorMsg = "Process transaction was not requested! Signed bytes are: " + signedBytesToBase58
+							let data = {}
+							data['error'] = errorMsg
+							response = JSON.stringify(data)
+							break
 						}
 
 						try {
 							this.loader.show()
 
-							const res = await this.processTransactionVersion2(signedBytesToBase58)
+							const res = await processTransactionVersion2(signedBytesToBase58)
 
 							if (!res.signature) {
-								throw new Error(res.message || "Transaction was not able to be processed")
+								const errorMsg = "Transaction was not able to be processed" + res.message
+								let data = {}
+								data['error'] = errorMsg
+								response = JSON.stringify(data)
+								break
 							}
 
 							response = JSON.stringify(res)
@@ -2478,7 +2493,6 @@ class WebBrowser extends LitElement {
 							}
 						)
 						if (processPayment.action === 'reject') {
-							let errorMsg = "User declined request"
 							let myMsg1 = get("transactions.declined")
 							let myMsg2 = get("walletpage.wchange44")
 							await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
@@ -2638,7 +2652,6 @@ class WebBrowser extends LitElement {
 							}
 						)
 						if (processPayment.action === 'reject') {
-							let errorMsg = "User declined request"
 							let myMsg1 = get("transactions.declined")
 							let myMsg2 = get("walletpage.wchange44")
 							await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
@@ -2736,7 +2749,6 @@ class WebBrowser extends LitElement {
 							}
 						)
 						if (processPayment.action === 'reject') {
-							let errorMsg = "User declined request"
 							let myMsg1 = get("transactions.declined")
 							let myMsg2 = get("walletpage.wchange44")
 							await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
@@ -2834,7 +2846,6 @@ class WebBrowser extends LitElement {
 							}
 						)
 						if (processPayment.action === 'reject') {
-							let errorMsg = "User declined request"
 							let myMsg1 = get("transactions.declined")
 							let myMsg2 = get("walletpage.wchange44")
 							await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
@@ -2932,7 +2943,6 @@ class WebBrowser extends LitElement {
 							}
 						)
 						if (processPayment.action === 'reject') {
-							let errorMsg = "User declined request"
 							let myMsg1 = get("transactions.declined")
 							let myMsg2 = get("walletpage.wchange44")
 							await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
@@ -3030,7 +3040,6 @@ class WebBrowser extends LitElement {
 							}
 						)
 						if (processPayment.action === 'reject') {
-							let errorMsg = "User declined request"
 							let myMsg1 = get("transactions.declined")
 							let myMsg2 = get("walletpage.wchange44")
 							await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
@@ -3128,7 +3137,6 @@ class WebBrowser extends LitElement {
 							}
 						)
 						if (processPayment.action === 'reject') {
-							let errorMsg = "User declined request"
 							let myMsg1 = get("transactions.declined")
 							let myMsg2 = get("walletpage.wchange44")
 							await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
