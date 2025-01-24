@@ -2875,7 +2875,7 @@ class GroupManagement extends LitElement {
 		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
 		const getNameUrl = `${nodeUrl}/arbitrary/resources?service=DOCUMENT_PRIVATE&identifier=${symIdentifier}&limit=0&reverse=true`
-		const getAdminUrl = `${nodeUrl}/groups/members/${groupId}?onlyAdmins=true&limit=20`
+		const getAdminUrl = `${nodeUrl}/groups/members/${groupId}?onlyAdmins=true&limit=0`
 
 		supArray = await fetch(getNameUrl).then(response => {
 			return response.json()
