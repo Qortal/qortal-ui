@@ -17,7 +17,8 @@ export function base64ToUint8Array(base64) {
 export function uint8ArrayToBase64(uint8Array) {
 	const length = uint8Array.length
 	let binaryString = ''
-	const chunkSize = 1024 * 1024 // Process 1MB at a time
+	// Process 1MB at a time
+	const chunkSize = 1024 * 1024
 
 	for (let i = 0; i < length; i += chunkSize) {
 		const chunkEnd = Math.min(i + chunkSize, length)
@@ -104,7 +105,8 @@ export function validateSecretKey(obj) {
 
 // Function to create a symmetric key and nonce
 export const createSymmetricKeyAndNonce = () => {
-	const messageKey = new Uint8Array(32) // 32 bytes for the symmetric key
+	// 32 bytes for the symmetric key
+	const messageKey = new Uint8Array(32)
 	crypto.getRandomValues(messageKey)
 
 	return { messageKey: uint8ArrayToBase64(messageKey)}
@@ -233,11 +235,13 @@ export const encryptSingle = async (data64, secretKeyObject, typeNumber = 2) => 
 		encryptedDataBase64 = uint8ArrayToBase64(encryptedData)
 
 		// Concatenate the highest key, type number, and encrypted data (old format)
-		const highestKeyStr = highestKey.toString().padStart(10, '0') // Fixed length of 10 digits
+		// Fixed length of 10 digits
+		const highestKeyStr = highestKey.toString().padStart(10, '0')
 		finalEncryptedData = btoa(highestKeyStr + encryptedDataBase64)
 	} else {
 		// New format: Generate a random nonce and embed it in the message
-		nonce = new Uint8Array(24) // 24 bytes for the nonce
+		// 24 bytes for the nonce
+		nonce = new Uint8Array(24)
 		crypto.getRandomValues(nonce)
 
 		// Encrypt the data with the new nonce and message key
@@ -248,7 +252,8 @@ export const encryptSingle = async (data64, secretKeyObject, typeNumber = 2) => 
 		const nonceBase64 = uint8ArrayToBase64(nonce)
 
 		// Concatenate the highest key, type number, nonce, and encrypted data (new format)
-		const highestKeyStr = highestKey.toString().padStart(10, '0') // Fixed length of 10 digits
+		// Fixed length of 10 digits
+		const highestKeyStr = highestKey.toString().padStart(10, '0')
 		const highestKeyBytes = new TextEncoder().encode(highestKeyStr.padStart(10, '0'))
 		const typeNumberBytes = new TextEncoder().encode(typeNumberStr.padStart(3, '0'))
 
@@ -306,7 +311,7 @@ export function decryptSingle(data64, secretKeyObject, skipDecodeBase64) {
 
 	// Check if we have a valid secret key for the extracted highestKey
 	if (!secretKeyObject[highestKey]) {
-		throw new Error('Cannot find correct secretKey')
+		return 'noKey'
 	}
 
 	const secretKeyEntry = secretKeyObject[highestKey]
@@ -315,18 +320,24 @@ export function decryptSingle(data64, secretKeyObject, skipDecodeBase64) {
 
 	// Determine if typeNumber exists by checking if the next 3 characters after keyStr are digits
 	const possibleTypeNumberStr = decodeForNumber.slice(10, 13)
-	const hasTypeNumber = /^\d{3}$/.test(possibleTypeNumberStr) // Check if next 3 characters are digits
+
+	// Check if next 3 characters are digits
+	const hasTypeNumber = /^\d{3}$/.test(possibleTypeNumberStr)
 	
 	if (secretKeyEntry.nonce) {
 		// Old format: nonce is present in the secretKeyObject, so no type number exists
 		nonceBase64 = secretKeyEntry.nonce
-		encryptedDataBase64 = decodeForNumber.slice(10) // The remaining part is the encrypted data
+
+		// The remaining part is the encrypted data
+		encryptedDataBase64 = decodeForNumber.slice(10)
 	} else {
 		if (hasTypeNumber) {
-			// const typeNumberStr = new TextDecoder().decode(typeNumberBytes)
 			if(decodeForNumber.slice(10, 13) !== '001'){
 				const decodedBinary = base64ToUint8Array(decodedData)
-				const highestKeyBytes = decodedBinary.slice(0, 10) // if ASCII digits only
+
+				// if ASCII digits only
+				const highestKeyBytes = decodedBinary.slice(0, 10)
+
 				const highestKeyStr = new TextDecoder().decode(highestKeyBytes)
 				const nonce = decodedBinary.slice(13, 13 + 24)
 				const encryptedData = decodedBinary.slice(13 + 24)
@@ -336,7 +347,7 @@ export function decryptSingle(data64, secretKeyObject, skipDecodeBase64) {
 
 				// Check if decryption was successful
 				if (!decryptedBytes) {
-					throw new Error("Decryption failed")
+					return 'decryptionFailed'
 				}
 
 				// Convert the decrypted Uint8Array back to a Base64 string
@@ -344,13 +355,21 @@ export function decryptSingle(data64, secretKeyObject, skipDecodeBase64) {
 			}
 
 			// New format: Extract type number and nonce
-			typeNumberStr = possibleTypeNumberStr // Extract type number
-			nonceBase64 = decodeForNumber.slice(13, 45) // Extract nonce (next 32 characters after type number)
-			encryptedDataBase64 = decodeForNumber.slice(45) // The remaining part is the encrypted data
+			// Extract type number
+			typeNumberStr = possibleTypeNumberStr
+
+			// Extract nonce (next 32 characters after type number)
+			nonceBase64 = decodeForNumber.slice(13, 45)
+
+			// The remaining part is the encrypted data
+			encryptedDataBase64 = decodeForNumber.slice(45)
 		} else {
 			// Old format without type number (nonce is embedded in the message, first 32 characters after keyStr)
-			nonceBase64 = decodeForNumber.slice(10, 42) // First 32 characters for the nonce
-			encryptedDataBase64 = decodeForNumber.slice(42) // The remaining part is the encrypted data
+			// First 32 characters for the nonce
+			nonceBase64 = decodeForNumber.slice(10, 42)
+
+			// The remaining part is the encrypted data
+			encryptedDataBase64 = decodeForNumber.slice(42)
 		}
 	}
 
@@ -360,7 +379,7 @@ export function decryptSingle(data64, secretKeyObject, skipDecodeBase64) {
 	const messageKey = base64ToUint8Array(secretKeyEntry.messageKey)
 
 	if (!(Uint8ArrayData instanceof Uint8Array)) {
-		throw new Error("The Uint8ArrayData you've submitted is invalid")
+		return 'decryptionFailed'
 	}
 
 	// Decrypt the data using the nonce and messageKey
@@ -368,7 +387,7 @@ export function decryptSingle(data64, secretKeyObject, skipDecodeBase64) {
 
 	// Check if decryption was successful
 	if (!decryptedData) {
-		throw new Error("Decryption failed")
+		return 'decryptionFailed'
 	}
 
 	// Convert the decrypted Uint8Array back to a Base64 string
@@ -383,25 +402,33 @@ export const decryptGroupEncryptionWithSharingKey = async (data64EncryptedData, 
 
 	// Extract the nonce
 	const nonceStartPosition = strUint8Array.length
-	const nonceEndPosition = nonceStartPosition + 24 // Nonce is 24 bytes
+
+	// Nonce is 24 bytes
+	const nonceEndPosition = nonceStartPosition + 24
 	const nonce = allCombined.slice(nonceStartPosition, nonceEndPosition)
 
 	// Extract the shared keyNonce
 	const keyNonceStartPosition = nonceEndPosition
-	const keyNonceEndPosition = keyNonceStartPosition + 24 // Nonce is 24 bytes
+
+	// Nonce is 24 bytes
+	const keyNonceEndPosition = keyNonceStartPosition + 24
 	const keyNonce = allCombined.slice(keyNonceStartPosition, keyNonceEndPosition)
 
 	// Extract the sender's public key
 	const senderPublicKeyStartPosition = keyNonceEndPosition
-	const senderPublicKeyEndPosition = senderPublicKeyStartPosition + 32 // Public keys are 32 bytes
+
+	// Public keys are 32 bytes
+	const senderPublicKeyEndPosition = senderPublicKeyStartPosition + 32
 
 	// Calculate count first
-	const countStartPosition = allCombined.length - 4 // 4 bytes before the end, since count is stored in Uint32 (4 bytes)
+	// 4 bytes before the end, since count is stored in Uint32 (4 bytes)
+	const countStartPosition = allCombined.length - 4
 	const countArray = allCombined.slice(countStartPosition, countStartPosition + 4)
 	const count = new Uint32Array(countArray.buffer)[0]
 
 	// Then use count to calculate encryptedData
-	const encryptedDataStartPosition = senderPublicKeyEndPosition // start position of encryptedData
+	// start position of encryptedData
+	const encryptedDataStartPosition = senderPublicKeyEndPosition
 	const encryptedDataEndPosition = allCombined.length - ((count * (32 + 16)) + 4)
 	const encryptedData = allCombined.slice(encryptedDataStartPosition, encryptedDataEndPosition)
 	const symmetricKey = base64ToUint8Array(key)
@@ -426,26 +453,34 @@ export function decryptGroupDataQortalRequest(data64EncryptedData, privateKey) {
 
 	// Extract the nonce
 	const nonceStartPosition = strUint8Array.length
-	const nonceEndPosition = nonceStartPosition + 24 // Nonce is 24 bytes
+
+	// Nonce is 24 bytes
+	const nonceEndPosition = nonceStartPosition + 24
 	const nonce = allCombined.slice(nonceStartPosition, nonceEndPosition)
 
 	// Extract the shared keyNonce
 	const keyNonceStartPosition = nonceEndPosition
-	const keyNonceEndPosition = keyNonceStartPosition + 24 // Nonce is 24 bytes
+
+	// Nonce is 24 bytes
+	const keyNonceEndPosition = keyNonceStartPosition + 24
 	const keyNonce = allCombined.slice(keyNonceStartPosition, keyNonceEndPosition)
 
 	// Extract the sender's public key
 	const senderPublicKeyStartPosition = keyNonceEndPosition
-	const senderPublicKeyEndPosition = senderPublicKeyStartPosition + 32 // Public keys are 32 bytes
+
+	// Public keys are 32 bytes
+	const senderPublicKeyEndPosition = senderPublicKeyStartPosition + 32
 	const senderPublicKey = allCombined.slice(senderPublicKeyStartPosition, senderPublicKeyEndPosition)
 
 	// Calculate count first
-	const countStartPosition = allCombined.length - 4 // 4 bytes before the end, since count is stored in Uint32 (4 bytes)
+	// 4 bytes before the end, since count is stored in Uint32 (4 bytes)
+	const countStartPosition = allCombined.length - 4
 	const countArray = allCombined.slice(countStartPosition, countStartPosition + 4)
 	const count = new Uint32Array(countArray.buffer)[0]
 
 	// Then use count to calculate encryptedData
-	const encryptedDataStartPosition = senderPublicKeyEndPosition // start position of encryptedData
+	// start position of encryptedData
+	const encryptedDataStartPosition = senderPublicKeyEndPosition
 	const encryptedDataEndPosition = allCombined.length - ((count * (32 + 16)) + 4)
 	const encryptedData = allCombined.slice(encryptedDataStartPosition, encryptedDataEndPosition)
 
@@ -474,6 +509,7 @@ export function decryptGroupDataQortalRequest(data64EncryptedData, privateKey) {
 		if (decryptedKey) {
 			// Decrypt the data using the symmetric key.
 			const decryptedData = nacl.secretbox.open(encryptedData, nonce, decryptedKey)
+
 			// If decryption was successful, decryptedData will not be null.
 			if (decryptedData) {
 				return decryptedData
@@ -493,26 +529,34 @@ export function decryptGroupData(data64EncryptedData, privateKey) {
 
 	// Extract the nonce
 	const nonceStartPosition = strUint8Array.length
-	const nonceEndPosition = nonceStartPosition + 24 // Nonce is 24 bytes
+
+	// Nonce is 24 bytes
+	const nonceEndPosition = nonceStartPosition + 24
 	const nonce = allCombined.slice(nonceStartPosition, nonceEndPosition)
 
 	// Extract the shared keyNonce
 	const keyNonceStartPosition = nonceEndPosition
-	const keyNonceEndPosition = keyNonceStartPosition + 24 // Nonce is 24 bytes
+
+	// Nonce is 24 bytes
+	const keyNonceEndPosition = keyNonceStartPosition + 24
 	const keyNonce = allCombined.slice(keyNonceStartPosition, keyNonceEndPosition)
 
 	// Extract the sender's public key
 	const senderPublicKeyStartPosition = keyNonceEndPosition
-	const senderPublicKeyEndPosition = senderPublicKeyStartPosition + 32 // Public keys are 32 bytes
+
+	// Public keys are 32 bytes
+	const senderPublicKeyEndPosition = senderPublicKeyStartPosition + 32
 	const senderPublicKey = allCombined.slice(senderPublicKeyStartPosition, senderPublicKeyEndPosition)
 
 	// Calculate count first
-	const countStartPosition = allCombined.length - 4 // 4 bytes before the end, since count is stored in Uint32 (4 bytes)
+	// 4 bytes before the end, since count is stored in Uint32 (4 bytes)
+	const countStartPosition = allCombined.length - 4
 	const countArray = allCombined.slice(countStartPosition, countStartPosition + 4)
 	const count = new Uint32Array(countArray.buffer)[0]
 
 	// Then use count to calculate encryptedData
-	const encryptedDataStartPosition = senderPublicKeyEndPosition // start position of encryptedData
+	// start position of encryptedData
+	const encryptedDataStartPosition = senderPublicKeyEndPosition
 	const encryptedDataEndPosition = allCombined.length - ((count * (32 + 16)) + 4)
 	const encryptedData = allCombined.slice(encryptedDataStartPosition, encryptedDataEndPosition)
 

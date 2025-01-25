@@ -515,7 +515,7 @@ class Chat extends LitElement {
 
 			if (adminExists(gAddress)) {
 				const sleep = (t) => new Promise(r => setTimeout(r, t))
-				const dataUrl = `${nodeUrl}/arbitrary/DOCUMENT_PRIVATE/${gAdmin}/${symIdentifier}?encoding=base64&rebuild=true&async=true`
+				const dataUrl = `${nodeUrl}/arbitrary/DOCUMENT_PRIVATE/${gAdmin}/${symIdentifier}?encoding=base64`
 				const res = await fetch(dataUrl)
 
 				do {

@@ -3035,6 +3035,11 @@ class GroupManagement extends LitElement {
 			let hubString = ''
 
 			const res = decryptSingle(string, this.secretKeys, false)
+
+			if (res === 'noKey' || res === 'decryptionFailed') {
+				return '{"messageText":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"This message could not be decrypted"}]}]},"images":[""],"repliedTo":"","version":3}'
+			}
+
 			const decryptToUnit8Array = base64ToUint8Array(res)
 			const responseData = uint8ArrayToObject(decryptToUnit8Array)
 
