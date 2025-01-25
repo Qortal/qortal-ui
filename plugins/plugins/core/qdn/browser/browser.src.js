@@ -12,6 +12,7 @@ import {
 	uint8ArrayStartsWith,
 	uint8ArrayToBase64
 } from '../../components/qdn-action-encryption'
+import { processTransactionVersion2 } from '../../../../../crypto/api/createTransaction'
 import { webBrowserStyles, webBrowserModalStyles } from '../../components/plugins-css'
 import * as actions from '../../components/qdn-action-types'
 import isElectron from 'is-electron'
@@ -19,6 +20,8 @@ import ShortUniqueId from 'short-unique-id'
 import FileSaver from 'file-saver'
 import WebWorker from 'web-worker:./computePowWorkerFile.js'
 import WebWorkerChat from 'web-worker:./computePowWorker.js'
+import Base58 from '../../../../../crypto/api/deps/Base58'
+import nacl from '../../../../../crypto/api/deps/nacl-fast'
 import '@material/mwc-button'
 import '@material/mwc-icon'
 import '@material/mwc-checkbox'
@@ -84,7 +87,7 @@ class WebBrowser extends LitElement {
 		this.loader = new Loader()
 
 		// Build initial display URL
-		let displayUrl = ''
+		let displayUrl
 
 		if (this.dev === 'FRAMEWORK') {
 			displayUrl = 'qortal://app/development'
@@ -2271,6 +2274,140 @@ class WebBrowser extends LitElement {
 					}
 				}
 
+				case actions.SIGN_TRANSACTION: {
+					const signNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+					const signUrl = signNode.protocol + '://' + signNode.domain + ':' + signNode.port
+					const requiredFields = ['unsignedBytes']
+					const missingFields = []
+
+					requiredFields.forEach((field) => {
+						if (!data[field]) {
+							missingFields.push(field)
+						}
+					})
+
+					if (missingFields.length > 0) {
+						const missingFieldsString = missingFields.join(', ')
+						const errorMsg = `Missing fields: ${missingFieldsString}`
+						let data = {}
+						data['error'] = errorMsg
+						response = JSON.stringify(data)
+						break
+					}
+
+					const shouldProcess = data.process || false
+
+					let url = `${signUrl}/transactions/decode?ignoreValidityChecks=false`
+					let body = data.unsignedBytes
+
+					const resp = await fetch(url, {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json"
+						},
+						body: body
+					})
+
+					if (!resp.ok) {
+						const errorMsg = "Failed to decode transaction"
+						let data = {}
+						data['error'] = errorMsg
+						response = JSON.stringify(data)
+						break
+					}
+
+					const decodedData = await resp.json()
+
+					const signRequest = await showModalAndWait(
+						actions.SIGN_TRANSACTION,
+						{
+							text1: `Do you give this application permission to ${ shouldProcess ? 'SIGN and PROCESS' : 'SIGN' } a transaction?`,
+							text2: "Read the transaction carefully before accepting!",
+							text3: `Tx type: ${decodedData.type}`,
+							json: decodedData
+						}
+					)
+
+					if (signRequest.action === 'accept') {
+						let urlConverted = `${signUrl}/transactions/convert`
+
+						const responseConverted = await fetch(urlConverted, {
+							method: "POST",
+							headers: {
+								"Content-Type": "application/json"
+							},
+							body: data.unsignedBytes
+						})
+
+						const uint8PrivateKey = Base58.encode(window.parent.reduxStore.getState().app.wallet._addresses[0].keyPair.privateKey)
+						const uint8PublicKey = Base58.encode(window.parent.reduxStore.getState().app.wallet._addresses[0].keyPair.publicKey)
+
+						const keyPair = {
+							privateKey: uint8PrivateKey,
+							publicKey: uint8PublicKey,
+						}
+
+						const convertedBytes = await responseConverted.text()
+						const txBytes = Base58.decode(data.unsignedBytes)
+
+						const _arbitraryBytesBuffer = Object.keys(txBytes).map(function (key) {
+							return txBytes[key]
+						})
+
+						const arbitraryBytesBuffer = new Uint8Array(_arbitraryBytesBuffer)
+						const txByteSigned = Base58.decode(convertedBytes)
+
+						const _bytesForSigningBuffer = Object.keys(txByteSigned).map(function (key) {
+							return txByteSigned[key]
+						})
+
+						const bytesForSigningBuffer = new Uint8Array(_bytesForSigningBuffer)
+
+						const signature = nacl.sign.detached(
+							bytesForSigningBuffer,
+							keyPair.privateKey
+						)
+
+						const signedBytes = utils.appendBuffer(arbitraryBytesBuffer, signature)
+						const signedBytesToBase58 = Base58.encode(signedBytes)
+
+						if(!shouldProcess) {
+							const errorMsg = "Process transaction was not requested! Signed bytes are: " + signedBytesToBase58
+							let data = {}
+							data['error'] = errorMsg
+							response = JSON.stringify(data)
+							break
+						}
+
+						try {
+							this.loader.show()
+
+							const res = await processTransactionVersion2(signedBytesToBase58)
+
+							if (!res.signature) {
+								const errorMsg = "Transaction was not able to be processed" + res.message
+								let data = {}
+								data['error'] = errorMsg
+								response = JSON.stringify(data)
+								break
+							}
+
+							response = JSON.stringify(res)
+						} catch (error) {
+							console.error(error)
+							const data = {}
+							data['error'] = error.message || get("browserpage.bchange21")
+							response = JSON.stringify(data)
+							return
+						} finally {
+							this.loader.hide()
+						}
+					} else if (signRequest.action === 'reject') {
+						response = '{"error": "User declined request"}'
+					}
+					break
+				}
+
 				case actions.SEND_COIN: {
 					const requiredFields = ['coin', 'destinationAddress', 'amount']
 					const missingFields = []
@@ -2356,7 +2493,6 @@ class WebBrowser extends LitElement {
 							}
 						)
 						if (processPayment.action === 'reject') {
-							let errorMsg = "User declined request"
 							let myMsg1 = get("transactions.declined")
 							let myMsg2 = get("walletpage.wchange44")
 							await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
@@ -2516,7 +2652,6 @@ class WebBrowser extends LitElement {
 							}
 						)
 						if (processPayment.action === 'reject') {
-							let errorMsg = "User declined request"
 							let myMsg1 = get("transactions.declined")
 							let myMsg2 = get("walletpage.wchange44")
 							await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
@@ -2614,7 +2749,6 @@ class WebBrowser extends LitElement {
 							}
 						)
 						if (processPayment.action === 'reject') {
-							let errorMsg = "User declined request"
 							let myMsg1 = get("transactions.declined")
 							let myMsg2 = get("walletpage.wchange44")
 							await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
@@ -2712,7 +2846,6 @@ class WebBrowser extends LitElement {
 							}
 						)
 						if (processPayment.action === 'reject') {
-							let errorMsg = "User declined request"
 							let myMsg1 = get("transactions.declined")
 							let myMsg2 = get("walletpage.wchange44")
 							await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
@@ -2810,7 +2943,6 @@ class WebBrowser extends LitElement {
 							}
 						)
 						if (processPayment.action === 'reject') {
-							let errorMsg = "User declined request"
 							let myMsg1 = get("transactions.declined")
 							let myMsg2 = get("walletpage.wchange44")
 							await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
@@ -2908,7 +3040,6 @@ class WebBrowser extends LitElement {
 							}
 						)
 						if (processPayment.action === 'reject') {
-							let errorMsg = "User declined request"
 							let myMsg1 = get("transactions.declined")
 							let myMsg2 = get("walletpage.wchange44")
 							await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
@@ -3006,7 +3137,6 @@ class WebBrowser extends LitElement {
 							}
 						)
 						if (processPayment.action === 'reject') {
-							let errorMsg = "User declined request"
 							let myMsg1 = get("transactions.declined")
 							let myMsg2 = get("walletpage.wchange44")
 							await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
@@ -4031,6 +4161,13 @@ async function showModalAndWait(type, data) {
 						${type === actions.SEND_CHAT_MESSAGE ? `
 							<p class="modal-paragraph">${get("browserpage.bchange22")}</p>
 							<p class="modal-paragraph">${get("chatpage.cchange4")}: <span> ${data.message}</span></p>
+						` : ''}
+
+						${type === actions.SIGN_TRANSACTION ? `
+							<p class="modal-paragraph">${data.text1}</p>
+							<p class="modal-paragraph">${data.text2}</p>
+							<p class="modal-paragraph">${data.text3}</p>
+							<p class="modal-paragraph">Transaction: <span>${data.json}</span></p>
 						` : ''}
 					</div>
 					<div class="modal-buttons">
