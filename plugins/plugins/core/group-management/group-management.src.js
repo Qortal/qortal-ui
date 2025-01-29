@@ -801,7 +801,7 @@ class GroupManagement extends LitElement {
 				const currentTime = Date.now()
 
 				this.myOpenInvites.forEach(a => {
-					let expiry = a.timestamp + a.timeToLive
+					let expiry = a.timestamp + (a.timeToLive * 1000)
 
 					if (expiry > currentTime || a.timeToLive === 0) {
 						let invitedGroupInfoUrl = `${nodeUrl}/groups/${a.groupId}`
