@@ -5,12 +5,21 @@ import { passiveSupport } from 'passive-events-support/src/utils'
 import { Editor, Extension } from '@tiptap/core'
 import { supportCountryFlagEmojis } from '../components/ChatEmojiFlags'
 import { qchatStyles } from '../components/plugins-css'
+import {
+	decryptGroupData,
+	uint8ArrayToBase64,
+	base64ToUint8Array,
+	uint8ArrayToObject,
+	validateSecretKey
+} from '../components/GroupEncryption'
+import Base58 from '../../../../crypto/api/deps/Base58'
 import isElectron from 'is-electron'
 import WebWorker from 'web-worker:./computePowWorker'
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
 import Placeholder from '@tiptap/extension-placeholder'
 import Highlight from '@tiptap/extension-highlight'
+import Mention from '@tiptap/extension-mention'
 import ShortUniqueId from 'short-unique-id'
 import snackbar from '../components/snackbar'
 import '../components/ChatWelcomePage'
@@ -429,8 +438,150 @@ class Chat extends LitElement {
 	}
 
 	async setActiveChatHeadUrl(url) {
-		this.activeChatHeadUrl = url
-		this.requestUpdate()
+		await this.getSymKeyFile(url)
+	}
+
+	async getSymKeyFile(url) {
+		this.secretKeys = {}
+		this.groupAdmins = {}
+
+		let data
+		let supArray = []
+		let allSymKeys = []
+		let gAdmin = ''
+		let gAddress = ''
+		let currentGroupId = url.substring(6)
+		let symIdentifier = 'symmetric-qchat-group-' + currentGroupId
+		let locateString = "Downloading and decrypt keys! Please wait..."
+		let keysToOld = "Wait until an admin re-encrypts the keys. Only unencrypted messages will be displayed."
+		let retryDownload = "Retry downloading and decrypt keys in 5 seconds! Please wait..."
+		let failDownload = "Error downloading and decrypt keys! Only unencrypted messages will be displayed. Please try again later..."
+		let all_ok = false
+		let counter = 0
+
+		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+		const getNameUrl = `${nodeUrl}/arbitrary/resources?service=DOCUMENT_PRIVATE&identifier=${symIdentifier}&limit=0&reverse=true`
+		const getAdminUrl = `${nodeUrl}/groups/members/${currentGroupId}?onlyAdmins=true&limit=0`
+
+		if (localStorage.getItem("symKeysCurrent") === null) {
+			localStorage.setItem("symKeysCurrent", "")
+		}
+
+		supArray = await fetch(getNameUrl).then(response => {
+			return response.json()
+		})
+
+		if (this.isEmptyArray(supArray) || currentGroupId === 0) {
+			this.activeChatHeadUrl = url
+			this.requestUpdate()
+		} else {
+			parentEpml.request('showSnackBar', `${locateString}`)
+
+			supArray.forEach(item => {
+				const symInfoObj = {
+					name: item.name,
+					identifier: item.identifier,
+					timestamp: item.updated ? item.updated : item.created
+				}
+				allSymKeys.push(symInfoObj)
+			})
+
+			let allSymKeysSorted = allSymKeys.sort(function(a, b) {
+				return b.timestamp - a.timestamp
+			})
+
+			gAdmin = allSymKeysSorted[0].name
+
+			const addressUrl = `${nodeUrl}/names/${gAdmin}`
+
+			let addressObject = await fetch(addressUrl).then(response => {
+				return response.json()
+			})
+
+			gAddress = addressObject.owner
+
+			let adminRes = await fetch(getAdminUrl).then(response => {
+				return response.json()
+			})
+
+			this.groupAdmins = adminRes.members
+
+			const adminExists = (adminAddress) => {
+				return this.groupAdmins.some(function(checkAdmin) {
+					return checkAdmin.member === adminAddress
+				})
+			}
+
+			if (adminExists(gAddress)) {
+				const sleep = (t) => new Promise(r => setTimeout(r, t))
+				const dataUrl = `${nodeUrl}/arbitrary/DOCUMENT_PRIVATE/${gAdmin}/${symIdentifier}?encoding=base64`
+				const res = await fetch(dataUrl)
+
+				do {
+					counter++
+
+					if (!res.ok) {
+						parentEpml.request('showSnackBar', `${retryDownload}`)
+						await sleep(5000)
+					} else {
+						data = await res.text()
+						all_ok = true
+					}
+
+					if (counter > 10) {
+						parentEpml.request('showSnackBar', `${failDownload}`)
+						this.activeChatHeadUrl = url
+						this.requestUpdate()
+						return
+					}
+				} while (!all_ok)
+
+				const decryptedKey = await this.decryptGroupEncryption(data)
+
+				if (decryptedKey === undefined) {
+					parentEpml.request('showSnackBar', `${keysToOld}`)
+					this.activeChatHeadUrl = url
+					this.requestUpdate()
+				} else {
+					const dataint8Array = base64ToUint8Array(decryptedKey.data)
+					const decryptedKeyToObject = uint8ArrayToObject(dataint8Array)
+
+					if (!validateSecretKey(decryptedKeyToObject)) {
+						throw new Error("SecretKey is not valid")
+					}
+
+					localStorage.removeItem("symKeysCurrent")
+					localStorage.setItem("symKeysCurrent", "")
+					let oldSymIdentifier = JSON.parse(localStorage.getItem("symKeysCurrent") || "[]")
+					oldSymIdentifier.push(decryptedKeyToObject)
+					localStorage.setItem("symKeysCurrent", JSON.stringify(oldSymIdentifier))
+
+					let arraySecretKeys = JSON.parse(localStorage.getItem("symKeysCurrent") || "[]")
+
+					this.secretKeys = arraySecretKeys[0]
+					this.activeChatHeadUrl = url
+					this.requestUpdate()
+				}
+			} else {
+				this.activeChatHeadUrl = url
+				this.requestUpdate()
+			}
+		}
+
+	}
+
+	async decryptGroupEncryption(data) {
+		try {
+			const privateKey = Base58.encode(window.parent.reduxStore.getState().app.wallet._addresses[0].keyPair.privateKey)
+			const encryptedData = decryptGroupData(data, privateKey)
+			return {
+				data: uint8ArrayToBase64(encryptedData.decryptedData),
+				count: encryptedData.count
+			}
+		} catch (error) {
+			console.log("Error:", error.message)
+		}
 	}
 
 	resetChatEditor() {
@@ -461,6 +612,7 @@ class Chat extends LitElement {
 				StarterKit,
 				Underline,
 				Highlight,
+				Mention,
 				Placeholder.configure({
 					placeholder: 'Write something …'
 				}),

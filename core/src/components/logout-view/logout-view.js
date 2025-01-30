@@ -48,6 +48,7 @@ class LogoutView extends connect(store)(LitElement) {
 	}
 
 	async confirm(e) {
+		localStorage.removeItem("symKeysCurrent")
 		store.dispatch(doLogout())
 		e.stopPropagation()
 	}

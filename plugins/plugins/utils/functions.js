@@ -56,7 +56,7 @@ export const getUserNameFromAddress = async (address) => {
 	}
 }
 
-export const replaceMessagesEdited = async ({ decodedMessages, parentEpml, isReceipient, decodeMessageFunc, _publicKey, addToUpdateMessageHashmap }) => {
+export const replaceMessagesEdited = async ({ decodedMessages, parentEpml, isReceipient, decodeMessageFunc, _publicKey, symKeys, addToUpdateMessageHashmap }) => {
 	const MAX_CONCURRENT_REQUESTS = 5 // Maximum number of concurrent requests
 
 	const executeWithConcurrencyLimit = async (array, asyncFn) => {
@@ -82,7 +82,6 @@ export const replaceMessagesEdited = async ({ decodedMessages, parentEpml, isRec
 
 	const findUpdatedMessage = async (msg) => {
 		let msgItem = { ...msg }
-
 		try {
 			let msgQuery = `&involving=${msg.recipient}&involving=${msg.sender}`
 			if (!isReceipient) {
@@ -96,7 +95,7 @@ export const replaceMessagesEdited = async ({ decodedMessages, parentEpml, isRec
 			})
 
 			if (Array.isArray(newMsgResponse) && newMsgResponse.length > 0) {
-				const decodeResponseItem = decodeMessageFunc(newMsgResponse[0], isReceipient, _publicKey)
+				const decodeResponseItem = decodeMessageFunc(newMsgResponse[0], isReceipient, _publicKey, symKeys)
 
 				delete decodeResponseItem.timestamp
 
@@ -143,8 +142,8 @@ export const replaceMessagesEdited = async ({ decodedMessages, parentEpml, isRec
 				})
 
 				if (originalReplyMessage && Array.isArray(replyResponse) && replyResponse.length !== 0) {
-					const decodeOriginalReply = decodeMessageFunc(originalReplyMessage, isReceipient, _publicKey)
-					const decodeUpdatedReply = decodeMessageFunc(replyResponse[0], isReceipient, _publicKey)
+					const decodeOriginalReply = decodeMessageFunc(originalReplyMessage, isReceipient, _publicKey, symKeys)
+					const decodeUpdatedReply = decodeMessageFunc(replyResponse[0], isReceipient, _publicKey, symKeys)
 
 					msgItem.repliedToData = {
 						...decodeUpdatedReply,
@@ -152,7 +151,7 @@ export const replaceMessagesEdited = async ({ decodedMessages, parentEpml, isRec
 						sender: decodeOriginalReply.sender
 					}
 				} else if (originalReplyMessage) {
-					msgItem.repliedToData = decodeMessageFunc(originalReplyMessage, isReceipient, _publicKey)
+					msgItem.repliedToData = decodeMessageFunc(originalReplyMessage, isReceipient, _publicKey, symKeys)
 				}
 			}
 
@@ -165,9 +164,10 @@ export const replaceMessagesEdited = async ({ decodedMessages, parentEpml, isRec
 	}
 
 	const sortedMessages = decodedMessages.sort((a, b) => b.timestamp - a.timestamp)
+	const withoutHubReactions = sortedMessages.filter(({decodedMessage}) => !decodedMessage.includes('isReaction'))
 
 	// Execute the functions with concurrency limit
-	const updatedMessages = await executeWithConcurrencyLimit(sortedMessages, findUpdatedMessage)
+	const updatedMessages = await executeWithConcurrencyLimit(withoutHubReactions, findUpdatedMessage)
 	addToUpdateMessageHashmap(updatedMessages)
 
 	return updatedMessages

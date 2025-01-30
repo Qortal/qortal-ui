@@ -5,6 +5,15 @@ import { Epml } from '../../../epml'
 import { generateHTML } from '@tiptap/core'
 import { roundToNearestDecimal } from '../../utils/functions'
 import { groupManagementStyles } from '../components/plugins-css'
+import {
+	decryptGroupData,
+	uint8ArrayToBase64,
+	base64ToUint8Array,
+	uint8ArrayToObject,
+	validateSecretKey,
+	decryptSingle
+} from '../components/GroupEncryption'
+import Base58 from '../../../../crypto/api/deps/Base58'
 import isElectron from 'is-electron'
 import Highlight from '@tiptap/extension-highlight'
 import ShortUniqueId from 'short-unique-id'
@@ -56,6 +65,7 @@ class GroupManagement extends LitElement {
 			manageGroupObj: { type: Object },
 			joinGroupObj: { type: Object },
 			leaveGroupObj: { type: Object },
+			secretKeys: { type: Object },
 			btnDisable: { type: Boolean },
 			isLoading: { type: Boolean },
 			createGroupFee: { type: Number },
@@ -130,6 +140,7 @@ class GroupManagement extends LitElement {
 		this.manageGroupObj = {}
 		this.joinGroupObj = {}
 		this.leaveGroupObj = {}
+		this.secretKeys = {}
 		this.recipientPublicKey = ''
 		this.btnDisable = false
 		this.isLoading = false
@@ -754,36 +765,61 @@ class GroupManagement extends LitElement {
 		}
 
 		const getGroupInvites = async () => {
+			let timerGroupInvites
+			let invitedGroupInfo = []
+			let myGroupInvites = []
+
 			const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 			const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
 
-			let timerGroupInvites
-			let myInvitesObj = []
-			let myArrObj = []
-			this.myGroupInvites = []
-			this.myGroupIdArr = []
+			this.myInvites = []
+			this.myInvitesFilter = []
+			this.myJoinedGroups = []
+			this.myOpenInvites = []
 
 			await parentEpml.request('apiCall', {
-				url: `/groups/invites/${this.selectedAddress.address}`
-			}).then(res => {
-				this.myGroupInvites = res
+				url: `/transactions/search?txType=GROUP_INVITE&address=${this.selectedAddress.address}&confirmationStatus=CONFIRMED&limit=0&reverse=false`
+			}).then(response => {
+				this.myInvites = response
 			})
 
-			if (this.isEmptyArray(this.myGroupInvites) === true) {
+			this.myInvitesFilter = this.myInvites.filter(elm => {
+				return elm.invitee === this.selectedAddress.address
+			})
+
+			this.myJoinedGroups = await getJoinedGroups()
+
+			this.myOpenInvites = this.myInvitesFilter.filter(myOpenGroup => {
+				let value = this.myJoinedGroups.some(myJoinedGroup => myOpenGroup.groupId === myJoinedGroup.groupId)
+				return !value
+			})
+
+			if (this.isEmptyArray(this.myOpenInvites) === true) {
 				clearTimeout(timerGroupInvites)
 				timerGroupInvites = setTimeout(getGroupInvites, 300000)
 			} else {
 				const currentTime = Date.now()
-				this.myGroupInvites.forEach(a => {
-					if (a.expiry > currentTime) {
-						let callTheNewInviteUrl = `${nodeUrl}/groups/${a.groupId}`
-						fetch(callTheNewInviteUrl).then(res => {
+
+				this.myOpenInvites.forEach(a => {
+					let expiry = a.timestamp + (a.timeToLive * 1000)
+
+					if (expiry > currentTime || a.timeToLive === 0) {
+						let invitedGroupInfoUrl = `${nodeUrl}/groups/${a.groupId}`
+						fetch(invitedGroupInfoUrl).then(res => {
 							return res.json()
 						}).then(jsonRes => {
-							myArrObj.push(jsonRes)
-							if (myArrObj.length) {
-								myArrObj.forEach(b => {
-									const infoObjToAdd = {
+							invitedGroupInfo.push(jsonRes)
+							if (invitedGroupInfo.length) {
+								let newExpiry
+
+								if (a.timeToLive === 0) {
+									newExpiry = 4070912471000
+								} else {
+									newExpiry = expiry
+								}
+
+								invitedGroupInfo.forEach(b => {
+									const groupInfoObj = {
 										invitee: a.invitee,
 										groupId: b.groupId,
 										owner: b.owner,
@@ -792,12 +828,12 @@ class GroupManagement extends LitElement {
 										created: b.created,
 										isOpen: b.isOpen,
 										memberCount: b.memberCount,
-										expiry: a.expiry
+										expiry: newExpiry
 									}
-									myInvitesObj.push(infoObjToAdd)
+									myGroupInvites.push(groupInfoObj)
 								})
 							}
-							this.groupInvites = myInvitesObj
+							this.groupInvites = myGroupInvites
 						})
 					}
 				})
@@ -2820,7 +2856,125 @@ class GroupManagement extends LitElement {
 		this.chatInfoId = groupObj.groupId
 		this.chatInfoMembers = groupObj.memberCount
 		this.shadowRoot.getElementById('downloadProgressDialog').open()
+		await this.getSymKeyFile(groupObj.groupId)
 		await this.getChatContent(groupObj.groupId)
+	}
+
+	async getSymKeyFile(groupId) {
+		this.secretKeys = {}
+		this.groupAdmins = {}
+
+		let data
+		let supArray = []
+		let allSymKeys = []
+		let gAdmin = ''
+		let gAddress = ''
+		let keysToOld = "Wait until an admin re-encrypts the keys. Only unencrypted messages will be displayed."
+		let retryDownload = "Retry downloading and decrypt keys in 5 seconds! Please wait..."
+		let failDownload = "Error downloading and decrypt keys! Only unencrypted messages will be displayed. Please try again later..."
+		let all_ok = false
+		let counter = 0
+
+		const symIdentifier = 'symmetric-qchat-group-' + groupId
+		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+		const getNameUrl = `${nodeUrl}/arbitrary/resources?service=DOCUMENT_PRIVATE&identifier=${symIdentifier}&limit=0&reverse=true`
+		const getAdminUrl = `${nodeUrl}/groups/members/${groupId}?onlyAdmins=true&limit=0`
+
+		supArray = await fetch(getNameUrl).then(response => {
+			return response.json()
+		})
+
+		if (this.isEmptyArray(supArray) || groupId === 0) {
+			console.log("No Symetric Key")
+		} else {
+			supArray.forEach(item => {
+				const symInfoObj = {
+					name: item.name,
+					identifier: item.identifier,
+					timestamp: item.updated ? item.updated : item.created
+				}
+				allSymKeys.push(symInfoObj)
+			})
+
+			let allSymKeysSorted = allSymKeys.sort(function(a, b) {
+				return b.timestamp - a.timestamp
+			})
+
+			gAdmin = allSymKeysSorted[0].name
+
+			const addressUrl = `${nodeUrl}/names/${gAdmin}`
+
+			let addressObject = await fetch(addressUrl).then(response => {
+				return response.json()
+			})
+
+			gAddress = addressObject.owner
+
+			let adminRes = await fetch(getAdminUrl).then(response => {
+				return response.json()
+			})
+
+			this.groupAdmins = adminRes.members
+
+			const adminExists = (adminAddress) => {
+				return this.groupAdmins.some(function(checkAdmin) {
+					return checkAdmin.member === adminAddress
+				})
+			}
+
+			if (adminExists(gAddress)) {
+				const sleep = (t) => new Promise(r => setTimeout(r, t))
+				const dataUrl = `${nodeUrl}/arbitrary/DOCUMENT_PRIVATE/${gAdmin}/${symIdentifier}?encoding=base64&rebuild=true&async=true`
+				const res = await fetch(dataUrl)
+
+				do {
+					counter++
+
+					if (!res.ok) {
+						parentEpml.request('showSnackBar', `${retryDownload}`)
+						await sleep(5000)
+					} else {
+						data = await res.text()
+						all_ok = true
+					}
+
+					if (counter > 10) {
+						parentEpml.request('showSnackBar', `${failDownload}`)
+						return
+					}
+				} while (!all_ok)
+
+				const decryptedKey = await this.decryptGroupEncryption(data)
+
+				if (decryptedKey === undefined) {
+					parentEpml.request('showSnackBar', `${keysToOld}`)
+				} else {
+					const dataint8Array = base64ToUint8Array(decryptedKey.data)
+					const decryptedKeyToObject = uint8ArrayToObject(dataint8Array)
+
+					if (!validateSecretKey(decryptedKeyToObject)) {
+						throw new Error("SecretKey is not valid")
+					}
+
+					this.secretKeys = decryptedKeyToObject
+				}
+			}
+		}
+	}
+
+	async decryptGroupEncryption(data) {
+		try {
+			const privateKey = Base58.encode(window.parent.reduxStore.getState().app.wallet._addresses[0].keyPair.privateKey)
+			const encryptedData = decryptGroupData(data, privateKey)
+
+			return {
+				data: uint8ArrayToBase64(encryptedData.decryptedData),
+				count: encryptedData.count
+			}
+		} catch (error) {
+			console.log("Error:", error.message)
+		}
 	}
 
 	async openPreviewGeneral() {
@@ -2866,7 +3020,61 @@ class GroupManagement extends LitElement {
 
 		const decoder = new TextDecoder()
 		const decodedString = decoder.decode(bytes)
-		return decodedString
+
+		if (decodedString.includes("messageText") || decodedString === "4001") {
+			if (decodedString === "4001") {
+				const firstString = 'First group key created.'
+				const hubString = '{"messageText":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"' + firstString + '"}]}]},"images":[""],"repliedTo":"","version":3}'
+				return hubString
+			} else {
+				return decodedString
+			}
+		} else {
+			let repliedToStr = ''
+			let messageStr = ''
+			let hubString = ''
+
+			const res = decryptSingle(string, this.secretKeys, false)
+
+			if (res === 'noKey' || res === 'decryptionFailed') {
+				return '{"messageText":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"This message could not be decrypted"}]}]},"images":[""],"repliedTo":"","version":3}'
+			}
+
+			const decryptToUnit8Array = base64ToUint8Array(res)
+			const responseData = uint8ArrayToObject(decryptToUnit8Array)
+
+			if (responseData.type === "notification") {
+				const messageStrRaw = responseData.data.message
+				messageStr = messageStrRaw.trim()
+			}
+
+			if (responseData.hasOwnProperty('message') && typeof responseData['message'] === 'string' && responseData['message'].length) {
+				const messageStrRaw = responseData.message
+				const messageJoin1 = messageStrRaw.split('"').join('<upvote>')
+				const messageReplace1 = messageJoin1.replace('<p>', '')
+				const messageReplace2 = messageReplace1.replace('</p>', '')
+				const messageTrim = messageReplace2.trim()
+				const messageJoin2 = messageTrim.split('<br><br>').join('"},{"type":"hardBreak"},{"type":"hardBreak"},{"type":"text","text":"')
+				const messageJoin3 = messageJoin2.split('<br>').join('"},{"type":"hardBreak"},{"type":"text","text":"')
+
+				messageStr = messageJoin3
+			}
+
+			if (responseData.repliedTo) {
+				repliedToStr = responseData.repliedTo
+			}
+
+			if (responseData.type === "edit") {
+				hubString = '{"messageText":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"' + messageStr + '"}]}]},"images":[""],"repliedTo":"' + repliedToStr + '","version":3,"isEdited":true}'
+			} else {
+				hubString = '{"messageText":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"' + messageStr + '"}]}]},"images":[""],"repliedTo":"' + repliedToStr + '","version":3}'
+			}
+
+			const preparedString = hubString.split('<upvote>').join('\\"')
+			const finalString = preparedString.replace(/<\/?[^>]+(>|$)/g, '')
+
+			return finalString
+		}
 	}
 
 	async getChatContent(involved) {
@@ -2915,7 +3123,7 @@ class GroupManagement extends LitElement {
 		let getEditedArray = await parentEpml.request('apiCall', {
 			url: `/chat/messages?txGroupId=${involved}&haschatreference=true&encoding=BASE64&limit=0&reverse=false`
 		})
-										
+
 		chaEditedArray = getEditedArray
 
 		// Replace messages which got edited in the chatMessageArray
@@ -2978,7 +3186,7 @@ class GroupManagement extends LitElement {
 		if (this.shadowRoot.getElementById('chat-container').innerHTML === '') {
 			this.shadowRoot.getElementById('chat-container').innerHTML = ''
 		}
-		
+
 		if (this.isEmptyArray(renderArray)) {
 			const chatEmpty = document.createElement('div')
 			chatEmpty.classList.add('no-messages')
