@@ -1202,13 +1202,13 @@ export const getPublishesFromAdminsAdminSpace = async (admins, groupId) => {
 	return sortedData[0]
 }
 
-export const isRunningGateway = async () => {
+export const isUsingPublicNode = async () => {
 	let isGateway = true
 
-	const gateways = ['ext-node.qortal.link']
+	const publicNodes = ['ext-node.qortal.link']
 	const nodeInfo = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 
-	if (nodeInfo && (nodeInfo.domain && !gateways.some(gateway => nodeInfo.domain.includes(gateway)))) {
+	if (nodeInfo && (nodeInfo.domain && !publicNodes.some(publicNode => nodeInfo.domain.includes(publicNode)))) {
 		isGateway = false
 	}
 
