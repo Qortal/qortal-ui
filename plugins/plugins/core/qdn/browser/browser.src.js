@@ -6,7 +6,7 @@ import {
 	getPublishesFromAdmins,
 	getGroupAdmins,
 	getPublishesFromAdminsAdminSpace,
-	isRunningGateway,
+	isUsingPublicNode,
 	createBuyOrderTx,
 	requestQueueGetAtAddresses,
 	getUserWalletFunc,
@@ -313,8 +313,8 @@ class WebBrowser extends LitElement {
 			let data = event.data
 
 			switch (data.action) {
-				case actions.IS_USING_GATEWAY: {
-					const res = await isRunningGateway()
+				case actions.IS_USING_PUBLIC_NODE: {
+					const res = await isUsingPublicNode()
 					return res
 				}
 
@@ -792,7 +792,7 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(dataSentBack)
 						break
 					}
-					const isGateway = await isRunningGateway()
+					const isGateway = await isUsingPublicNode()
 					const foreignBlockchain = data.foreignBlockchain
 					const atAddresses = data.crosschainAtInfo.map((order) => order.qortalAtAddress)
 					const atPromises = atAddresses.map((atAddress) =>
