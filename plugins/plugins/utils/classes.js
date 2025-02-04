@@ -1,4 +1,8 @@
 import { get } from '../../../core/translate'
+import { appendBuffer } from './utilities'
+import Base58 from '../../../crypto/api/deps/Base58'
+import nacl from '../../../crypto/api/deps/nacl-fast.js'
+import ed2curve from '../../../crypto/api/deps/ed2curve.js'
 
 const getApiKey = () => {
 	const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
@@ -70,6 +74,10 @@ export class RequestQueueWithPromise {
 		}
 	}
 }
+
+export const requestQueueMemberNames = new RequestQueueWithPromise(5)
+export const requestQueueAdminMemberNames = new RequestQueueWithPromise(5)
+export const requestQueueGetAtAddresses = new RequestQueueWithPromise(10)
 
 export class Loader {
 	constructor() {
@@ -664,6 +672,178 @@ export class WarningModal {
 export const modalHelper = ModalHelper.getInstance()
 export const warningModal = WarningModal.getInstance()
 
+export class TradeBotRespondRequest {
+	constructor() {
+		// ...
+	}
+
+	createTransaction(txnReq) {
+		this.atAddress(txnReq.atAddress)
+		this.foreignKey(txnReq.foreignKey)
+		this.receivingAddress(txnReq.receivingAddress)
+
+		return this.txnRequest()
+	}
+
+	atAddress(atAddress) {
+		this._atAddress = atAddress
+	}
+
+	foreignKey(foreignKey) {
+		this._foreignKey = foreignKey
+	}
+
+	receivingAddress(receivingAddress) {
+		this._receivingAddress = receivingAddress
+	}
+
+	txnRequest() {
+		return {
+			atAddress: this._atAddress,
+			foreignKey: this._foreignKey,
+			receivingAddress: this._receivingAddress
+		}
+	}
+}
+
+export class TradeBotRespondMultipleRequest {
+	constructor() {
+		// ...
+	}
+
+	createTransaction(txnReq) {
+		this.addresses(txnReq.addresses)
+		this.foreignKey(txnReq.foreignKey)
+		this.receivingAddress(txnReq.receivingAddress)
+
+		return this.txnRequest()
+	}
+
+	addresses(addresses) {
+		this._addresses = addresses
+	}
+
+	foreignKey(foreignKey) {
+		this._foreignKey = foreignKey
+	}
+
+	receivingAddress(receivingAddress) {
+		this._receivingAddress = receivingAddress
+	}
+
+	txnRequest() {
+		return {
+			addresses: this._addresses,
+			foreignKey: this._foreignKey,
+			receivingAddress: this._receivingAddress
+		}
+	}
+}
+
+export class TradeBotCreateRequest {
+	constructor() {
+		// ...
+	}
+
+	createTransaction(txnReq) {
+		this.creatorPublicKey(txnReq.creatorPublicKey)
+		this.qortAmount(txnReq.qortAmount)
+		this.fundingQortAmount(txnReq.fundingQortAmount)
+		this.foreignBlockchain(txnReq.foreignBlockchain)
+		this.foreignAmount(txnReq.foreignAmount)
+		this.tradeTimeout(txnReq.tradeTimeout)
+		this.receivingAddress(txnReq.receivingAddress)
+
+		return this.txnRequest()
+	}
+
+	creatorPublicKey(creatorPublicKey) {
+		this._creatorPublicKey = creatorPublicKey
+	}
+
+	qortAmount(qortAmount) {
+		this._qortAmount = qortAmount
+	}
+
+	fundingQortAmount(fundingQortAmount) {
+		this._fundingQortAmount = fundingQortAmount
+	}
+
+	foreignBlockchain(foreignBlockchain) {
+		this._foreignBlockchain = foreignBlockchain
+	}
+
+	foreignAmount(foreignAmount) {
+		this._foreignAmount = foreignAmount
+	}
+
+	tradeTimeout(tradeTimeout) {
+		this._tradeTimeout = tradeTimeout
+	}
+
+	receivingAddress(receivingAddress) {
+		this._receivingAddress = receivingAddress
+	}
+
+	txnRequest() {
+		return {
+			creatorPublicKey: this._creatorPublicKey,
+			qortAmount: this._qortAmount,
+			fundingQortAmount: this._fundingQortAmount,
+			foreignBlockchain: this._foreignBlockchain,
+			foreignAmount: this._foreignAmount,
+			tradeTimeout: this._tradeTimeout,
+			receivingAddress: this._receivingAddress
+		}
+	}
+}
+
+export class DeleteTradeOffer {
+	constructor() {
+		// ...
+	}
+
+	createTransaction(txnReq) {
+		this.creatorPublicKey(txnReq.creatorPublicKey)
+		this.atAddress(txnReq.atAddress)
+
+		return this.txnRequest()
+	}
+
+	creatorPublicKey(creatorPublicKey) {
+		this._creatorPublicKey = creatorPublicKey
+	}
+
+	atAddress(atAddress) {
+		this._atAddress = atAddress
+	}
+
+	txnRequest() {
+		return {
+			creatorPublicKey: this._creatorPublicKey,
+			atAddress: this._atAddress
+		}
+	}
+}
+
+export const processTransactionV2 = async (bytes) => {
+	const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+	const nodeUrl = `${myNode.protocol}://${myNode.domain}:${myNode.port}`
+	const url = `${nodeUrl}/transactions/process?apiVersion=2`
+
+	const doProcess = await fetch(url, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: bytes
+	})
+
+	const res = await doProcess.json()
+
+	return res
+}
+
 export const publishData = async ({
 	registeredName,
 	path,
@@ -922,5 +1102,440 @@ export const publishData = async ({
 		return await validate()
 	} catch (error) {
 		throw new Error(error.message)
+	}
+}
+
+export const getPublishesFromAdmins = async (admins, groupId) => {
+	const queryString = admins.map((name) => `name=${name}`).join("&")
+	const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+	const nodeUrl = `${myNode.protocol}://${myNode.domain}:${myNode.port}`
+	const url = `${nodeUrl}/arbitrary/resources/searchsimple?mode=ALL&service=DOCUMENT_PRIVATE&identifier=symmetric-qchat-group-${groupId}&exactmatchnames=true&limit=0&reverse=true&${queryString}&prefix=true`
+	const response = await fetch(url)
+
+	if (!response.ok) {
+		consoöe.error("network error")
+		return false
+	}
+
+	const adminData = await response.json()
+	const filterId = adminData.filter((data) => data.identifier === `symmetric-qchat-group-${groupId}`)
+
+	if (filterId.length === 0) {
+		return false
+	}
+
+	const sortedData = filterId.sort((a, b) => {
+		// Get the most recent date for both a and b
+		const dateA = a.updated ? new Date(a.updated) : new Date(a.created)
+		const dateB = b.updated ? new Date(b.updated) : new Date(b.created)
+
+		// Sort by most recent
+		return dateB.getTime() - dateA.getTime()
+	})
+
+	return sortedData[0]
+}
+
+export const getGroupAdmins = async (groupNumber) => {
+	const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+	const nodeUrl = `${myNode.protocol}://${myNode.domain}:${myNode.port}`
+	const url = `${nodeUrl}/groups/members/${groupNumber}?limit=0&onlyAdmins=true`
+	const response = await fetch(url)
+	const groupData = await response.json()
+
+	let members = []
+	let membersAddresses = []
+	let both = []
+
+	const getMemNames = groupData.members.map(async (member) => {
+		if (member.member) {
+			const name = await requestQueueAdminMemberNames.enqueue(() => {
+				return getNameInfo(member.member)
+			})
+
+			if (name) {
+				members.push(name)
+				both.push({ name, address: member.member })
+			}
+
+			membersAddresses.push(member.member)
+		}
+
+		return true
+	})
+
+	await Promise.all(getMemNames)
+
+	return { names: members, addresses: membersAddresses, both }
+}
+
+export const getPublishesFromAdminsAdminSpace = async (admins, groupId) => {
+	const queryString = admins.map((name) => `name=${name}`).join("&")
+	const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+	const nodeUrl = `${myNode.protocol}://${myNode.domain}:${myNode.port}`
+
+	const url = `${nodeUrl}/arbitrary/resources/searchsimple?mode=ALL&service=DOCUMENT_PRIVATE&identifier=admins-symmetric-qchat-group-${groupId}&exactmatchnames=true&limit=0&reverse=true&${queryString}&prefix=true`
+	const response = await fetch(url)
+
+	if (!response.ok) {
+		consoöe.error("network error")
+		return false
+	}
+
+	const adminData = await response.json()
+
+	const filterId = adminData.filter((data) => data.identifier === `admins-symmetric-qchat-group-${groupId}`)
+
+	if (filterId.length === 0) {
+		return false
+	}
+
+	const sortedData = filterId.sort((a, b) => {
+		// Get the most recent date for both a and b
+		const dateA = a.updated ? new Date(a.updated) : new Date(a.created)
+		const dateB = b.updated ? new Date(b.updated) : new Date(b.created)
+
+		// Sort by most recent
+		return dateB.getTime() - dateA.getTime()
+	})
+
+	return sortedData[0]
+}
+
+export const isUsingPublicNode = async () => {
+	let isGateway = true
+
+	const publicNodes = ['ext-node.qortal.link']
+	const nodeInfo = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+
+	if (nodeInfo && (nodeInfo.domain && !publicNodes.some(publicNode => nodeInfo.domain.includes(publicNode)))) {
+		isGateway = false
+	}
+
+	return isGateway
+}
+
+export const getForeignKey = (foreignBlockchain) => {
+	switch (foreignBlockchain) {
+		case "LITECOIN":
+			return window.parent.reduxStore.getState().app.selectedAddress.ltcWallet.derivedMasterPrivateKey
+		case "DOGECOIN":
+			return window.parent.reduxStore.getState().app.selectedAddress.dogeWallet.derivedMasterPrivateKey
+		case "BITCOIN":
+			return window.parent.reduxStore.getState().app.selectedAddress.btcWallet.derivedMasterPrivateKey
+		case "DIGIBYTE":
+			return window.parent.reduxStore.getState().app.selectedAddress.dgbWallet.derivedMasterPrivateKey
+		case "RAVENCOIN":
+			return window.parent.reduxStore.getState().app.selectedAddress.rvnWallet.derivedMasterPrivateKey
+		case "PIRATECHAIN":
+			return window.parent.reduxStore.getState().app.selectedAddress.arrrWallet.seed58
+		default:
+			return null
+	}
+}
+
+export async function getQortalBalanceInfo() {
+	const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+	const nodeUrl = `${myNode.protocol}://${myNode.domain}:${myNode.port}`
+	const address = window.parent.reduxStore.getState().app.selectedAddress.address
+	const url = `${nodeUrl}/addresses/balance/${address}`
+	const res = await fetch(url)
+
+	if (!response.ok) throw new Error("Cannot fetch Qortal balance")
+
+	const balance = await res.json()
+
+	return (Number(balance) / 1e8).toFixed(8)
+}
+
+export async function getBitcoinBalanceInfo() {
+	const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+	const nodeUrl = `${myNode.protocol}://${myNode.domain}:${myNode.port}`
+	const myApiKey = myNode.apiKey
+	const url = `${nodeUrl}/crosschain/btc/walletbalance?apiKey=${myApiKey}`
+
+	const res = await fetch(url, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: `${window.parent.reduxStore.getState().app.selectedAddress.btcWallet.derivedMasterPublicKey}`
+	})
+
+	if (!res.ok) throw new Error("Cannot fetch Bitcoin balance")
+
+	const balance = await res.json()
+
+	return (Number(balance) / 1e8).toFixed(8)
+}
+
+
+export async function getLitecoinBalanceInfo() {
+	const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+	const nodeUrl = `${myNode.protocol}://${myNode.domain}:${myNode.port}`
+	const myApiKey = myNode.apiKey
+	const url = `${nodeUrl}/crosschain/ltc/walletbalance?apiKey=${myApiKey}`
+
+	const res = await fetch(url, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: `${window.parent.reduxStore.getState().app.selectedAddress.ltcWallet.derivedMasterPublicKey}`
+	})
+
+	if (!res.ok) throw new Error("Cannot fetch Litecoin balance")
+
+	const balance = await res.json()
+
+	return (Number(balance) / 1e8).toFixed(8)
+}
+
+export async function createBuyOrderTx({ crosschainAtInfo, isGateway, foreignBlockchain }) {
+	const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+	const nodeUrl = `${myNode.protocol}://${myNode.domain}:${myNode.port}`
+	const myApiKey = myNode.apiKey
+
+	let txn
+	let url
+	let message
+	let responseVar
+	let responseMessage
+
+	try {
+		if (!isGateway) {
+			const address = window.parent.reduxStore.getState().app.selectedAddress.address
+
+			if (foreignBlockchain === 'PIRATECHAIN') {
+				message = {
+					atAddress: crosschainAtInfo[0].qortalAtAddress,
+					foreignKey: getForeignKey(foreignBlockchain),
+					receivingAddress: address
+				}
+			} else {
+				message = {
+					addresses: crosschainAtInfo.map((order)=> order.qortalAtAddress),
+					foreignKey: getForeignKey(foreignBlockchain),
+					receivingAddress: address
+				}
+			}
+
+			if (foreignBlockchain === 'PIRATECHAIN') {
+				txn = new TradeBotRespondRequest().createTransaction(message)
+				url = `${nodeUrl}/crosschain/tradebot/respond?apiKey=${myApiKey}`
+			} else {
+				txn = new TradeBotRespondMultipleRequest().createTransaction(message)
+				url = `${nodeUrl}/crosschain/tradebot/respondmultiple?apiKey=${myApiKey}`
+			}
+
+			const responseFetch = await fetch(url, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify(txn)
+			})
+
+			const res = await responseFetch.json()
+
+			if(res.error && res.message) {
+				console.error(res.message)
+				throw new Error(res.message)
+			}
+
+			if (!responseFetch.ok) {
+				console.error('Failed to submit buy order')
+				throw new Error('Failed to submit buy order')
+			}
+
+			if (res === false) {
+				responseVar = { response: res, success: false }
+			} else {
+				responseVar = { response: res, success: true }
+			}
+
+			if (responseVar.success) {
+				responseMessage = {
+					callResponse: responseVar.success,
+					extra: {
+						message: "Buy order message sended successfully!",
+						atAddresses: foreignBlockchain === 'PIRATECHAIN' ? [crosschainAtInfo[0].qortalAtAddress]  : crosschainAtInfo.map((order)=> order.qortalAtAddress),
+						senderAddress: address,
+						node: nodeUrl
+					}
+				}
+			} else {
+				responseMessage = {
+					callResponse: responseVar.success,
+					extra: {
+						message: "Unable to execute buy order!",
+						atAddresses: foreignBlockchain === 'PIRATECHAIN' ? [crosschainAtInfo[0].qortalAtAddress]  : crosschainAtInfo.map((order)=> order.qortalAtAddress),
+						senderAddress: address,
+						node: nodeUrl
+					}
+				}
+			}
+
+			return responseMessage
+		} else {
+			responseVar = { response: false, success: false }
+			responseMessage = {
+				callResponse: responseVar.success,
+				extra: {
+					message: "Unable to send buy order message over Gateway!",
+					atAddresses: foreignBlockchain === 'PIRATECHAIN' ? [crosschainAtInfo[0].qortalAtAddress]  : crosschainAtInfo.map((order)=> order.qortalAtAddress),
+					senderAddress: address,
+					node: nodeUrl
+				}
+			}
+
+			return responseMessage
+		}
+	} catch (error) {
+		throw new Error(error.message)
+	}
+}
+
+export const getPirateWalletAddress = async (seed58) => {
+	const myApiKey = getApiKey()
+	const mySeed58 = seed58
+
+	let res = await parentEpml.request('apiCall', {
+		url: `/crosschain/arrr/walletaddress?apiKey=${myApiKey}`,
+		method: 'POST',
+		body: `${mySeed58}`
+	})
+
+	if (res != null && res.error != 1201) {
+		return res
+	}
+
+	return mySeed58
+}
+
+export const getUserWalletFunc = async (coin) => {
+	let userWallet = {}
+
+	switch (coin) {
+		case "QORT":
+			userWallet["address"] = window.parent.reduxStore.getState().app.selectedAddress.address
+			userWallet["publickey"] = Base58.encode(window.parent.reduxStore.getState().app.selectedAddress.keyPair.publicKey)
+			userWallet["privatekey"] = Base58.encode(window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey)
+			break
+		case "BTC":
+		case "BITCOIN":
+			userWallet["address"] = window.parent.reduxStore.getState().app.selectedAddress.btcWallet.address
+			userWallet["publickey"] = window.parent.reduxStore.getState().app.selectedAddress.btcWallet.derivedMasterPublicKey
+			userWallet["privatekey"] = window.parent.reduxStore.getState().app.selectedAddress.btcWallet.derivedMasterPrivateKey
+			break
+		case "LTC":
+		case "LITECOIN":
+			userWallet["address"] = window.parent.reduxStore.getState().app.selectedAddress.ltcWallet.address
+			userWallet["publickey"] = window.parent.reduxStore.getState().app.selectedAddress.ltcWallet.derivedMasterPublicKey
+			userWallet["privatekey"] = window.parent.reduxStore.getState().app.selectedAddress.ltcWallet.derivedMasterPrivateKey
+			break
+		case "DOGE":
+		case "DOGECOIN":
+			userWallet["address"] = window.parent.reduxStore.getState().app.selectedAddress.dogeWallet.address
+			userWallet["publickey"] = window.parent.reduxStore.getState().app.selectedAddress.dogeWallet.derivedMasterPublicKey
+			userWallet["privatekey"] = window.parent.reduxStore.getState().app.selectedAddress.dogeWallet.derivedMasterPrivateKey
+			break
+		case "DGB":
+		case "DIGIBYTE":
+			userWallet["address"] = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet.address
+			userWallet["publickey"] = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet.derivedMasterPublicKey
+			userWallet["privatekey"] = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet.derivedMasterPrivateKey
+			break
+		case "RVN":
+		case "RAVENCOIN":
+			userWallet["address"] = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet.address
+			userWallet["publickey"] = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet.derivedMasterPublicKey
+			userWallet["privatekey"] = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet.derivedMasterPrivateKey
+			break
+		case "ARRR":
+		case "PIRATECHAIN":
+			const arrrAddress = await getPirateWalletAddress(window.parent.reduxStore.getState().app.selectedAddress.arrrWallet.seed58)
+			userWallet["address"] = arrrAddress
+			userWallet["publickey"] = ""
+			userWallet["privatekey"] = ""
+			break
+		default:
+			break
+	}
+
+	return userWallet
+}
+
+export const signTransaction = async (unsignedTxn, keyPair) => {
+	if (!unsignedTxn) {
+		throw new Error('Unsigned Transaction Bytes not defined')
+	}
+
+	if (!keyPair) {
+		throw new Error('keyPair not defined')
+	}
+
+	const unsignedTxBytes = Base58.decode(unsignedTxn)
+	const signature = nacl.sign.detached(unsignedTxBytes, keyPair.privateKey)
+	const signedTxBytes = appendBuffer(unsignedTxBytes, signature)
+
+	return Base58.encode(signedTxBytes)
+}
+
+export const tradeBotCreateRequest = async (body, keyPair) => {
+	const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+	const nodeUrl = `${myNode.protocol}://${myNode.domain}:${myNode.port}`
+	const myApiKey = myNode.apiKey
+	const url = `${nodeUrl}/crosschain/tradebot/create?apiKey=${myApiKey}`
+	const txn = new TradeBotCreateRequest().createTransaction(body)
+	const bodyToString = JSON.stringify(txn)
+
+	const unsignedTxnResponse = await fetch(url, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: bodyToString
+	})
+
+	if (!unsignedTxnResponse.ok) throw new Error("Unable to create tradebot")
+
+	const unsignedTxn = await unsignedTxnResponse.text()
+	const signedTxnBytes = await signTransaction(unsignedTxn, keyPair)
+	const resProcess = await processTransactionV2(signedTxnBytes)
+
+	if (resProcess.signature) {
+		return resProcess
+	} else {
+		throw new Error("Failed to Create Sell Order. Try again!")
+	}
+}
+
+export const cancelTradeOfferTradeBot = async (body, keyPair) => {
+	const txn = new DeleteTradeOffer().createTransaction(body)
+	const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+	const nodeUrl = `${myNode.protocol}://${myNode.domain}:${myNode.port}`
+	const myApiKey = myNode.apiKey
+	const url = `${nodeUrl}/crosschain/tradeoffer?apiKey=${myApiKey}`
+	const bodyToString = JSON.stringify(txn)
+
+	const deleteTradeBotResponse = await fetch(url, {
+		method: "DELETE",
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: bodyToString
+	})
+
+	if (!deleteTradeBotResponse.ok) throw new Error("Unable to update tradebot")
+
+	const unsignedTxn = await deleteTradeBotResponse.text()
+	const signedTxnBytes = await signTransaction(unsignedTxn, keyPair)
+	const resProcess = await processTransactionV2(signedTxnBytes)
+
+	if (resProcess.signature) {
+		return resProcess
+	} else {
+		throw new Error("Failed to Cancel Sell Order. Try again!")
 	}
 }

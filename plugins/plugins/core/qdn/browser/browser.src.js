@@ -1,18 +1,45 @@
 import { html, LitElement } from 'lit'
 import { Epml } from '../../../../epml'
-import { Loader, publishData } from '../../../utils/classes'
+import {
+	Loader,
+	publishData,
+	getPublishesFromAdmins,
+	getGroupAdmins,
+	getPublishesFromAdminsAdminSpace,
+	isUsingPublicNode,
+	createBuyOrderTx,
+	requestQueueGetAtAddresses,
+	getUserWalletFunc,
+	tradeBotCreateRequest,
+	cancelTradeOfferTradeBot,
+	processTransactionV2
+} from '../../../utils/classes'
+import { appendBuffer } from '../../../utils/utilities'
 import { QORT_DECIMALS } from '../../../../../crypto/api/constants'
-import { mimeToExtensionMap } from '../../components/qdn-action-constants'
+import { mimeToExtensionMap, listOfAllQortalRequests } from '../../components/qdn-action-constants'
+import {
+	uint8ArrayToObject,
+	validateSecretKey,
+	encryptSingle,
+	decryptSingle,
+	createSymmetricKeyAndNonce,
+	decryptGroupEncryptionWithSharingKey
+} from '../../components/GroupEncryption'
 import {
 	base64ToUint8Array,
 	decryptDeprecatedSingle,
 	decryptGroupData,
+	decryptGroupDataNew,
 	encryptDataGroup,
+	encryptDataGroupNew,
 	fileToBase64,
 	uint8ArrayStartsWith,
-	uint8ArrayToBase64
+	uint8ArrayToBase64,
+	base64ToBlobUrl,
+	groupSecretkeys,
+	objectToBase64,
+	roundUpToDecimals
 } from '../../components/qdn-action-encryption'
-import { processTransactionVersion2 } from '../../../../../crypto/api/createTransaction'
 import { webBrowserStyles, webBrowserModalStyles } from '../../components/plugins-css'
 import * as actions from '../../components/qdn-action-types'
 import isElectron from 'is-electron'
@@ -33,6 +60,33 @@ registerTranslateConfig({
 })
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
+
+const sellerForeignFee = {
+	LITECOIN: {
+		value: "~0.00005",
+		ticker: "LTC"
+	},
+	DOGECOIN: {
+		value: "~0.005",
+		ticker: "DOGE"
+	},
+	BITCOIN: {
+		value: "~0.0001",
+		ticker: "BTC"
+	},
+	DIGIBYTE: {
+		value: "~0.0005",
+		ticker: "DGB"
+	},
+	RAVENCOIN: {
+		value: "~0.006",
+		ticker: "RVN"
+	},
+	PIRATECHAIN: {
+		value: "~0.0002",
+		ticker: "ARRR"
+	}
+}
 
 class WebBrowser extends LitElement {
 	static get properties() {
@@ -259,54 +313,31 @@ class WebBrowser extends LitElement {
 			let data = event.data
 
 			switch (data.action) {
-				case actions.GET_USER_ACCOUNT: {
-					let skip = false
-					if (window.parent.reduxStore.getState().app.qAPPAutoAuth) {
-						skip = true
-					}
-					let res1
-					if (!skip) {
-						res1 = await showModalAndWait(
-							actions.GET_USER_ACCOUNT,
-							{
-								service: this.service,
-								name: this.name
-							}
-						)
-					}
-					if ((res1 && res1.action === 'accept') || skip) {
-						let account = {}
-						account['address'] = this.selectedAddress.address
-						account['publicKey'] =
-							this.selectedAddress.base58PublicKey
-						response = JSON.stringify(account)
-						break
-					} else {
-						const data = {}
-						data['error'] = "User declined to share account details"
-						response = JSON.stringify(data)
-						break
-					}
+				case actions.IS_USING_PUBLIC_NODE: {
+					const res = await isUsingPublicNode()
+					return res
 				}
 
 				case actions.ADMIN_ACTION: {
 					let type = data.type
-					let value = data.value // Extract value from data
+					let value = data.value
 					let res1 = await showModalAndWait(
 						actions.ADMIN_ACTION,
 						{
 							service: this.service,
 							name: this.name,
 							type: type,
-							value: value // Pass value to the modal
+							value: value
 						}
 					)
 					if (res1 && res1.action === 'accept') {
 						try {
 							// Determine the API endpoint based on the type
 							let apiEndpoint = ''
-							let method = 'GET' // Default method
-							let includeValueInBody = false // Flag to include value in body
+							// Default method
+							let method = 'GET'
+							// Flag to include value in body
+							let includeValueInBody = false
 							switch (type.toLowerCase()) {
 								case 'stop':
 									apiEndpoint = '/admin/stop'
@@ -373,6 +404,41 @@ class WebBrowser extends LitElement {
 					break
 				}
 
+				case actions.SHOW_ACTIONS: {
+					const res = JSON.stringify(listOfAllQortalRequests)
+					return res
+				}
+
+				case actions.GET_USER_ACCOUNT: {
+					let skip = false
+					if (window.parent.reduxStore.getState().app.qAPPAutoAuth) {
+						skip = true
+					}
+					let res1
+					if (!skip) {
+						res1 = await showModalAndWait(
+							actions.GET_USER_ACCOUNT,
+							{
+								service: this.service,
+								name: this.name
+							}
+						)
+					}
+					if ((res1 && res1.action === 'accept') || skip) {
+						let account = {}
+						account['address'] = this.selectedAddress.address
+						account['publicKey'] =
+							this.selectedAddress.base58PublicKey
+						response = JSON.stringify(account)
+						break
+					} else {
+						const data = {}
+						data['error'] = "User declined to share account details"
+						response = JSON.stringify(data)
+						break
+					}
+				}
+
 				case actions.ENCRYPT_DATA: {
 					try {
 						let dataSentBack = {}
@@ -382,12 +448,10 @@ class WebBrowser extends LitElement {
 							data64 = await fileToBase64(data.file)
 						}
 						if (!data64) {
-
 							dataSentBack['error'] = "Please include data to encrypt"
 							response = JSON.stringify(dataSentBack)
 							break
 						}
-
 						const encryptDataResponse = encryptDataGroup({
 							data64, publicKeys: publicKeys
 						})
@@ -396,7 +460,6 @@ class WebBrowser extends LitElement {
 							response = JSON.stringify(encryptDataResponse)
 							break
 						} else {
-
 							dataSentBack['error'] = "Unable to encrypt"
 							response = JSON.stringify(dataSentBack)
 							break
@@ -433,7 +496,6 @@ class WebBrowser extends LitElement {
 						}
 						const startsWithQortalGroupEncryptedData = uint8ArrayStartsWith(uint8Array, "qortalGroupEncryptedData")
 						if (startsWithQortalGroupEncryptedData) {
-
 							const decryptedData = decryptGroupData(encryptedData)
 							const decryptedDataToBase64 = uint8ArrayToBase64(decryptedData)
 							response = JSON.stringify(decryptedDataToBase64)
@@ -447,6 +509,507 @@ class WebBrowser extends LitElement {
 						const data = {}
 						data['error'] = error.message || "Error in decrypting data"
 						response = JSON.stringify(data)
+						break
+					}
+				}
+
+				case actions.ENCRYPT_QORTAL_GROUP_DATA: {
+					let data64 = data.data64 || data.base64
+					let groupId = data.groupId
+					let isAdmins = data.isAdmins
+					let dataSentBack = {}
+					let secretKeyObject
+					if (!groupId) {
+						dataSentBack['error'] = "Please provide a groupId"
+						response = JSON.stringify(dataSentBack)
+						break
+					}
+  					if (data.file || data.blob) {
+						data64 = await fileToBase64(data.file || data.blob)
+					}
+					if (!data64) {
+						dataSentBack['error'] = "Please include data to encrypt"
+						response = JSON.stringify(dataSentBack)
+						break
+					}
+					if (!isAdmins) {
+						if (
+							groupSecretkeys[groupId] &&
+							groupSecretkeys[groupId].secretKeyObject &&
+							groupSecretkeys[groupId].timestamp &&
+							(Date.now() - groupSecretkeys[groupId].timestamp) < 1200000
+						) {
+							secretKeyObject = groupSecretkeys[groupId].secretKeyObject
+						}
+
+						if(!secretKeyObject) {
+							const { names } = await getGroupAdmins(groupId)
+							const publish = await getPublishesFromAdmins(names, groupId)
+							if (publish === false) {
+								dataSentBack['error'] = "No group key found."
+								response = JSON.stringify(dataSentBack)
+								break
+							}
+							const res = await parentEpml.request('apiCall', {
+								url: `/arbitrary/DOCUMENT_PRIVATE/${publish.name}/${publish.identifier}?encoding=base64`
+							})
+							const resData = await res.text()
+							const decryptedKey = await this.decryptResourceQDN(resData)
+							const dataint8Array = base64ToUint8Array(decryptedKey.data)
+							const decryptedKeyToObject = uint8ArrayToObject(dataint8Array)
+							if (!validateSecretKey(decryptedKeyToObject)) {
+								dataSentBack['error'] = "SecretKey is not valid"
+								response = JSON.stringify(dataSentBack)
+								break
+							}
+							secretKeyObject = decryptedKeyToObject
+							groupSecretkeys[groupId] = {
+								secretKeyObject,
+								timestamp: Date.now()
+							}
+						}
+					} else {
+						if (
+							groupSecretkeys[`admins-${groupId}`] &&
+							groupSecretkeys[`admins-${groupId}`].secretKeyObject &&
+							groupSecretkeys[`admins-${groupId}`].timestamp &&
+							(Date.now() - groupSecretkeys[`admins-${groupId}`].timestamp) < 1200000
+						) {
+							secretKeyObject = groupSecretkeys[`admins-${groupId}`].secretKeyObject
+						}
+						if (!secretKeyObject) {
+							const { names } = await getGroupAdmins(groupId)
+							const publish = await getPublishesFromAdminsAdminSpace(names, groupId)
+							if (publish === false) {
+								dataSentBack['error'] = "No group key found."
+								response = JSON.stringify(dataSentBack)
+								break
+							}
+							const res = await parentEpml.request('apiCall', {
+								url: `/arbitrary/DOCUMENT_PRIVATE/${publish.name}/${publish.identifier}?encoding=base64`
+							})
+							const resData = await res.text()
+							const decryptedKey = await this.decryptResourceQDN(resData)
+							const dataint8Array = base64ToUint8Array(decryptedKey.data)
+							const decryptedKeyToObject = uint8ArrayToObject(dataint8Array)
+							if (!validateSecretKey(decryptedKeyToObject)) {
+								dataSentBack['error'] = "SecretKey is not valid"
+								response = JSON.stringify(dataSentBack)
+								break
+							}
+							secretKeyObject = decryptedKeyToObject
+							groupSecretkeys[`admins-${groupId}`] = {
+								secretKeyObject,
+								timestamp: Date.now()
+							}
+						}
+					}
+					const resGroupEncryptedResource = encryptSingle({
+						data64, secretKeyObject: secretKeyObject
+					})
+					if (resGroupEncryptedResource) {
+						return resGroupEncryptedResource
+					} else {
+						dataSentBack['error'] = "Unable to encrypt"
+						response = JSON.stringify(dataSentBack)
+						break
+					}
+				}
+
+				case actions.DECRYPT_QORTAL_GROUP_DATA: {
+					let data64 = data.data64 || data.base64
+					let groupId = data.groupId
+					let isAdmins = data.isAdmins
+					let dataSentBack = {}
+					let secretKeyObject
+					if (!groupId) {
+						dataSentBack['error'] = "Please provide a groupId"
+						response = JSON.stringify(dataSentBack)
+						break
+					}
+					if (!data64) {
+						dataSentBack['error'] = "Please include data to encrypt"
+						response = JSON.stringify(dataSentBack)
+						break
+					}
+					if (!isAdmins) {
+						if (
+							groupSecretkeys[groupId] &&
+							groupSecretkeys[groupId].secretKeyObject &&
+							groupSecretkeys[groupId].timestamp &&
+							(Date.now() - groupSecretkeys[groupId].timestamp) < 1200000
+						) {
+							secretKeyObject = groupSecretkeys[groupId].secretKeyObject
+						}
+
+						if (!secretKeyObject) {
+							const { names } = await getGroupAdmins(groupId)
+							const publish = await getPublishesFromAdmins(names, groupId)
+							if (publish === false) {
+								dataSentBack['error'] = "No group key found."
+								response = JSON.stringify(dataSentBack)
+								break
+							}
+							const res = await parentEpml.request('apiCall', {
+								url: `/arbitrary/DOCUMENT_PRIVATE/${publish.name}/${publish.identifier}?encoding=base64`
+							})
+							const resData = await res.text()
+							const decryptedKey = await this.decryptResourceQDN(resData)
+							const dataint8Array = base64ToUint8Array(decryptedKey.data)
+							const decryptedKeyToObject = uint8ArrayToObject(dataint8Array)
+							if (!validateSecretKey(decryptedKeyToObject)) {
+								dataSentBack['error'] = "SecretKey is not valid"
+								response = JSON.stringify(dataSentBack)
+								break
+							}
+							secretKeyObject = decryptedKeyToObject
+							groupSecretkeys[groupId] = {
+								secretKeyObject,
+								timestamp: Date.now()
+							}
+						}
+					} else {
+						if (
+							groupSecretkeys[`admins-${groupId}`] &&
+							groupSecretkeys[`admins-${groupId}`].secretKeyObject &&
+							groupSecretkeys[`admins-${groupId}`].timestamp &&
+							(Date.now() - groupSecretkeys[`admins-${groupId}`].timestamp) < 1200000
+						) {
+							secretKeyObject = groupSecretkeys[`admins-${groupId}`].secretKeyObject
+						}
+						if (!secretKeyObject) {
+							const { names } = await getGroupAdmins(groupId)
+							const publish = await getPublishesFromAdminsAdminSpace(names, groupId)
+							if (publish === false) {
+								dataSentBack['error'] = "No group key found."
+								response = JSON.stringify(dataSentBack)
+								break
+							}
+							const res = await parentEpml.request('apiCall', {
+								url: `/arbitrary/DOCUMENT_PRIVATE/${publish.name}/${publish.identifier}?encoding=base64`
+							})
+							const resData = await res.text()
+							const decryptedKey = await this.decryptResourceQDN(resData)
+							const dataint8Array = base64ToUint8Array(decryptedKey.data)
+							const decryptedKeyToObject = uint8ArrayToObject(dataint8Array)
+							if (!validateSecretKey(decryptedKeyToObject)) {
+								dataSentBack['error'] = "SecretKey is not valid"
+								response = JSON.stringify(dataSentBack)
+								break
+							}
+							secretKeyObject = decryptedKeyToObject
+							groupSecretkeys[`admins-${groupId}`] = {
+								secretKeyObject,
+								timestamp: Date.now()
+							}
+						}
+					}
+					const resGroupDecryptResource = decryptSingle({
+						data64, secretKeyObject: secretKeyObject, skipDecodeBase64: true
+					})
+					if (resGroupDecryptResource) {
+						return resGroupDecryptResource
+					} else {
+						dataSentBack['error'] = "Unable to decrypt"
+						response = JSON.stringify(dataSentBack)
+						break
+					}
+				}
+
+				case actions.ENCRYPT_DATA_WITH_SHARING_KEY: {
+					let data64 = data.data64 || data.base64
+					let publicKeys = data.publicKeys || []
+					let dataSentBack = {}
+					if (data.file || data.blob) {
+						data64 = await fileToBase64(data.file || data.blob)
+  					}
+					if (!data64) {
+						dataSentBack['error'] = "Please include data to encrypt"
+						response = JSON.stringify(dataSentBack)
+						break
+					}
+					const symmetricKey = createSymmetricKeyAndNonce()
+					const dataObject = {
+						data: data64,
+						key:symmetricKey.messageKey
+					}
+					const dataObjectBase64 = await objectToBase64(dataObject)
+					const privateKey = Base58.encode(window.parent.reduxStore.getState().app.wallet._addresses[0].keyPair.privateKey)
+					const userPublicKey = Base58.encode(window.parent.reduxStore.getState().app.wallet._addresses[0].keyPair.publicKey)
+					const encryptDataResponse = encryptDataGroupNew({
+						data64: dataObjectBase64,
+						publicKeys: publicKeys,
+						privateKey,
+						userPublicKey,
+						customSymmetricKey: symmetricKey.messageKey
+					})
+					if (encryptDataResponse) {
+						return encryptDataResponse
+					} else {
+						dataSentBack['error'] = "Unable to encrypt"
+						response = JSON.stringify(dataSentBack)
+						break
+					}
+				}
+
+				case actions.DECRYPT_DATA_WITH_SHARING_KEY: {
+					let dataSentBack = {}
+					const { encryptedData, key } = data
+					if (!encryptedData) {
+						dataSentBack['error'] = "Please include data to decrypt"
+						response = JSON.stringify(dataSentBack)
+						break
+					}
+					const decryptedData = await decryptGroupEncryptionWithSharingKey({
+						data64EncryptedData: encryptedData,
+						key
+					})
+					const base64ToObject = JSON.parse(atob(decryptedData))
+					if(base64ToObject.data) {
+						return base64ToObject.data
+					} else {
+						dataSentBack['error'] = "No data in the decrypted resource"
+						response = JSON.stringify(dataSentBack)
+						break
+					}
+				}
+
+				case actions.CREATE_TRADE_BUY_ORDER: {
+					const node = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+					const nodeUrl = node.protocol + '://' + node.domain + ':' + node.port
+					const requiredFields = ["crosschainAtInfo", "foreignBlockchain"]
+					const missingFields = []
+					let dataSentBack = {}
+					requiredFields.forEach((field) => {
+						if (!data[field]) {
+							missingFields.push(field)
+						}
+					})
+					if (missingFields.length > 0) {
+						const missingFieldsString = missingFields.join(', ')
+						const errorMsg = `Missing fields: ${missingFieldsString}`
+						dataSentBack['error'] = errorMsg
+						response = JSON.stringify(dataSentBack)
+						break
+					}
+					const isGateway = await isUsingPublicNode()
+					const foreignBlockchain = data.foreignBlockchain
+					const atAddresses = data.crosschainAtInfo.map((order) => order.qortalAtAddress)
+					const atPromises = atAddresses.map((atAddress) =>
+						requestQueueGetAtAddresses.enqueue(async () => {
+							const url = `${nodeUrl}/crosschain/trade/${atAddress}`
+							const resAddress = await fetch(url)
+							const resData = await resAddress.json()
+
+							if (foreignBlockchain !== resData.foreignBlockchain) {
+								let myMsg1 = get("managegroup.mg58")
+								let myMsg2 = get("walletpage.wchange44")
+								await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+								response = '{"error": "All requested ATs need to be of the same foreign Blockchain."}'
+								throw new Error("All requested ATs need to be of the same foreign Blockchain.")
+							}
+
+							return resData
+						})
+					)
+					const crosschainAtInfo = await Promise.all(atPromises)
+					try {
+						const resPermission = await showModalAndWait(
+							actions.CREATE_TRADE_BUY_ORDER,
+							{
+								text1: "Do you give this application permission to perform a buy order?",
+								text2: `${atAddresses.length}${" "} ${`buy order${atAddresses.length === 1 ? "" : "s"}`}`,
+								text3: `${crosschainAtInfo.reduce((latest, cur) => {
+										return latest + cur.qortAmount
+									}, 0)} QORT FOR ${roundUpToDecimals(
+										crosschainAtInfo.reduce((latest, cur) => {
+											return latest + cur.expectedForeignAmount
+										}, 0)
+									)}
+									${` ${crosschainAtInfo[0].foreignBlockchain}`}`,
+								foreignFee: `${sellerForeignFee[foreignBlockchain].value} ${sellerForeignFee[foreignBlockchain].ticker}`
+							}
+						)
+						if (resPermission.action === 'accept') {
+							const resBuyOrder = await createBuyOrderTx({
+								crosschainAtInfo,
+								isGateway,
+								foreignBlockchain
+							})
+							if (resBuyOrder.callResponse === true) {
+								let myMsg1 = resBuyOrder.extra.message
+								let myMsg2 = "Please wait untill buy order get fulfilled"
+								await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+								response = '{"success": "Successfully created sell order"}'
+								break
+							} else {
+								let myMsg1 = resBuyOrder.extra.message
+								let myMsg2 = get("walletpage.wchange44")
+								await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+								response = '{"error": "Failed to submit sell order."}'
+								break
+							}
+						} else if (resPermission.action === 'reject') {
+							let myMsg1 = get("transactions.declined")
+							let myMsg2 = get("walletpage.wchange44")
+							await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+							response = '{"error": "User declined request"}'
+							break
+						}
+					} catch (error) {
+						let myMsg1 = get("managegroup.mg58")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+						response = '{"error": "Failed to submit sell order."}'
+						break
+					}
+				}
+
+				case actions.CREATE_TRADE_SELL_ORDER: {
+					const requiredFields = ["qortAmount", "foreignBlockchain", "foreignAmount"]
+					const missingFields = []
+					let dataSentBack = {}
+					requiredFields.forEach((field) => {
+						if (!data[field]) {
+							missingFields.push(field)
+						}
+					})
+					if (missingFields.length > 0) {
+						const missingFieldsString = missingFields.join(', ')
+						const errorMsg = `Missing fields: ${missingFieldsString}`
+						dataSentBack['error'] = errorMsg
+						response = JSON.stringify(dataSentBack)
+						break
+					}
+					const receivingAddress = await getUserWalletFunc(data.foreignBlockchain)
+					try {
+						const resPermission = await showModalAndWait(
+							actions.CREATE_TRADE_SELL_ORDER,
+							{
+								text1: "Do you give this application permission to perform a sell order?",
+								text2: `${data.qortAmount}${" "} ${`QORT`}`,
+								text3: `FOR ${data.foreignAmount} ${data.foreignBlockchain}`,
+								fee: "0.02"
+							}
+						)
+						if (resPermission.action === 'accept') {
+							const keyPair = window.parent.reduxStore.getState().app.selectedAddress.keyPair
+							const userPublicKey = Base58.encode(keyPair.publicKey)
+							const myRes = await tradeBotCreateRequest(
+								{
+									creatorPublicKey: userPublicKey,
+									qortAmount: parseFloat(data.qortAmount),
+									fundingQortAmount: parseFloat(data.qortAmount) + 0.001,
+									foreignBlockchain: data.foreignBlockchain,
+									foreignAmount: parseFloat(data.foreignAmount),
+									tradeTimeout: 120,
+									receivingAddress: receivingAddress.address
+								},
+								keyPair
+							)
+							if (myRes.signature) {
+								let myMsg1 = "Successfully created sell order"
+								let myMsg2 = "Please wait untill the order get listed"
+								await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+								response = '{"success": "Successfully created sell order"}'
+								break
+							} else {
+								let myMsg1 = get("managegroup.mg58")
+								let myMsg2 = get("walletpage.wchange44")
+								await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+								response = '{"error": "Failed to submit sell order."}'
+								break
+							}
+						} else if (resPermission.action === 'reject') {
+							let myMsg1 = get("transactions.declined")
+							let myMsg2 = get("walletpage.wchange44")
+							await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+							response = '{"error": "User declined request"}'
+							break
+						}
+					} catch (error) {
+						let myMsg1 = get("managegroup.mg58")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+						response = '{"error": "Failed to submit sell order."}'
+						break
+					}
+				}
+
+				case actions.CANCEL_TRADE_SELL_ORDER: {
+					const requiredFields = ["atAddress"]
+					const missingFields = []
+					let dataSentBack = {}
+					requiredFields.forEach((field) => {
+						if (!data[field]) {
+							missingFields.push(field)
+						}
+					})
+					if (missingFields.length > 0) {
+						const missingFieldsString = missingFields.join(', ')
+						const errorMsg = `Missing fields: ${missingFieldsString}`
+						dataSentBack['error'] = errorMsg
+						response = JSON.stringify(dataSentBack)
+						break
+					}
+					const node = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+					const nodeUrl = node.protocol + '://' + node.domain + ':' + node.port
+					const url = `${nodeUrl}/crosschain/trade/${data.atAddress}`
+					const resAddress = await fetch(url)
+					const resData = await resAddress.json()
+					if (!resData.qortalAtAddress) {
+						let myMsg1 = get("managegroup.mg58")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+						response = '{"error": "Cannot find AT info."}'
+						break
+					}
+					try {
+						const fee = await this.messageFee()
+						const resPermission = await showModalAndWait(
+							actions.CANCEL_TRADE_SELL_ORDER,
+							{
+								text1: "Do you give this application permission to perform: cancel a sell order?",
+								text2: `${resData.qortAmount}${" "} ${`QORT`}`,
+								text3: `FOR ${resData.expectedForeignAmount} ${resData.foreignBlockchain}`,
+								fee: fee
+							}
+						)
+						if (resPermission.action === 'accept') {
+							const keyPair = window.parent.reduxStore.getState().app.selectedAddress.keyPair
+							const userPublicKey = Base58.encode(keyPair.publicKey)
+							const myRes = await cancelTradeOfferTradeBot(
+								{
+									creatorPublicKey: userPublicKey,
+									atAddress: data.atAddress
+								},
+								keyPair
+							)
+							if (myRes.signature) {
+								let myMsg1 = "Trade Cancelling In Progress!"
+								let myMsg2 = "Please wait..."
+								await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+								response = '{"success": "Successfully created sell order"}'
+								break
+							} else {
+								let myMsg1 = get("managegroup.mg58")
+								let myMsg2 = get("walletpage.wchange44")
+								await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+								response = '{"error": "Failed to cancel sell order."}'
+								break
+							}
+						} else if (resPermission.action === 'reject') {
+							let myMsg1 = get("transactions.declined")
+							let myMsg2 = get("walletpage.wchange44")
+							await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+							response = '{"error": "User declined request"}'
+							break
+						}
+					} catch (error) {
+						let myMsg1 = get("managegroup.mg58")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+						response = '{"error": "Failed to submit sell order."}'
 						break
 					}
 				}
@@ -911,6 +1474,7 @@ class WebBrowser extends LitElement {
 								})
 								continue
 							}
+
 							const service = resource.service
 							const name = resource.name
 							let identifier = resource.identifier
@@ -1984,13 +2548,11 @@ class WebBrowser extends LitElement {
 				case actions.GET_FOREIGN_FEE: {
 					const requiredFields = ['coin','type']
 					const missingFields = []
-
 		  			requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
 						}
 					})
-
 		  			if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
 						const errorMsg = `Missing fields: ${missingFieldsString}`
@@ -1999,7 +2561,6 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(data)
 						break
 					}
-
 					try {
 						let coin = data.coin
 						let type = data.type
@@ -2024,13 +2585,11 @@ class WebBrowser extends LitElement {
 				case actions.UPDATE_FOREIGN_FEE: {
 					const requiredFields = ['coin','type']
 					const missingFields = []
-
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
 						}
 					})
-
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
 						const errorMsg = `Missing fields: ${missingFieldsString}`
@@ -2039,7 +2598,6 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(data)
 						break
 					}
-
 					try {
 						let coin = data.coin
 						let type = data.type
@@ -2066,13 +2624,11 @@ class WebBrowser extends LitElement {
 				case actions.GET_SERVER_CONNECTION_HISTORY: {
 					const requiredFields = ['coin']
 					const missingFields = []
-
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
 						}
 					})
-
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
 						const errorMsg = `Missing fields: ${missingFieldsString}`
@@ -2081,10 +2637,8 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(data)
 						break
 					}
-
 					try {
 						let coin = data.coin.toLowerCase()
-
 						response = await parentEpml.request('apiCall', {
 							type: 'api',
 							method: 'GET',
@@ -2106,13 +2660,11 @@ class WebBrowser extends LitElement {
 				case actions.SET_CURRENT_FOREIGN_SERVER: {
 					const requiredFields = ['coin']
 					const missingFields = []
-
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
 						}
 					})
-
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
 						const errorMsg = `Missing fields: ${missingFieldsString}`
@@ -2121,21 +2673,17 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(data)
 						break
 					}
-
 					try {
 						let coin = data.coin
 						let host = data.host
 						let port = data.port
 						let type = data.type
-
 						const body = {
 							hostName: host,
 							port: port,
 							connectionType: type
 						}
-
 						const bodyToString = JSON.stringify(body)
-
 						response = await parentEpml.request('apiCall', {
 							type: 'api',
 							method: 'POST',
@@ -2158,13 +2706,11 @@ class WebBrowser extends LitElement {
 				case actions.ADD_FOREIGN_SERVER: {
 					const requiredFields = ['coin']
 					const missingFields = []
-
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
 						}
 					})
-
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
 						const errorMsg = `Missing fields: ${missingFieldsString}`
@@ -2173,21 +2719,17 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(data)
 						break
 					}
-
 					try {
 						let coin = data.coin
 						let host = data.host
 						let port = data.port
 						let type = data.type
-
 						const body = {
 							hostName: host,
 							port: port,
 							connectionType: type
 						}
-
 						const bodyToString = JSON.stringify(body)
-
 						response = await parentEpml.request('apiCall', {
 							type: 'api',
 							method: 'POST',
@@ -2210,13 +2752,11 @@ class WebBrowser extends LitElement {
 				case actions.REMOVE_FOREIGN_SERVER: {
 					const requiredFields = ['coin']
 					const missingFields = []
-
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
 						}
 					})
-
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
 						const errorMsg = `Missing fields: ${missingFieldsString}`
@@ -2225,21 +2765,17 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(data)
 						break
 					}
-
 					try {
 						let coin = data.coin
 						let host = data.host
 						let port = data.port
 						let type = data.type
-
 						const body = {
 							hostName: host,
 							port: port,
 							connectionType: type
 						}
-
 						const bodyToString = JSON.stringify(body)
-
 						response = await parentEpml.request('apiCall', {
 							type: 'api',
 							method: 'POST',
@@ -2279,6 +2815,7 @@ class WebBrowser extends LitElement {
 					const signUrl = signNode.protocol + '://' + signNode.domain + ':' + signNode.port
 					const requiredFields = ['unsignedBytes']
 					const missingFields = []
+					let dataSentBack = {}
 
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
@@ -2289,9 +2826,8 @@ class WebBrowser extends LitElement {
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {}
-						data['error'] = errorMsg
-						response = JSON.stringify(data)
+						dataSentBack['error'] = errorMsg
+						response = JSON.stringify(dataSentBack)
 						break
 					}
 
@@ -2300,7 +2836,7 @@ class WebBrowser extends LitElement {
 					let url = `${signUrl}/transactions/decode?ignoreValidityChecks=false`
 					let body = data.unsignedBytes
 
-					const resp = await fetch(url, {
+					const resDecode = await fetch(url, {
 						method: "POST",
 						headers: {
 							"Content-Type": "application/json"
@@ -2308,15 +2844,15 @@ class WebBrowser extends LitElement {
 						body: body
 					})
 
-					if (!resp.ok) {
-						const errorMsg = "Failed to decode transaction"
-						let data = {}
-						data['error'] = errorMsg
-						response = JSON.stringify(data)
+					if (!resDecode.ok) {
+						let myMsg1 = "Failed to decode transaction."
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+						response = '{"error": "Failed to decode transaction."}'
 						break
 					}
 
-					const decodedData = await resp.json()
+					const decodedData = await resDecode.json()
 
 					const signRequest = await showModalAndWait(
 						actions.SIGN_TRANSACTION,
@@ -2324,7 +2860,7 @@ class WebBrowser extends LitElement {
 							text1: `Do you give this application permission to ${ shouldProcess ? 'SIGN and PROCESS' : 'SIGN' } a transaction?`,
 							text2: "Read the transaction carefully before accepting!",
 							text3: `Tx type: ${decodedData.type}`,
-							json: decodedData
+							json: `TX Data: ${decodedData}`
 						}
 					)
 
@@ -2339,14 +2875,7 @@ class WebBrowser extends LitElement {
 							body: data.unsignedBytes
 						})
 
-						const uint8PrivateKey = Base58.encode(window.parent.reduxStore.getState().app.wallet._addresses[0].keyPair.privateKey)
-						const uint8PublicKey = Base58.encode(window.parent.reduxStore.getState().app.wallet._addresses[0].keyPair.publicKey)
-
-						const keyPair = {
-							privateKey: uint8PrivateKey,
-							publicKey: uint8PublicKey,
-						}
-
+						const keyPair = window.parent.reduxStore.getState().app.selectedAddress.keyPair
 						const convertedBytes = await responseConverted.text()
 						const txBytes = Base58.decode(data.unsignedBytes)
 
@@ -2368,44 +2897,53 @@ class WebBrowser extends LitElement {
 							keyPair.privateKey
 						)
 
-						const signedBytes = utils.appendBuffer(arbitraryBytesBuffer, signature)
+						const signedBytes = appendBuffer(arbitraryBytesBuffer, signature)
 						const signedBytesToBase58 = Base58.encode(signedBytes)
 
 						if(!shouldProcess) {
-							const errorMsg = "Process transaction was not requested! Signed bytes are: " + signedBytesToBase58
-							let data = {}
-							data['error'] = errorMsg
-							response = JSON.stringify(data)
+							let myMsg1 = "Process transaction was not requested!"
+							let myMsg2 = "Signed bytes are: " + signedBytesToBase58
+							await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+							response = '{"error": "Process transaction was not requested!"}'
 							break
 						}
 
 						try {
 							this.loader.show()
 
-							const res = await processTransactionVersion2(signedBytesToBase58)
+							const res = await processTransactionV2(signedBytesToBase58)
 
-							if (!res.signature) {
-								const errorMsg = "Transaction was not able to be processed" + res.message
-								let data = {}
-								data['error'] = errorMsg
-								response = JSON.stringify(data)
+							if (res.signature) {
+								this.loader.hide()
+								let myMsg1 = "Transaction signed and processed successfully!"
+								let myMsg2 = ""
+								await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+								response = '{"success": "Transaction signed and processed successfully!"}'
+								break
+							} else {
+								this.loader.hide()
+								let myMsg1 = "Transaction was not able to be processed"
+								let myMsg2 = get("walletpage.wchange44")
+								await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+								response = '{"error": "Transaction was not able to be processed."}'
 								break
 							}
 
-							response = JSON.stringify(res)
 						} catch (error) {
-							console.error(error)
-							const data = {}
-							data['error'] = error.message || get("browserpage.bchange21")
-							response = JSON.stringify(data)
-							return
-						} finally {
 							this.loader.hide()
+							let myMsg1 = get("managegroup.mg58")
+							let myMsg2 = get("walletpage.wchange44")
+							await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+							response = '{"error": "Transaction was not able to be processed."}'
+							break
 						}
 					} else if (signRequest.action === 'reject') {
+						let myMsg1 = get("transactions.declined")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
 						response = '{"error": "User declined request"}'
+						break
 					}
-					break
 				}
 
 				case actions.SEND_COIN: {
@@ -3192,7 +3730,6 @@ class WebBrowser extends LitElement {
 					console.log('Unhandled message: ' + JSON.stringify(data))
 					return
 			}
-
 			// Parse response
 			let responseObj
 			try {
@@ -3214,9 +3751,7 @@ class WebBrowser extends LitElement {
 				})
 			}
 		})
-
 		this.clearConsole()
-
 		setInterval(() => {
 			this.clearConsole()
 		}, 60000)
@@ -3273,6 +3808,20 @@ class WebBrowser extends LitElement {
 		this.renderFullScreen()
 	}
 
+	async decryptResourceQDN(data) {
+		try {
+			const privateKey = Base58.encode(window.parent.reduxStore.getState().app.wallet._addresses[0].keyPair.privateKey)
+			const encryptedData = decryptGroupDataNew(data, privateKey)
+
+			return {
+				data: uint8ArrayToBase64(encryptedData.decryptedData),
+				count: encryptedData.count
+			}
+		} catch (error) {
+			console.log("Error:", error.message)
+		}
+	}
+
 	async unitJoinFee() {
 		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
@@ -3284,7 +3833,6 @@ class WebBrowser extends LitElement {
 		const data = await response.json()
 		return (Number(data) / 1e8).toFixed(8)
 	}
-
 	async deployAtFee() {
 		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
@@ -3296,6 +3844,19 @@ class WebBrowser extends LitElement {
 		const data = await response.json()
 		return (Number(data) / 1e8).toFixed(8)
 	}
+
+	async messageFee() {
+		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+		const url = `${nodeUrl}/transactions/unitfee?txType=MESSAGE`
+		const response = await fetch(url)
+		if (!response.ok) {
+			throw new Error('Error when fetching message fee')
+		}
+		const data = await response.json()
+		return (Number(data) / 1e8).toFixed(8)
+	}
+
 
 	async getArbitraryFee() {
 		const timestamp = Date.now()
@@ -4169,6 +4730,27 @@ async function showModalAndWait(type, data) {
 							<p class="modal-paragraph">${data.text3}</p>
 							<p class="modal-paragraph">Transaction: <span>${data.json}</span></p>
 						` : ''}
+
+						${type === actions.CREATE_TRADE_BUY_ORDER ? `
+							<p class="modal-paragraph">${data.text1}</p>
+							<p class="modal-paragraph">${data.text2}</p>
+							<p class="modal-paragraph">${data.text3}</p>
+							<p class="modal-paragraph">Fee: <span>${data.foreignFee}</span></p>
+						` : ''}
+
+						${type === actions.CREATE_TRADE_SELL_ORDER ? `
+							<p class="modal-paragraph">${data.text1}</p>
+							<p class="modal-paragraph">${data.text2}</p>
+							<p class="modal-paragraph">${data.text3}</p>
+							<p class="modal-paragraph">Fee: <span>${data.fee}</span></p>
+						` : ''}
+
+						${type === actions.CANCEL_TRADE_SELL_ORDER ? `
+							<p class="modal-paragraph">${data.text1}</p>
+							<p class="modal-paragraph">${data.text2}</p>
+							<p class="modal-paragraph">${data.text3}</p>
+							<p class="modal-paragraph">Fee: <span>${data.fee}</span></p>
+						` : ''}
 					</div>
 					<div class="modal-buttons">
 						<button id="cancel-button">${get("browserpage.bchange27")}</button>
@@ -4347,7 +4929,7 @@ async function showErrorAndWait(type, data, data1) {
 		</div>
 	`
 	document.body.appendChild(error)
-	await modalDelay(3000)
+	await modalDelay(5000)
 	document.body.removeChild(error)
 }
 

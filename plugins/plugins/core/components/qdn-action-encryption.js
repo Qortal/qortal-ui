@@ -1,3 +1,4 @@
+import Base58 from '../../../../crypto/api/deps/Base58'
 import nacl from '../../../../crypto/api/deps/nacl-fast.js'
 import ed2curve from '../../../../crypto/api/deps/ed2curve.js'
 
@@ -33,10 +34,14 @@ export const fileToBase64 = (file) => new Promise(async (resolve, reject) => {
 	if (!reader) {
 		reader = new FileReader()
 	}
+
 	await semaphore.acquire()
+
 	reader.readAsDataURL(file)
+
 	reader.onload = () => {
 		const dataUrl = reader.result
+
 		if (typeof dataUrl === "string") {
 			const base64String = dataUrl.split(',')[1]
 			reader.onload = null
@@ -49,6 +54,7 @@ export const fileToBase64 = (file) => new Promise(async (resolve, reject) => {
 		}
 		semaphore.release()
 	}
+
 	reader.onerror = (error) => {
 		reader.onload = null
 		reader.onerror = null
@@ -73,9 +79,11 @@ export function base64ToUint8Array(base64) {
 	const binaryString = atob(base64)
 	const len = binaryString.length
 	const bytes = new Uint8Array(len)
+
 	for (let i = 0; i < len; i++) {
 		bytes[i] = binaryString.charCodeAt(i)
 	}
+
 	return bytes
 }
 
@@ -226,6 +234,102 @@ export const encryptDataGroup = ({ data64, publicKeys }) => {
 	}
 }
 
+export const encryptDataGroupNew = (data64, publicKeys, privateKey, userPublicKey, customSymmetricKey) => {
+	let combinedPublicKeys = [...publicKeys, userPublicKey]
+
+	const decodedPrivateKey = Base58.decode(privateKey)
+	const publicKeysDuplicateFree = [...new Set(combinedPublicKeys)]
+	const Uint8ArrayData = base64ToUint8Array(data64)
+
+	if (!(Uint8ArrayData instanceof Uint8Array)) {
+		throw new Error("The Uint8ArrayData you've submitted is invalid")
+	}
+
+	try {
+		// Generate a random symmetric key for the message.
+		let messageKey
+
+		if(customSymmetricKey){
+			messageKey = base64ToUint8Array(customSymmetricKey)
+		} else {
+			messageKey = new Uint8Array(32)
+			crypto.getRandomValues(messageKey)
+		}
+
+		if(!messageKey) throw new Error('Cannot create symmetric key')
+
+		const nonce = new Uint8Array(24)
+
+		crypto.getRandomValues(nonce)
+
+		// Encrypt the data with the symmetric key.
+		const encryptedData = nacl.secretbox(Uint8ArrayData, nonce, messageKey)
+
+		// Generate a keyNonce outside of the loop.
+		const keyNonce = new Uint8Array(24)
+		crypto.getRandomValues(keyNonce)
+
+		// Encrypt the symmetric key for each recipient.
+		let encryptedKeys = []
+
+		publicKeysDuplicateFree.forEach((recipientPublicKey) => {
+			const publicKeyUnit8Array = Base58.decode(recipientPublicKey)
+			const convertedPrivateKey = ed2curve.convertSecretKey(decodedPrivateKey)
+			const convertedPublicKey = ed2curve.convertPublicKey(publicKeyUnit8Array)
+			const sharedSecret = new Uint8Array(32)
+
+			// the length of the sharedSecret will be 32 + 16
+			// When you're encrypting data using nacl.secretbox, it's adding an authentication tag to the result, which is 16 bytes long. This tag is used for verifying the integrity and authenticity of the data when it is decrypted
+			nacl.lowlevel.crypto_scalarmult(sharedSecret, convertedPrivateKey, convertedPublicKey)
+
+			// Encrypt the symmetric key with the shared secret.
+			const encryptedKey = nacl.secretbox(messageKey, keyNonce, sharedSecret)
+
+			encryptedKeys.push(encryptedKey)
+		})
+
+		const str = "qortalGroupEncryptedData"
+		const strEncoder = new TextEncoder()
+		const strUint8Array = strEncoder.encode(str)
+
+		// Convert sender's public key to Uint8Array and add to the message
+		const senderPublicKeyUint8Array = Base58.decode(userPublicKey)
+
+		// Combine all data into a single Uint8Array.
+		// Calculate size of combinedData
+		let combinedDataSize = strUint8Array.length + nonce.length + keyNonce.length + senderPublicKeyUint8Array.length + encryptedData.length + 4
+		let encryptedKeysSize = 0
+
+		encryptedKeys.forEach((key) => {
+			encryptedKeysSize += key.length
+		})
+
+		combinedDataSize += encryptedKeysSize
+		let combinedData = new Uint8Array(combinedDataSize)
+		combinedData.set(strUint8Array)
+		combinedData.set(nonce, strUint8Array.length)
+		combinedData.set(keyNonce, strUint8Array.length + nonce.length)
+		combinedData.set(senderPublicKeyUint8Array, strUint8Array.length + nonce.length + keyNonce.length)
+		combinedData.set(encryptedData, strUint8Array.length + nonce.length + keyNonce.length + senderPublicKeyUint8Array.length)
+
+		// Initialize offset for encryptedKeys
+		let encryptedKeysOffset = strUint8Array.length + nonce.length + keyNonce.length + senderPublicKeyUint8Array.length + encryptedData.length
+
+		encryptedKeys.forEach((key) => {
+			combinedData.set(key, encryptedKeysOffset)
+			encryptedKeysOffset += key.length
+		})
+
+		const countArray = new Uint8Array(new Uint32Array([publicKeysDuplicateFree.length]).buffer)
+		combinedData.set(countArray, combinedData.length - 4)
+
+		return uint8ArrayToBase64(combinedData)
+	} catch (error) {
+		console.log('error', error)
+		throw new Error("Error in encrypting data")
+	}
+}
+
 export function uint8ArrayStartsWith(uint8Array, string) {
 	const stringEncoder = new TextEncoder()
 	const stringUint8Array = stringEncoder.encode(string)
@@ -316,4 +420,101 @@ export function decryptGroupData(data64EncryptedData) {
 		}
 	}
 	throw new Error("Unable to decrypt data")
+}
+
+export function decryptGroupDataNew(data64EncryptedData, privateKey) {
+	const allCombined = base64ToUint8Array(data64EncryptedData)
+	const str = "qortalGroupEncryptedData"
+	const strEncoder = new TextEncoder()
+	const strUint8Array = strEncoder.encode(str)
+
+	// Extract the nonce
+	const nonceStartPosition = strUint8Array.length
+
+	// Nonce is 24 bytes
+	const nonceEndPosition = nonceStartPosition + 24
+	const nonce = allCombined.slice(nonceStartPosition, nonceEndPosition)
+
+	// Extract the shared keyNonce
+	const keyNonceStartPosition = nonceEndPosition
+
+	// Nonce is 24 bytes
+	const keyNonceEndPosition = keyNonceStartPosition + 24
+	const keyNonce = allCombined.slice(keyNonceStartPosition, keyNonceEndPosition)
+
+	// Extract the sender's public key
+	const senderPublicKeyStartPosition = keyNonceEndPosition
+
+	// Public keys are 32 bytes
+	const senderPublicKeyEndPosition = senderPublicKeyStartPosition + 32
+	const senderPublicKey = allCombined.slice(senderPublicKeyStartPosition, senderPublicKeyEndPosition)
+
+	// Calculate count first
+	// 4 bytes before the end, since count is stored in Uint32 (4 bytes)
+	const countStartPosition = allCombined.length - 4
+	const countArray = allCombined.slice(countStartPosition, countStartPosition + 4)
+	const count = new Uint32Array(countArray.buffer)[0]
+
+	// Then use count to calculate encryptedData
+	// start position of encryptedData
+	const encryptedDataStartPosition = senderPublicKeyEndPosition
+	const encryptedDataEndPosition = allCombined.length - ((count * (32 + 16)) + 4)
+	const encryptedData = allCombined.slice(encryptedDataStartPosition, encryptedDataEndPosition)
+
+	// Extract the encrypted keys
+	// 32+16 = 48
+	const combinedKeys = allCombined.slice(encryptedDataEndPosition, encryptedDataEndPosition + (count * 48))
+
+	if (!privateKey) {
+		throw new Error("Unable to retrieve keys")
+	}
+
+	const decodedPrivateKey = Base58.decode(privateKey)
+	const convertedPrivateKey = ed2curve.convertSecretKey(decodedPrivateKey)
+	const convertedSenderPublicKey = ed2curve.convertPublicKey(senderPublicKey)
+	const sharedSecret = new Uint8Array(32)
+
+	nacl.lowlevel.crypto_scalarmult(sharedSecret, convertedPrivateKey, convertedSenderPublicKey)
+
+	for (let i = 0; i < count; i++) {
+		const encryptedKey = combinedKeys.slice(i * 48, (i + 1) * 48)
+		console.log("Encrypted KEY", encryptedKey)
+		console.log("KEY NONCE", keyNonce)
+		console.log("SHARED SECRET", sharedSecret)
+		// Decrypt the symmetric key.
+		const decryptedKey = nacl.secretbox.open(encryptedKey, keyNonce, sharedSecret)
+	
+		// If decryption was successful, decryptedKey will not be null.
+		if (decryptedKey) {
+			// Decrypt the data using the symmetric key.
+			const decryptedData = nacl.secretbox.open(encryptedData, nonce, decryptedKey)
+
+			// If decryption was successful, decryptedData will not be null.
+			if (decryptedData) {
+				return {decryptedData, count}
+			}
+		}
+	}
+
+	throw new Error("Unable to decrypt data")
+}
+
+export const base64ToBlobUrl = (base64, mimeType = "image/png") => {
+	const binary = atob(base64)
+	const array = []
+
+	for (let i = 0; i < binary.length; i++) {
+		array.push(binary.charCodeAt(i))
+	}
+
+	const blob = new Blob([new Uint8Array(array)], { type: mimeType })
+
+	return URL.createObjectURL(blob)
+}
+
+export let groupSecretkeys = {}
+
+export function roundUpToDecimals(number, decimals = 8) {
+	const factor = Math.pow(10, decimals)
+	return Math.ceil(+number * factor) / factor
 }
