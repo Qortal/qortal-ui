@@ -56,14 +56,16 @@ Base64Message.decode = function (string, keys, ref) {
 		if (responseData.hasOwnProperty('message') && typeof responseData['message'] === 'string' && responseData['message'].length) {
 			const messageRep = responseData.message
 			const messageRep1 = messageRep.split('"').join('<upvote>')
-			const messageRep2 = messageRep1.replace('<p>', '')
-			const messageRep3 = messageRep2.replace('<br></p>', '')
-			const messageRep4 = messageRep3.replace('</p>', '')
-			const messageRep5 = messageRep4.trim()
-			const messageRep6 = messageRep5.split('<br><br><br>').join('"},{"type":"hardBreak"},{"type":"hardBreak"},{"type":"hardBreak"},{"type":"text","text":"')
-			const messageRep7 = messageRep6.split('<br><br>').join('"},{"type":"hardBreak"},{"type":"hardBreak"},{"type":"text","text":"')
-			const messageRep8 = messageRep7.split('<br>').join('"},{"type":"hardBreak"},{"type":"text","text":"')
-			messageStr = messageRep8
+			const messageRep2 = messageRep1.split('</p><p></p><p>').join('"},{"type":"hardBreak"},{"type":"text","text":"')
+			const messageRep3 = messageRep2.split('</p><p>').join('"},{"type":"hardBreak"},{"type":"text","text":"')
+			const messageRep4 = messageRep3.replace('<p>', '')
+			const messageRep5 = messageRep4.replace('<br></p>', '')
+			const messageRep6 = messageRep5.replace('</p>', '')
+			const messageRep7 = messageRep6.trim()
+			const messageRep8 = messageRep7.split('<br><br><br>').join('"},{"type":"hardBreak"},{"type":"hardBreak"},{"type":"hardBreak"},{"type":"text","text":"')
+			const messageRep9 = messageRep8.split('<br><br>').join('"},{"type":"hardBreak"},{"type":"hardBreak"},{"type":"text","text":"')
+			const messageRep10 = messageRep9.split('<br>').join('"},{"type":"hardBreak"},{"type":"text","text":"')
+			messageStr = messageRep10
 		}
 
 		if (responseData.repliedTo) {
