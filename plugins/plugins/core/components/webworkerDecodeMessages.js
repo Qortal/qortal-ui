@@ -2810,15 +2810,16 @@ const decode = (string, keys, ref) => {
 		}
 
 		if (responseData.hasOwnProperty('message') && typeof responseData['message'] === 'string' && responseData['message'].length) {
-			const messageStrRaw = responseData.message
-			const messageJoin1 = messageStrRaw.split('"').join('<upvote>')
-			const messageReplace1 = messageJoin1.replace('<p>', '')
-			const messageReplace2 = messageReplace1.replace('</p>', '')
-			const messageTrim = messageReplace2.trim()
-			const messageJoin2 = messageTrim.split('<br><br>').join('"},{"type":"hardBreak"},{"type":"hardBreak"},{"type":"text","text":"')
-			const messageJoin3 = messageJoin2.split('<br>').join('"},{"type":"hardBreak"},{"type":"text","text":"')
-
-			messageStr = messageJoin3
+			const messageRep = responseData.message
+			const messageRep1 = messageRep.split('"').join('<upvote>')
+			const messageRep2 = messageRep1.replace('<p>', '')
+			const messageRep3 = messageRep2.replace('<br></p>', '')
+			const messageRep4 = messageRep3.replace('</p>', '')
+			const messageRep5 = messageRep4.trim()
+			const messageRep6 = messageRep5.split('<br><br><br>').join('"},{"type":"hardBreak"},{"type":"hardBreak"},{"type":"hardBreak"},{"type":"text","text":"')
+			const messageRep7 = messageRep6.split('<br><br>').join('"},{"type":"hardBreak"},{"type":"hardBreak"},{"type":"text","text":"')
+			const messageRep8 = messageRep7.split('<br>').join('"},{"type":"hardBreak"},{"type":"text","text":"')
+			messageStr = messageRep8
 		}
 
 		if (responseData.repliedTo) {
