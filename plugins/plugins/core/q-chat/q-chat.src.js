@@ -32,6 +32,10 @@ import '@material/mwc-button'
 import '@material/mwc-dialog'
 import '@material/mwc-icon'
 import '@material/mwc-snackbar'
+import '@material/mwc-textfield'
+import '@polymer/paper-dialog/paper-dialog.js'
+import '@polymer/iron-icons/iron-icons.js'
+import '@polymer/paper-icon-button/paper-icon-button.js'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@vaadin/grid'
 import '@vaadin/tooltip'
@@ -136,6 +140,17 @@ class Chat extends LitElement {
 							</vaadin-tooltip>
 						</div>
 						<div style="display:flex; align-items:center;gap:10px">
+							<div id="viewChat" class="create-chat" @click=${() => { this.shadowRoot.querySelector('#viewChatDialog').show() }}>
+								<mwc-icon style="color: var(--black);">pageview</mwc-icon>
+								<vaadin-tooltip
+									for="viewChat"
+									position="top"
+									hover-delay=${200}
+									hide-delay=${1}
+									text="Switch Chat Over ID"
+								>
+								</vaadin-tooltip>
+							</div>
 							<div id="goToGroup" class="create-chat" @click=${() => { this.openTabToGroupManagement() }}>
 								<mwc-icon style="color: var(--black);">group_add</mwc-icon>
 								<vaadin-tooltip
@@ -299,6 +314,45 @@ class Chat extends LitElement {
 						${translate("general.close")}
 					</mwc-button>
 				</mwc-dialog>
+				<!-- View Chat Over ID -->
+				<mwc-dialog id="viewChatDialog">
+					<div style="text-align: center;">
+						<h1>Please Enter The Group ID</h1>
+						<hr>
+						<br>
+					</div>
+					<div style="display: flex; align-items: center;">
+						<mwc-textfield
+							style="width: 100%;"
+							required
+							id="groupIdInput"
+							label="Emter Group ID"
+							type="number"
+							auto-validate="false"
+							value=""
+						>
+						</mwc-textfield>
+					</div>
+					<mwc-button slot="primaryAction" dialogAction="cancel" class="red">
+						${translate("general.close")}
+					</mwc-button>
+					<mwc-button slot="secondaryAction" class="green" @click=${this.switchChatID}>
+						${translate("general.view")}
+					</mwc-button>
+				</mwc-dialog>
+				<paper-dialog id="checkIdDialog" class="check" modal>
+					<div class="check-roller">
+						<div></div>
+						<div></div>
+						<div></div>
+						<div></div>
+						<div></div>
+						<div></div>
+						<div></div>
+						<div></div>
+					</div>
+					<h2>Checking</h2>
+				</paper-dialog>
 			</div>
 		`
 	}
@@ -435,6 +489,48 @@ class Chat extends LitElement {
 		setInterval(() => {
 			this.clearConsole()
 		}, 60000)
+	}
+
+	async switchChatID() {
+		let viewGroupID = 0
+		let checkTheID = {}
+		let notFound = 'Group ID not found! Please try again...'
+		let wentWrong = 'Something went wrong! Please try again...'
+
+		viewGroupID = this.shadowRoot.getElementById('groupIdInput').value
+
+		this.shadowRoot.getElementById('checkIdDialog').open()
+
+		await parentEpml.request('apiCall', {
+			url: `/groups/${viewGroupID}`
+		}).then(res => {
+			checkTheID = res
+		})
+
+		if (checkTheID.error) {
+			this.shadowRoot.getElementById('checkIdDialog').close()
+			this.shadowRoot.getElementById('viewChatDialog').close()
+			this.shadowRoot.getElementById('groupIdInput').value = ''
+			parentEpml.request('showSnackBar', `${notFound}`)
+		} else if (checkTheID.groupId) {
+			let switchToID = checkTheID.groupName
+			this.shadowRoot.getElementById('checkIdDialog').close()
+			this.shadowRoot.getElementById('viewChatDialog').close()
+			this.shadowRoot.getElementById('groupIdInput').value = ''
+			parentEpml.request('showSnackBar', `${switchToID}`)
+			this.processChatID(checkTheID.groupId)
+		} else {
+			this.shadowRoot.getElementById('checkIdDialog').close()
+			this.shadowRoot.getElementById('viewChatDialog').close()
+			this.shadowRoot.getElementById('groupIdInput').value = ''
+			parentEpml.request('showSnackBar', `${wentWrong}`)
+		}
+	}
+
+	async processChatID(newID) {
+		let viewNewUrl = 'group/' + newID
+		this.setActiveChatHeadUrl(viewNewUrl)
+		this.resetChatEditor()
 	}
 
 	async setActiveChatHeadUrl(url) {

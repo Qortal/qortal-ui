@@ -56,16 +56,20 @@ Base64Message.decode = function (string, keys, ref) {
 		if (responseData.hasOwnProperty('message') && typeof responseData['message'] === 'string' && responseData['message'].length) {
 			const messageRep = responseData.message
 			const messageRep1 = messageRep.split('"').join('<upvote>')
-			const messageRep2 = messageRep1.split('</p><p></p><p>').join('"},{"type":"hardBreak"},{"type":"text","text":"')
-			const messageRep3 = messageRep2.split('</p><p>').join('"},{"type":"hardBreak"},{"type":"text","text":"')
-			const messageRep4 = messageRep3.replace('<p>', '')
-			const messageRep5 = messageRep4.replace('<br></p>', '')
-			const messageRep6 = messageRep5.replace('</p>', '')
-			const messageRep7 = messageRep6.trim()
-			const messageRep8 = messageRep7.split('<br><br><br>').join('"},{"type":"hardBreak"},{"type":"hardBreak"},{"type":"hardBreak"},{"type":"text","text":"')
-			const messageRep9 = messageRep8.split('<br><br>').join('"},{"type":"hardBreak"},{"type":"hardBreak"},{"type":"text","text":"')
-			const messageRep10 = messageRep9.split('<br>').join('"},{"type":"hardBreak"},{"type":"text","text":"')
-			messageStr = messageRep10
+			const messageRep2 = messageRep1.split('</p><p></p><p></p><p></p><p>').join('"},{"type":"hardBreak"},{"type":"hardBreak"},{"type":"hardBreak"},{"type":"hardBreak"},{"type":"text","text":"')
+			const messageRep3 = messageRep2.split('</p><p></p><p></p><p>').join('"},{"type":"hardBreak"},{"type":"hardBreak"},{"type":"hardBreak"},{"type":"text","text":"')
+			const messageRep4 = messageRep3.split('</p><p></p><p>').join('"},{"type":"hardBreak"},{"type":"hardBreak"},{"type":"text","text":"')
+			const messageRep5 = messageRep4.replace('</p><p>', '')
+			const messageRep6 = messageRep5.replace('<p></p>', '')
+			const messageRep7 = messageRep6.replace('<p>', '')
+			const messageRep8 = messageRep7.replace('<br></p>', '')
+			const messageRep9 = messageRep8.replace('</p>', '')
+			const messageRep10 = messageRep9.trim()
+			const messageRep11 = messageRep10.split('<br><br><br><br>').join('"},{"type":"hardBreak"},{"type":"hardBreak"},{"type":"hardBreak"},{"type":"hardBreak"},{"type":"text","text":"')
+			const messageRep12 = messageRep11.split('<br><br><br>').join('"},{"type":"hardBreak"},{"type":"hardBreak"},{"type":"hardBreak"},{"type":"text","text":"')
+			const messageRep13 = messageRep12.split('<br><br>').join('"},{"type":"hardBreak"},{"type":"hardBreak"},{"type":"text","text":"')
+			const messageRep14 = messageRep13.split('<br>').join('"},{"type":"hardBreak"},{"type":"text","text":"')
+			messageStr = messageRep14
 		}
 
 		if (responseData.repliedTo) {
