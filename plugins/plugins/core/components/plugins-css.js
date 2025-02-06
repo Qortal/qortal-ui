@@ -7440,6 +7440,10 @@ export const qchatStyles = css`
         --mdc-theme-primary: red;
     }
 
+    .green {
+        --mdc-theme-primary: #198754;
+    }
+
     h2 {
         margin: 0;
     }
@@ -7597,6 +7601,155 @@ export const qchatStyles = css`
         gap: 10px;
         color: #04aa2e;
         font-size: 13px;
+    }
+
+    .close-check {
+        color: var(--black);
+        font-size: 14px;
+        font-weight: bold;
+        position: absolute;
+        top: -15px;
+        right: -15px;
+    }
+
+    .close-check:hover {
+        color: #df3636;
+    }
+
+    paper-dialog.check {
+        width: auto;
+        max-width: 50vw;
+        height: auto;
+        max-height: 30vh;
+        background-color: var(--white);
+        color: var(--black);
+        border: 1px solid var(--black);
+        border-radius: 15px;
+        text-align: center;
+        padding: 15px;
+        line-height: 1.6;
+        overflow: hidden;
+    }
+
+    paper-dialog.close-check {
+        min-width: 550px;
+        max-width: 550px;
+        height: auto;
+        background-color: var(--white);
+        color: var(--black);
+        border: 1px solid var(--black);
+        border-radius: 15px;
+        text-align: center;
+        padding: 15px;
+        font-size: 17px;
+        font-weight: 500;
+        line-height: 20px;
+        overflow: hidden;
+    }
+
+    .check-roller {
+        display: inline-block;
+        position: relative;
+        width: 80px;
+        height: 80px;
+    }
+
+    .check-roller div {
+        animation: check-roller 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        transform-origin: 40px 40px;
+    }
+
+    .check-roller div:after {
+        content: " ";
+        display: block;
+        position: absolute;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--black);
+        margin: -4px 0 0 -4px;
+    }
+
+    .check-roller div:nth-child(1) {
+        animation-delay: -0.036s;
+    }
+
+    .check-roller div:nth-child(1):after {
+        top: 63px;
+        left: 63px;
+    }
+
+    .check-roller div:nth-child(2) {
+        animation-delay: -0.072s;
+    }
+
+    .check-roller div:nth-child(2):after {
+        top: 68px;
+        left: 56px;
+    }
+
+    .check-roller div:nth-child(3) {
+        animation-delay: -0.108s;
+    }
+
+    .check-roller div:nth-child(3):after {
+        top: 71px;
+        left: 48px;
+    }
+
+    .check-roller div:nth-child(4) {
+        animation-delay: -0.144s;
+    }
+
+    .check-roller div:nth-child(4):after {
+        top: 72px;
+        left: 40px;
+    }
+
+    .check-roller div:nth-child(5) {
+        animation-delay: -0.18s;
+    }
+
+    .check-roller div:nth-child(5):after {
+        top: 71px;
+        left: 32px;
+    }
+
+    .check-roller div:nth-child(6) {
+        animation-delay: -0.216s;
+    }
+
+    .check-roller div:nth-child(6):after {
+        top: 68px;
+        left: 24px;
+    }
+
+    .check-roller div:nth-child(7) {
+        animation-delay: -0.252s;
+    }
+
+    .check-roller div:nth-child(7):after {
+        top: 63px;
+        left: 17px;
+    }
+
+    .check-roller div:nth-child(8) {
+        animation-delay: -0.288s;
+    }
+
+    .check-roller div:nth-child(8):after {
+        top: 56px;
+        left: 12px;
+    }
+
+    @keyframes check-roller {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
     }
 `
 
@@ -12230,6 +12383,10 @@ export const webBrowserModalStyles = css`
         z-index: 1000001;
     }
 
+    .modal-body {
+        padding: 25px;
+    }
+
     @keyframes modal_transition {
         0% {
             visibility: hidden;
@@ -12253,8 +12410,30 @@ export const webBrowserModalStyles = css`
         justify-content: space-between;
     }
 
-    .modal-body {
-        padding: 25px;
+    .modal-content-error {
+        background-color: #ffdddd;
+        border-radius: 15px;
+	border: 1px solid var(--black);
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        max-width: 80%;
+        min-width: 300px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .modal-content-success {
+        background-color: #ddffdd;
+        border-radius: 15px;
+	border: 1px solid var(--black);
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        max-width: 80%;
+        min-width: 300px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
     }
 
     .modal-subcontainer {
@@ -12266,22 +12445,23 @@ export const webBrowserModalStyles = css`
     }
 
     .modal-subcontainer-error {
-        color: var(--black);
+        color: 000;
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 15px;
+        gap: 1ßpx;
         overflow: auto;
         max-height: calc(95vh - 250px);
     }
 
-    .modal-paragraph-error {
-        font-family: Roboto, sans-serif;
-        font-size: 20px;
-        letter-spacing: 0.3px;
-        font-weight: 700;
-        color: var(--black);
-        margin: 0;
+    .modal-subcontainer-success {
+        color: 000;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        overflow: auto;
+        max-height: calc(95vh - 250px);
     }
 
     .modal-paragraph {
@@ -12290,6 +12470,50 @@ export const webBrowserModalStyles = css`
         letter-spacing: 0.3px;
         font-weight: 300;
         color: var(--black);
+        margin: 0;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .modal-paragraph-error {
+        font-family: Roboto, sans-serif;
+        font-size: 16px;
+        letter-spacing: 0.3px;
+        font-weight: 600;
+        color: 000;
+        margin: 0;
+        word-wrap: break-word;
+        overflow-wrap: break-wor
+    }
+
+    .modal-paragraph-success {
+        font-family: Roboto, sans-serif;
+        font-size: 16px;
+        letter-spacing: 0.3px;
+        font-weight: 600;
+        color: 000;
+        margin: 0;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .modal-paragraph-error-header {
+        font-family: Roboto, sans-serif;
+        font-size: 18px;
+        letter-spacing: 0.3px;
+        font-weight: 700;
+        color: 000;
+        margin: 0;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .modal-paragraph-success-header {
+        font-family: Roboto, sans-serif;
+        font-size: 18px;
+        letter-spacing: 0.3px;
+        font-weight: 700;
+        color: 000;
         margin: 0;
         word-wrap: break-word;
         overflow-wrap: break-word;
