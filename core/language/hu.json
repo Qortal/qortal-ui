@@ -1416,6 +1416,7 @@
 		"mpchange82": "HIÁNYZÓ MEZŐK",
 		"mpchange83": "Elutasítva",
 		"mpchange84": "FAILURE",
-		"mpchange85": "SIKER"
+		"mpchange85": "SIKER",
+		"mpchange86": "Mindig engedélyezze a pénztárcaegyenleg automatikus lekérését"
 	}
 }

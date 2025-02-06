@@ -1416,6 +1416,7 @@
 		"mpchange82": "Campos em falta",
 		"mpchange83": "RECLINADO",
 		"mpchange84": "FALHA",
-		"mpchange85": "SUCESSO"
+		"mpchange85": "SUCESSO",
+		"mpchange86": "Permitir sempre obter saldo da carteira automaticamente"
 	}
 }

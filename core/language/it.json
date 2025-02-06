@@ -1416,6 +1416,7 @@
 		"mpchange82": "CAMPI MANCANTI",
 		"mpchange83": "RIFIUTATO",
 		"mpchange84": "FALLITO",
-		"mpchange85": "RIUSCITO"
+		"mpchange85": "RIUSCITO",
+		"mpchange86": "Consenti sempre di ottenere automaticamente il saldo del portafoglio"
 	}
 }

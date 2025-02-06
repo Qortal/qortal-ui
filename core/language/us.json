@@ -1416,6 +1416,7 @@
 		"mpchange82": "MISSING FIELDS",
 		"mpchange83": "DECLINED",
 		"mpchange84": "FAILURE",
-		"mpchange85": "SUCCESS"
+		"mpchange85": "SUCCESS",
+		"mpchange86": "Always allow get wallet balance automatically"
 	}
 }

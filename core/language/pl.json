@@ -1416,6 +1416,7 @@
 		"mpchange82": "Brakujące pola",
 		"mpchange83": "ODRZUCONE",
 		"mpchange84": "NIEPOWODZENIE",
-		"mpchange85": "POWODZENIE"
+		"mpchange85": "POWODZENIE",
+		"mpchange86": "Zawsze zezwalaj na automatyczne pobieranie salda portfela"
 	}
 }

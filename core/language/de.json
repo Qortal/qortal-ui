@@ -1416,6 +1416,7 @@
 		"mpchange82": "FEHLENDE FELDER",
 		"mpchange83": "ABGELEHNT",
 		"mpchange84": "FEHLER",
-		"mpchange85": "ERFOLGREICH"
+		"mpchange85": "ERFOLGREICH",
+		"mpchange86": "Immer automatisches Abrufen des Wallet-Guthabens zulassen"
 	}
 }

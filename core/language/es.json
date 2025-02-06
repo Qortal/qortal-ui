@@ -1416,6 +1416,7 @@
 		"mpchange82": "CAMPOS FALTANTES",
 		"mpchange83": "RECHAZADO",
 		"mpchange84": "ERROR",
-		"mpchange85": "ÉXITO"
+		"mpchange85": "ÉXITO",
+		"mpchange86": "Permitir siempre obtener el saldo de la billetera automáticamente"
 	}
 }

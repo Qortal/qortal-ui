@@ -1416,6 +1416,7 @@
 		"mpchange82": "MANGLER FELT",
 		"mpchange83": "AVSLAGT",
 		"mpchange84": "FEIL",
-		"mpchange85": "SUKSESS"
+		"mpchange85": "SUKSESS",
+		"mpchange86": "Tillat alltid få lommeboksaldo automatisk"
 	}
 }
