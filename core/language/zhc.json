@@ -1416,6 +1416,7 @@
 		"mpchange82": "缺少字段",
 		"mpchange83": "拒绝",
 		"mpchange84": "失败",
-		"mpchange85": "成功"
+		"mpchange85": "成功",
+		"mpchange86": "始终允许自动获取钱包余额"
 	}
 }

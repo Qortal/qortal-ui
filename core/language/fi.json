@@ -1416,6 +1416,7 @@
 		"mpchange82": "PUITTUVAT KENTÄT",
 		"mpchange83": "hylätty",
 		"mpchange84": "FAILURE",
-		"mpchange85": "SUCCESS"
+		"mpchange85": "SUCCESS",
+		"mpchange86": "Salli aina saada lompakon saldo automaattisesti"
 	}
 }

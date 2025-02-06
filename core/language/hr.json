@@ -1416,6 +1416,7 @@
 		"mpchange82": "NEDOSTAJUĆA POLJA",
 		"mpchange83": "ODBIJENO",
 		"mpchange84": "GREŠKA",
-		"mpchange85": "USPJEH"
+		"mpchange85": "USPJEH",
+		"mpchange86": "Uvijek dopusti automatsko dobivanje stanja novčanika"
 	}
 }

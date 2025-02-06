@@ -1416,6 +1416,7 @@
 		"mpchange82": "CHAMPS MANQUANTS",
 		"mpchange83": "REFUSÉ",
 		"mpchange84": "ÉCHEC",
-		"mpchange85": "SUCCÈS"
+		"mpchange85": "SUCCÈS",
+		"mpchange86": "Toujours autoriser l'obtention automatique du solde du portefeuille"
 	}
 }

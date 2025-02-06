@@ -315,7 +315,8 @@ class WebBrowser extends LitElement {
 			switch (data.action) {
 				case actions.IS_USING_PUBLIC_NODE: {
 					const res = await isUsingPublicNode()
-					return res
+					response = res
+					break
 				}
 
 				case actions.ADMIN_ACTION: {
@@ -405,10 +406,7 @@ class WebBrowser extends LitElement {
 				}
 
 				case actions.SHOW_ACTIONS: {
-					let dataSentBack = {}
-					const resMsg = `${listOfAllQortalRequests}`
-					dataSentBack['qortalRequests'] = resMsg
-					response = JSON.stringify(dataSentBack)
+					response = listOfAllQortalRequests
 					break
 				}
 
@@ -2642,6 +2640,8 @@ class WebBrowser extends LitElement {
 					const requiredFields = ['coin']
 					const missingFields = []
 					let dataSentBack = {}
+					let skip = false
+					let res3
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
@@ -2666,10 +2666,15 @@ class WebBrowser extends LitElement {
 					// TODO: prompt user to share wallet balance. If they confirm, call `GET /crosschain/:coin/walletbalance`, or for QORT, call `GET /addresses/balance/:address`
 					// then set the response string from the core to the `response` variable (defined above)
 					// If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
-					const res3 = await showModalAndWait(
-						actions.GET_WALLET_BALANCE
-					)
-					if (res3.action === 'accept') {
+					if (window.parent.reduxStore.getState().app.qAPPAutoBalance) {
+						skip = true
+					}
+					if (!skip) {
+						res3 = await showModalAndWait(
+							actions.GET_WALLET_BALANCE
+						)
+					}
+					if ((res3 && res3.action === 'accept') || skip) {
 						let coin = data.coin
 						if (coin === "QORT") {
 							let qortAddress = window.parent.reduxStore.getState().app.selectedAddress.address
@@ -5117,6 +5122,12 @@ async function showModalAndWait(type, data) {
 						${type === actions.GET_WALLET_BALANCE ? `
 							<div class="modal-subcontainer">
 								<p class="modal-paragraph">${get("browserpage.bchange20")}</p>
+								<div class="checkbox-row">
+									<label for="balanceButton" id="balanceButtonLabel" style="color: var(--black);">
+										${get('modals.mpchange86')}
+									</label>
+									<mwc-checkbox style="margin-right: -15px;" id="balanceButton" ?checked=${window.parent.reduxStore.getState().app.qAPPAutoBalance}></mwc-checkbox>
+								</div>
 							</div>
 						` : ''}
 
@@ -5266,6 +5277,7 @@ async function showModalAndWait(type, data) {
 			}
 			resolve({ action: 'reject' })
 		})
+
 		const cancelButton = modal.querySelector('#cancel-button')
 		cancelButton.addEventListener('click', () => {
 			if (modal.parentNode === document.body) {
@@ -5289,6 +5301,24 @@ async function showModalAndWait(type, data) {
 					return
 				}
 				window.parent.reduxStore.dispatch(window.parent.reduxAction.allowQAPPAutoAuth(true))
+			})
+		}
+
+		const labelButton1 = modal.querySelector('#balanceButtonLabel')
+		if (labelButton1) {
+			labelButton1.addEventListener('click', () => {
+				this.shadowRoot.getElementById('balanceButton').click()
+			})
+		}
+
+		const checkbox1 = modal.querySelector('#abalanceButton')
+		if (checkbox1) {
+			checkbox1.addEventListener('click', (e) => {
+				if (e.target.checked) {
+					window.parent.reduxStore.dispatch(window.parent.reduxAction.removeQAPPAutoBalance(false))
+					return
+				}
+				window.parent.reduxStore.dispatch(window.parent.reduxAction.allowQAPPAutoBalance(true))
 			})
 		}
 

@@ -1416,6 +1416,7 @@
 		"mpchange82": "누락된 필드",
 		"mpchange83": "거부됨",
 		"mpchange84": "실패",
-		"mpchange85": "성공"
+		"mpchange85": "성공",
+		"mpchange86": "항상 지갑 잔액을 자동으로 가져오도록 허용"
 	}
 }
