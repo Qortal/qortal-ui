@@ -315,7 +315,8 @@ class WebBrowser extends LitElement {
 			switch (data.action) {
 				case actions.IS_USING_PUBLIC_NODE: {
 					const res = await isUsingPublicNode()
-					return res
+					response = res
+					break
 				}
 
 				case actions.ADMIN_ACTION: {
@@ -405,8 +406,8 @@ class WebBrowser extends LitElement {
 				}
 
 				case actions.SHOW_ACTIONS: {
-					const res = JSON.stringify(listOfAllQortalRequests)
-					return res
+					response = listOfAllQortalRequests
+					break
 				}
 
 				case actions.GET_USER_ACCOUNT: {
@@ -787,6 +788,14 @@ class WebBrowser extends LitElement {
 					})
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
+						const tryAgain = get("walletpage.wchange44")
+						await showErrorAndWait(
+							"MISSING_FIELDS",
+							{
+								id1: missingFieldsString,
+								id2: tryAgain
+							}
+						)
 						const errorMsg = `Missing fields: ${missingFieldsString}`
 						dataSentBack['error'] = errorMsg
 						response = JSON.stringify(dataSentBack)
@@ -802,9 +811,9 @@ class WebBrowser extends LitElement {
 							const resData = await resAddress.json()
 
 							if (foreignBlockchain !== resData.foreignBlockchain) {
-								let myMsg1 = get("managegroup.mg58")
+								let myMsg1 = get("modals.mpchange1")
 								let myMsg2 = get("walletpage.wchange44")
-								await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+								await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 								response = '{"error": "All requested ATs need to be of the same foreign Blockchain."}'
 								throw new Error("All requested ATs need to be of the same foreign Blockchain.")
 							}
@@ -817,7 +826,7 @@ class WebBrowser extends LitElement {
 						const resPermission = await showModalAndWait(
 							actions.CREATE_TRADE_BUY_ORDER,
 							{
-								text1: "Do you give this application permission to perform a buy order?",
+								text1: get("modals.mpchange2"),
 								text2: `${atAddresses.length}${" "} ${`buy order${atAddresses.length === 1 ? "" : "s"}`}`,
 								text3: `${crosschainAtInfo.reduce((latest, cur) => {
 										return latest + cur.qortAmount
@@ -837,30 +846,30 @@ class WebBrowser extends LitElement {
 								foreignBlockchain
 							})
 							if (resBuyOrder.callResponse === true) {
-								let myMsg1 = resBuyOrder.extra.message
-								let myMsg2 = "Please wait untill buy order get fulfilled"
-								await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
-								response = '{"success": "Successfully created sell order"}'
+								let myMsg1 = get("modals.mpchange3")
+								let myMsg2 = get("modals.mpchange4")
+								await showSuccessAndWait("REQUEST_SUCCESS", { id1: myMsg1, id2: myMsg2 })
+								response = '{"success": "Successfully created buy order"}'
 								break
 							} else {
-								let myMsg1 = resBuyOrder.extra.message
+								let myMsg1 = get("modals.mpchange5")
 								let myMsg2 = get("walletpage.wchange44")
-								await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
-								response = '{"error": "Failed to submit sell order."}'
+								await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
+								response = '{"error": "Failed to submit buy order."}'
 								break
 							}
 						} else if (resPermission.action === 'reject') {
 							let myMsg1 = get("transactions.declined")
 							let myMsg2 = get("walletpage.wchange44")
-							await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+							await showErrorAndWait("DECLINED_REQUEST", { id1: myMsg1, id2: myMsg2 })
 							response = '{"error": "User declined request"}'
 							break
 						}
 					} catch (error) {
 						let myMsg1 = get("managegroup.mg58")
 						let myMsg2 = get("walletpage.wchange44")
-						await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
-						response = '{"error": "Failed to submit sell order."}'
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
+						response = '{"error": "Failed to submit buy order."}'
 						break
 					}
 				}
@@ -876,6 +885,14 @@ class WebBrowser extends LitElement {
 					})
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
+						const tryAgain = get("walletpage.wchange44")
+						await showErrorAndWait(
+							"MISSING_FIELDS",
+							{
+								id1: missingFieldsString,
+								id2: tryAgain
+							}
+						)
 						const errorMsg = `Missing fields: ${missingFieldsString}`
 						dataSentBack['error'] = errorMsg
 						response = JSON.stringify(dataSentBack)
@@ -886,9 +903,9 @@ class WebBrowser extends LitElement {
 						const resPermission = await showModalAndWait(
 							actions.CREATE_TRADE_SELL_ORDER,
 							{
-								text1: "Do you give this application permission to perform a sell order?",
+								text1: get("modals.mpchange6"),
 								text2: `${data.qortAmount}${" "} ${`QORT`}`,
-								text3: `FOR ${data.foreignAmount} ${data.foreignBlockchain}`,
+								text3: `${get("modals.mpchange7")} ${data.foreignAmount} ${data.foreignBlockchain}`,
 								fee: "0.02"
 							}
 						)
@@ -908,29 +925,29 @@ class WebBrowser extends LitElement {
 								keyPair
 							)
 							if (myRes.signature) {
-								let myMsg1 = "Successfully created sell order"
-								let myMsg2 = "Please wait untill the order get listed"
-								await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+								let myMsg1 = get("modals.mpchange8")
+								let myMsg2 = get("modals.mpchange9")
+								await showSuccessAndWait("REQUEST_SUCCESS", { id1: myMsg1, id2: myMsg2 })
 								response = '{"success": "Successfully created sell order"}'
 								break
 							} else {
-								let myMsg1 = get("managegroup.mg58")
+								let myMsg1 = get("modals.mpchange10")
 								let myMsg2 = get("walletpage.wchange44")
-								await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+								await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 								response = '{"error": "Failed to submit sell order."}'
 								break
 							}
 						} else if (resPermission.action === 'reject') {
 							let myMsg1 = get("transactions.declined")
 							let myMsg2 = get("walletpage.wchange44")
-							await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+							await showErrorAndWait("DECLINED_REQUEST", { id1: myMsg1, id2: myMsg2 })
 							response = '{"error": "User declined request"}'
 							break
 						}
 					} catch (error) {
 						let myMsg1 = get("managegroup.mg58")
 						let myMsg2 = get("walletpage.wchange44")
-						await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 						response = '{"error": "Failed to submit sell order."}'
 						break
 					}
@@ -947,6 +964,14 @@ class WebBrowser extends LitElement {
 					})
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
+						const tryAgain = get("walletpage.wchange44")
+						await showErrorAndWait(
+							"MISSING_FIELDS",
+							{
+								id1: missingFieldsString,
+								id2: tryAgain
+							}
+						)
 						const errorMsg = `Missing fields: ${missingFieldsString}`
 						dataSentBack['error'] = errorMsg
 						response = JSON.stringify(dataSentBack)
@@ -958,9 +983,9 @@ class WebBrowser extends LitElement {
 					const resAddress = await fetch(url)
 					const resData = await resAddress.json()
 					if (!resData.qortalAtAddress) {
-						let myMsg1 = get("managegroup.mg58")
+						let myMsg1 = get("modals.mpchange11")
 						let myMsg2 = get("walletpage.wchange44")
-						await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 						response = '{"error": "Cannot find AT info."}'
 						break
 					}
@@ -969,9 +994,9 @@ class WebBrowser extends LitElement {
 						const resPermission = await showModalAndWait(
 							actions.CANCEL_TRADE_SELL_ORDER,
 							{
-								text1: "Do you give this application permission to perform: cancel a sell order?",
+								text1: get("modals.mpchange12"),
 								text2: `${resData.qortAmount}${" "} ${`QORT`}`,
-								text3: `FOR ${resData.expectedForeignAmount} ${resData.foreignBlockchain}`,
+								text3: `${get("modals.mpchange7")} ${resData.expectedForeignAmount} ${resData.foreignBlockchain}`,
 								fee: fee
 							}
 						)
@@ -986,29 +1011,29 @@ class WebBrowser extends LitElement {
 								keyPair
 							)
 							if (myRes.signature) {
-								let myMsg1 = "Trade Cancelling In Progress!"
-								let myMsg2 = "Please wait..."
-								await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
-								response = '{"success": "Successfully created sell order"}'
+								let myMsg1 = get("modals.mpchange13")
+								let myMsg2 = get("modals.mpchange14")
+								await showSuccessAndWait("REQUEST_SUCCESS", { id1: myMsg1, id2: myMsg2 })
+								response = '{"success": "Successfully cancelled sell order."}'
 								break
 							} else {
-								let myMsg1 = get("managegroup.mg58")
+								let myMsg1 = get("modals.mpchange15")
 								let myMsg2 = get("walletpage.wchange44")
-								await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+								await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 								response = '{"error": "Failed to cancel sell order."}'
 								break
 							}
 						} else if (resPermission.action === 'reject') {
 							let myMsg1 = get("transactions.declined")
 							let myMsg2 = get("walletpage.wchange44")
-							await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+							await showErrorAndWait("DECLINED_REQUEST", { id1: myMsg1, id2: myMsg2 })
 							response = '{"error": "User declined request"}'
 							break
 						}
 					} catch (error) {
 						let myMsg1 = get("managegroup.mg58")
 						let myMsg2 = get("walletpage.wchange44")
-						await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 						response = '{"error": "Failed to submit sell order."}'
 						break
 					}
@@ -1017,6 +1042,7 @@ class WebBrowser extends LitElement {
 				case actions.GET_LIST_ITEMS: {
 					const requiredFields = ['list_name']
 					const missingFields = []
+					let dataSentBack = {}
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
@@ -1024,10 +1050,17 @@ class WebBrowser extends LitElement {
 					})
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
+						const tryAgain = get("walletpage.wchange44")
+						await showErrorAndWait(
+							"MISSING_FIELDS",
+							{
+								id1: missingFieldsString,
+								id2: tryAgain
+							}
+						)
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {}
-						data['error'] = errorMsg
-						response = JSON.stringify(data)
+						dataSentBack['error'] = errorMsg
+						response = JSON.stringify(dataSentBack)
 						break
 					}
 					let skip = false
@@ -1050,18 +1083,21 @@ class WebBrowser extends LitElement {
 								url: `/lists/${data.list_name}?apiKey=${this.getApiKey()}`
 							})
 							response = JSON.stringify(list)
-
 						} catch (error) {
+							let myMsg1 = get("modals.mpchange16")
+							let myMsg2 = get("walletpage.wchange44")
+							await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 							const data = {}
-							data['error'] = "Error in retrieving list"
+							data['error'] = "Error in retrieving list."
 							response = JSON.stringify(data)
 						} finally {
 							break
 						}
 					} else {
-						const data = {}
-						data['error'] = "User declined to share list"
-						response = JSON.stringify(data)
+						let myMsg1 = get("transactions.declined")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("DECLINED_REQUEST", { id1: myMsg1, id2: myMsg2 })
+						response = '{"error": "User declined request"}'
 						break
 					}
 				}
@@ -1069,6 +1105,7 @@ class WebBrowser extends LitElement {
 				case actions.ADD_LIST_ITEMS: {
 					const requiredFields = ['list_name', 'items']
 					const missingFields = []
+					let dataSentBack = {}
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
@@ -1076,10 +1113,17 @@ class WebBrowser extends LitElement {
 					})
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
+						const tryAgain = get("walletpage.wchange44")
+						await showErrorAndWait(
+							"MISSING_FIELDS",
+							{
+								id1: missingFieldsString,
+								id2: tryAgain
+							}
+						)
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {}
-						data['error'] = errorMsg
-						response = JSON.stringify(data)
+						dataSentBack['error'] = errorMsg
+						response = JSON.stringify(dataSentBack)
 						break
 					}
 					const items = data.items
@@ -1107,16 +1151,20 @@ class WebBrowser extends LitElement {
 								}
 							})
 						} catch (error) {
+							let myMsg1 = get("modals.mpchange17")
+							let myMsg2 = get("walletpage.wchange44")
+							await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 							const data = {}
-							data['error'] = "Error in adding to list"
+							data['error'] = "Error in adding to list."
 							response = JSON.stringify(data)
 						} finally {
 							break
 						}
 					} else {
-						const data = {}
-						data['error'] = "User declined add to list"
-						response = JSON.stringify(data)
+						let myMsg1 = get("transactions.declined")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("DECLINED_REQUEST", { id1: myMsg1, id2: myMsg2 })
+						response = '{"error": "User declined request"}'
 						break
 					}
 				}
@@ -1124,6 +1172,7 @@ class WebBrowser extends LitElement {
 				case actions.DELETE_LIST_ITEM: {
 					const requiredFields = ['list_name', 'item']
 					const missingFields = []
+					let dataSentBack = {}
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
@@ -1131,10 +1180,17 @@ class WebBrowser extends LitElement {
 					})
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
+						const tryAgain = get("walletpage.wchange44")
+						await showErrorAndWait(
+							"MISSING_FIELDS",
+							{
+								id1: missingFieldsString,
+								id2: tryAgain
+							}
+						)
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {}
-						data['error'] = errorMsg
-						response = JSON.stringify(data)
+						dataSentBack['error'] = errorMsg
+						response = JSON.stringify(dataSentBack)
 						break
 					}
 					const item = data.item
@@ -1162,16 +1218,20 @@ class WebBrowser extends LitElement {
 								}
 							})
 						} catch (error) {
+							let myMsg1 = get("modals.mpchange18")
+							let myMsg2 = get("walletpage.wchange44")
+							await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 							const data = {}
-							data['error'] = "Error in adding to list"
+							data['error'] = "Error in delete list."
 							response = JSON.stringify(data)
 						} finally {
 							break
 						}
 					} else {
-						const data = {}
-						data['error'] = "User declined add to list"
-						response = JSON.stringify(data)
+						let myMsg1 = get("transactions.declined")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("DECLINED_REQUEST", { id1: myMsg1, id2: myMsg2 })
+						response = '{"error": "User declined request"}'
 						break
 					}
 				}
@@ -1193,15 +1253,20 @@ class WebBrowser extends LitElement {
 							list = list.map((friend) => friend.name || "")
 							response = JSON.stringify(list)
 						} catch (error) {
+							let myMsg1 = get("modals.mpchange19")
+							let myMsg2 = get("walletpage.wchange44")
+							await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 							const data = {}
-							data['error'] = "Error in retrieving friends list"
+							data['error'] = "Error in retrieving friends list."
 							response = JSON.stringify(data)
+						} finally {
+							break
 						}
-						break
 					} else {
-						const data = {}
-						data['error'] = "User declined to share friends list"
-						response = JSON.stringify(data)
+						let myMsg1 = get("transactions.declined")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("DECLINED_REQUEST", { id1: myMsg1, id2: myMsg2 })
+						response = '{"error": "User declined request"}'
 						break
 					}
 				}
@@ -1244,11 +1309,17 @@ class WebBrowser extends LitElement {
 				case actions.SET_TAB_NOTIFICATIONS: {
 					const { count } = data
 					if (isNaN(count)) {
-						response['error'] = 'count is not a number'
+						let myMsg1 = get("modals.mpchange20")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
+						response['error'] = 'Count is not a number.'
 						break
 					}
 					if (count === undefined) {
-						response['error'] = 'missing count'
+						let myMsg1 = get("modals.mpchange21")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
+						response['error'] = 'Missing count.'
 						break
 					}
 					window.parent.reduxStore.dispatch(window.parent.reduxAction.setTabNotifications({
@@ -1263,6 +1334,7 @@ class WebBrowser extends LitElement {
 					// optional fields: encrypt:boolean recipientPublicKey:string
 					const requiredFields = ['service', 'name']
 					const missingFields = []
+					let dataSentBack = {}
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
@@ -1270,15 +1342,25 @@ class WebBrowser extends LitElement {
 					})
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
+						const tryAgain = get("walletpage.wchange44")
+						await showErrorAndWait(
+							"MISSING_FIELDS",
+							{
+								id1: missingFieldsString,
+								id2: tryAgain
+							}
+						)
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {}
-						data['error'] = errorMsg
-						response = JSON.stringify(data)
+						dataSentBack['error'] = errorMsg
+						response = JSON.stringify(dataSentBack)
 						break
 					}
 					if (!data.file && !data.data64) {
+						let myMsg1 = get("modals.mpchange22")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 						let data = {}
-						data['error'] = "No data or file was submitted"
+						data['error'] = "No data or file was submitted."
 						response = JSON.stringify(data)
 						break
 					}
@@ -1301,14 +1383,20 @@ class WebBrowser extends LitElement {
 						identifier = 'default'
 					}
 					if (data.encrypt && (!data.publicKeys || (Array.isArray(data.publicKeys) && data.publicKeys.length === 0))) {
+						let myMsg1 = get("modals.mpchange23")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 						let data = {}
-						data['error'] = "Encrypting data requires public keys"
+						data['error'] = "Encrypting data requires public keys."
 						response = JSON.stringify(data)
 						break
 					}
 					if (!data.encrypt && data.service.endsWith("_PRIVATE")) {
+						let myMsg1 = get("modals.mpchange24")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 						let data = {}
-						data['error'] = "Only encrypted data can go into private services"
+						data['error'] = "Only encrypted data can go into private services."
 						response = JSON.stringify(data)
 						break
 					}
@@ -1326,8 +1414,11 @@ class WebBrowser extends LitElement {
 								data64 = encryptDataResponse
 							}
 						} catch (error) {
+							let myMsg1 = get("modals.mpchange25")
+							let myMsg2 = get("walletpage.wchange44")
+							await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 							const obj = {}
-							obj['error'] = error.message || 'Upload failed due to failed encryption'
+							obj['error'] = error.message ? error.message : get("modals.mpchange25")
 							response = JSON.stringify(obj)
 							break
 						}
@@ -1376,9 +1467,12 @@ class WebBrowser extends LitElement {
 							response = JSON.stringify(resPublish)
 							worker.terminate()
 						} catch (error) {
+							let myMsg1 = get("modals.mpchange26")
+							let myMsg2 = get("walletpage.wchange44")
+							await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 							worker.terminate()
 							const obj = {}
-							obj['error'] = error.message || 'Upload failed'
+							obj['error'] = error.message ? error.message : get("modals.mpchange26")
 							response = JSON.stringify(obj)
 							console.error(error)
 							break
@@ -1386,6 +1480,9 @@ class WebBrowser extends LitElement {
 							this.loader.hide()
 						}
 					} else if (res2.action === 'reject') {
+						let myMsg1 = get("transactions.declined")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("DECLINED_REQUEST", { id1: myMsg1, id2: myMsg2 })
 						response = '{"error": "User declined request"}'
 					}
 					// Params: data.service, data.name, data.identifier, data.data64,
@@ -1399,6 +1496,7 @@ class WebBrowser extends LitElement {
 					const requiredFields = ['resources']
 					const missingFields = []
 					let feeAmount = null
+					let dataSentBack = {}
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
@@ -1406,28 +1504,44 @@ class WebBrowser extends LitElement {
 					})
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
+						const tryAgain = get("walletpage.wchange44")
+						await showErrorAndWait(
+							"MISSING_FIELDS",
+							{
+								id1: missingFieldsString,
+								id2: tryAgain
+							}
+						)
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {}
-						data['error'] = errorMsg
-						response = JSON.stringify(data)
+						dataSentBack['error'] = errorMsg
+						response = JSON.stringify(dataSentBack)
 						break
 					}
 					const resources = data.resources
 					if (!Array.isArray(resources)) {
+						let myMsg1 = get("modals.mpchange27")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 						let data = {}
-						data['error'] = "Invalid data"
+						data['error'] = "Invalid data."
 						response = JSON.stringify(data)
 						break
 					}
 					if (resources.length === 0) {
+						let myMsg1 = get("modals.mpchange28")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 						let data = {}
-						data['error'] = "No resources to publish"
+						data['error'] = "No resources to publish."
 						response = JSON.stringify(data)
 						break
 					}
 					if (data.encrypt && (!data.publicKeys || (Array.isArray(data.publicKeys) && data.publicKeys.length === 0))) {
+						let myMsg1 = get("modals.mpchange23")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 						let data = {}
-						data['error'] = "Encrypting data requires public keys"
+						data['error'] = "Encrypting data requires public keys."
 						response = JSON.stringify(data)
 						break
 					}
@@ -1442,6 +1556,9 @@ class WebBrowser extends LitElement {
 						}
 					)
 					if (res2.action === 'reject') {
+						let myMsg1 = get("transactions.declined")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("DECLINED_REQUEST", { id1: myMsg1, id2: myMsg2 })
 						response = '{"error": "User declined request"}'
 						break
 
@@ -1492,7 +1609,7 @@ class WebBrowser extends LitElement {
 								identifier = 'default'
 							}
 							if (!data.encrypt && service.endsWith("_PRIVATE")) {
-								const errorMsg = "Only encrypted data can go into private services"
+								const errorMsg = get("modals.mpchange24")
 								failedPublishesIdentifiers.push({
 									reason: errorMsg,
 									identifier: resource.identifier
@@ -1511,7 +1628,7 @@ class WebBrowser extends LitElement {
 										data64 = encryptDataResponse
 									}
 								} catch (error) {
-									const errorMsg = error.message || 'Upload failed due to failed encryption'
+									const errorMsg = error.message ? error.message : get("modals.mpchange25")
 									failedPublishesIdentifiers.push({
 										reason: errorMsg,
 										identifier: resource.identifier
@@ -1555,7 +1672,7 @@ class WebBrowser extends LitElement {
 								})
 							} catch (error) {
 								worker.terminate()
-								const errorMsg = error.message || 'Upload failed'
+								const errorMsg = error.message ? error.message : get("modals.mpchange26")
 								failedPublishesIdentifiers.push({
 									reason: errorMsg,
 									identifier: resource.identifier
@@ -1563,14 +1680,16 @@ class WebBrowser extends LitElement {
 							}
 						} catch (error) {
 							failedPublishesIdentifiers.push({
-								reason: "Unknown error",
+								reason: get("modals.mpchange29"),
 								identifier: resource.identifier
 							})
 						}
 					}
 					this.loader.hide()
 					if (failedPublishesIdentifiers.length > 0) {
-						response = failedPublishesIdentifiers
+						let myMsg1 = failedPublishesIdentifiers
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 						const obj = {}
 						obj['error'] = {
 							unsuccessfulPublishes: failedPublishesIdentifiers
@@ -1586,6 +1705,7 @@ class WebBrowser extends LitElement {
 				case actions.VOTE_ON_POLL: {
 					const requiredFields = ['pollName', 'optionIndex']
 					const missingFields = []
+					let dataSentBack = {}
 					requiredFields.forEach((field) => {
 						if (!data[field] && data[field] !== 0) {
 							missingFields.push(field)
@@ -1593,10 +1713,17 @@ class WebBrowser extends LitElement {
 					})
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
+						const tryAgain = get("walletpage.wchange44")
+						await showErrorAndWait(
+							"MISSING_FIELDS",
+							{
+								id1: missingFieldsString,
+								id2: tryAgain
+							}
+						)
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {}
-						data['error'] = errorMsg
-						response = JSON.stringify(data)
+						dataSentBack['error'] = errorMsg
+						response = JSON.stringify(dataSentBack)
 						break
 					}
 					const pollName = data.pollName
@@ -1608,14 +1735,20 @@ class WebBrowser extends LitElement {
 							url: `/polls/${encodeURIComponent(pollName)}`
 						})
 					} catch (error) {
-						const errorMsg = (error && error.message) || 'Poll not found'
+						let myMsg1 = get("modals.mpchange30")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
+						const errorMsg = (error && error.message) || get("modals.mpchange30")
 						let obj = {}
 						obj['error'] = errorMsg
 						response = JSON.stringify(obj)
 						break
 					}
 					if (!pollInfo || pollInfo.error) {
-						const errorMsg = (pollInfo && pollInfo.message) || 'Poll not found'
+						let myMsg1 = get("modals.mpchange30")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
+						const errorMsg = (pollInfo && pollInfo.message) || 'Poll not found.'
 						let obj = {}
 						obj['error'] = errorMsg
 						response = JSON.stringify(obj)
@@ -1626,8 +1759,11 @@ class WebBrowser extends LitElement {
 						const resVoteOnPoll = await this._voteOnPoll(pollName, optionIndex)
 						response = JSON.stringify(resVoteOnPoll)
 					} catch (error) {
+						let myMsg1 = get("modals.mpchange31")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 						const obj = {}
-						obj['error'] = error.message || 'Failed to vote on the poll.'
+						obj['error'] = error.message ? error.message : get("modals.mpchange31")
 						response = JSON.stringify(obj)
 					} finally {
 						this.loader.hide()
@@ -1638,6 +1774,7 @@ class WebBrowser extends LitElement {
 				case actions.CREATE_POLL: {
 					const requiredFields = ['pollName', 'pollDescription', 'pollOptions', 'pollOwnerAddress']
 					const missingFields = []
+					let dataSentBack = {}
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
@@ -1645,10 +1782,17 @@ class WebBrowser extends LitElement {
 					})
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
+						const tryAgain = get("walletpage.wchange44")
+						await showErrorAndWait(
+							"MISSING_FIELDS",
+							{
+								id1: missingFieldsString,
+								id2: tryAgain
+							}
+						)
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {}
-						data['error'] = errorMsg
-						response = JSON.stringify(data)
+						dataSentBack['error'] = errorMsg
+						response = JSON.stringify(dataSentBack)
 						break
 					}
 					const pollName = data.pollName
@@ -1660,8 +1804,11 @@ class WebBrowser extends LitElement {
 						const resCreatePoll = await this._createPoll(pollName, pollDescription, pollOptions, pollOwnerAddress)
 						response = JSON.stringify(resCreatePoll)
 					} catch (error) {
+						let myMsg1 = get("modals.mpchange32")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 						const obj = {}
-						obj['error'] = error.message || 'Failed to created poll.'
+						obj['error'] = error.message ? error.message : get("modals.mpchange32")
 						response = JSON.stringify(obj)
 					} finally {
 						this.loader.hide()
@@ -1671,6 +1818,9 @@ class WebBrowser extends LitElement {
 
 				case actions.OPEN_NEW_TAB: {
 					if (!data.qortalLink) {
+						let myMsg1 = get("modals.mpchange33")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 						const obj = {}
 						obj['error'] = 'Please enter a qortal link - qortal://...'
 						response = JSON.stringify(obj)
@@ -1681,9 +1831,11 @@ class WebBrowser extends LitElement {
 						response = true
 						break
 					} catch (error) {
-						console.log('error', error)
+						let myMsg1 = get("modals.mpchange34")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 						const obj = {}
-						obj['error'] = "Invalid qortal link"
+						obj['error'] = "Invalid qortal link."
 						response = JSON.stringify(obj)
 						break
 					}
@@ -1739,11 +1891,17 @@ class WebBrowser extends LitElement {
 							this.updateLastNotification(id)
 							break
 						} else {
-							throw new Error(`invalid data`)
+							let myMsg1 = get("modals.mpchange27")
+							let myMsg2 = get("walletpage.wchange44")
+							await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
+							throw new Error(`invalid data.`)
 						}
 					} catch (error) {
+						let myMsg1 = get("modals.mpchange35")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 						const obj = {}
-						obj['error'] = error.message || "error in pushing notification"
+						obj['error'] = error.message ? error.message : get("modals.mpchange35")
 						response = JSON.stringify(obj)
 						break
 					}
@@ -1824,9 +1982,15 @@ class WebBrowser extends LitElement {
 							if (res.signature) {
 								return res
 							} else if (res.error) {
+								let myMsg1 = res.message
+								let myMsg2 = get("walletpage.wchange44")
+								showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 								throw new Error(res.message)
 							} else {
-								throw new Error('ERROR: Could not send message')
+								let myMsg1 = get("modals.mpchange36")
+								let myMsg2 = get("walletpage.wchange44")
+								showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
+								throw new Error('ERROR: Could not send message.')
 							}
 						}
 						return await sendMessageRequest()
@@ -1858,6 +2022,9 @@ class WebBrowser extends LitElement {
 							}
 						}
 						if (!hasPublicKey && isRecipient) {
+							let myMsg1 = get("modals.mpchange37")
+							let myMsg2 = get("walletpage.wchange44")
+							await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 							response = '{"error": "Cannot send an encrypted message to this user since they do not have their publickey on chain."}'
 							break
 						}
@@ -1882,18 +2049,23 @@ class WebBrowser extends LitElement {
 							this.loader.show()
 							response = await sendMessage(stringifyMessageObject)
 						} catch (error) {
-							console.error(error)
+							let myMsg1 = get("modals.mpchange38")
+							let myMsg2 = get("walletpage.wchange44")
+							await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 							if (error.message) {
 								let data = {}
 								data['error'] = error.message
 								response = JSON.stringify(data)
 								break
 							}
-							response = '{"error": "Request could not be fulfilled"}'
+							response = '{"error": "Request could not be fulfilled."}'
 						} finally {
 							this.loader.hide()
 						}
 					} else {
+						let myMsg1 = get("transactions.declined")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("DECLINED_REQUEST", { id1: myMsg1, id2: myMsg2 })
 						response = '{"error": "User declined request"}'
 					}
 					// this.loader.show()
@@ -1907,6 +2079,7 @@ class WebBrowser extends LitElement {
 				case actions.JOIN_GROUP: {
 					const requiredFields = ['groupId']
 					const missingFields = []
+					let dataSentBack = {}
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
@@ -1914,55 +2087,98 @@ class WebBrowser extends LitElement {
 					})
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
+						const tryAgain = get("walletpage.wchange44")
+						await showErrorAndWait(
+							"MISSING_FIELDS",
+							{
+								id1: missingFieldsString,
+								id2: tryAgain
+							}
+						)
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {}
-						data['error'] = errorMsg
-						response = JSON.stringify(data)
+						dataSentBack['error'] = errorMsg
+						response = JSON.stringify(dataSentBack)
 						break
 					}
 					const groupId = data.groupId
-					let groupInfo = null
+					let groupInfo
 					try {
 						groupInfo = await parentEpml.request("apiCall", {
 							type: "api",
 							url: `/groups/${groupId}`
 						})
 					} catch (error) {
-						const errorMsg = (error && error.message) || 'Group not found'
+						let myMsg1 = get("modals.mpchange39")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
+						const errorMsg = (error && error.message) || 'Group not found.'
 						let obj = {}
 						obj['error'] = errorMsg
 						response = JSON.stringify(obj)
 						break
 					}
 					if (!groupInfo || groupInfo.error) {
-						const errorMsg = (groupInfo && groupInfo.message) || 'Group not found'
+						let myMsg1 = get("modals.mpchange39")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
+						const errorMsg = (groupInfo && groupInfo.message) || 'Group not found.'
 						let obj = {}
 						obj['error'] = errorMsg
 						response = JSON.stringify(obj)
 						break
 					}
+					const fee = await this.unitJoinFee()
 					try {
-						this.loader.show()
-						const resJoinGroup = await this._joinGroup(groupId, groupInfo.groupName)
-						response = JSON.stringify(resJoinGroup)
+						const resPermission = await showModalAndWait(
+							actions.JOIN_GROUP,
+							{
+								text1: get("modals.mpchange40"),
+								text2: `${get("modals.mpchange41")} ${groupInfo.groupName}`,
+								text3: `${get("modals.mpchange42")} ${groupId}`,
+								fee: fee
+							}
+						)
+						if (resPermission.action === 'accept') {
+							this.loader.show()
+							const resJoinGroup = await this._joinGroup(groupId, groupInfo.groupName)
+							if (resJoinGroup.signature) {
+								this.loader.hide()
+								let myMsg1 = get("modals.mpchange43")
+								await showSuccessAndWait("REQUEST_SUCCESS", { id1: myMsg1 })
+								response = JSON.stringify(resJoinGroup)
+								break
+							} else {
+								this.loader.hide()
+								let myMsg1 = get("modals.mpchange44")
+								let myMsg2 = get("walletpage.wchange44")
+								await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
+								response = '{"error": "Failed to join the group."}'
+								break
+							}
+						} else if (resPermission.action === 'reject') {
+							let myMsg1 = get("transactions.declined")
+							let myMsg2 = get("walletpage.wchange44")
+							await showErrorAndWait("DECLINED_REQUEST", { id1: myMsg1, id2: myMsg2 })
+							response = '{"error": "User declined request"}'
+							break
+						}
 					} catch (error) {
-						const obj = {}
-						obj['error'] = error.message || 'Failed to join the group.'
-						response = JSON.stringify(obj)
-					} finally {
 						this.loader.hide()
+						let myMsg1 = get("modals.mpchange44")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
+						const obj = {}
+						obj['error'] = error.message ? error.message : get("modals.mpchange44")
+						response = JSON.stringify(obj)
+						break
 					}
-					// Params: data.groupId
-					// TODO: prompt user to join group. If they confirm, sign+process a JOIN_GROUP transaction
-					// then set the response string from the core to the `response` variable (defined above)
-					// If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
-					break
 				}
 
 				case actions.SAVE_FILE: {
 					try {
 						const requiredFields = ['filename', 'blob']
 						const missingFields = []
+						let dataSentBack = {}
 						requiredFields.forEach((field) => {
 							if (!data[field]) {
 								missingFields.push(field)
@@ -1970,10 +2186,17 @@ class WebBrowser extends LitElement {
 						})
 						if (missingFields.length > 0) {
 							const missingFieldsString = missingFields.join(', ')
+							const tryAgain = get("walletpage.wchange44")
+							await showErrorAndWait(
+							"MISSING_FIELDS",
+								{
+									id1: missingFieldsString,
+									id2: tryAgain
+								}
+							)
 							const errorMsg = `Missing fields: ${missingFieldsString}`
-							let data = {}
-							data['error'] = errorMsg
-							response = JSON.stringify(data)
+							dataSentBack['error'] = errorMsg
+							response = JSON.stringify(dataSentBack)
 							break
 						}
 						const filename = data.filename
@@ -1985,6 +2208,9 @@ class WebBrowser extends LitElement {
 							}
 						)
 						if (res.action === 'reject') {
+							let myMsg1 = get("transactions.declined")
+							let myMsg2 = get("walletpage.wchange44")
+							await showErrorAndWait("DECLINED_REQUEST", { id1: myMsg1, id2: myMsg2 })
 							response = '{"error": "User declined request"}'
 							break
 						}
@@ -1996,14 +2222,20 @@ class WebBrowser extends LitElement {
 						const fileExtension = mimeToExtensionMap[mimeType] || backupExention
 						let fileHandleOptions = {}
 						if (!mimeType) {
+							let myMsg1 = get("modals.mpchange45")
+							let myMsg2 = get("walletpage.wchange44")
+							await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 							const obj = {}
-							obj['error'] = 'A mimeType could not be derived'
+							obj['error'] = 'A mime type could not be derived.'
 							response = JSON.stringify(obj)
 							break
 						}
 						if (!fileExtension) {
+							let myMsg1 = get("modals.mpchange46")
+							let myMsg2 = get("walletpage.wchange44")
+							await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 							const obj = {}
-							obj['error'] = 'A file extension could not be derived'
+							obj['error'] = 'A file extension could not be derived.'
 							response = JSON.stringify(obj)
 							break
 						}
@@ -2032,8 +2264,11 @@ class WebBrowser extends LitElement {
 							writeFile(fileHandle, blob).then(() => console.log("FILE SAVED"))
 						} catch (error) {
 							if (error.name === 'AbortError') {
+								let myMsg1 = get("modals.mpchange47")
+								let myMsg2 = get("walletpage.wchange44")
+								await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 								const obj = {}
-								obj['error'] = 'User declined the download'
+								obj['error'] = 'User declined the download.'
 								response = JSON.stringify(obj)
 								break
 							}
@@ -2041,8 +2276,11 @@ class WebBrowser extends LitElement {
 						}
 						response = JSON.stringify(true)
 					} catch (error) {
+						let myMsg1 = get("modals.mpchange48")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 						const obj = {}
-						obj['error'] = error.message || 'Failed to initiate download'
+						obj['error'] = error.message ? error.message : get("modals.mpchange48")
 						response = JSON.stringify(obj)
 					}
 					break
@@ -2051,6 +2289,7 @@ class WebBrowser extends LitElement {
 				case actions.DEPLOY_AT: {
 					const requiredFields = ['name', 'description', 'tags', 'creationBytes', 'amount', 'assetId', 'type']
 					const missingFields = []
+					let dataSentBack = {}
 					requiredFields.forEach((field) => {
 						if (!data[field] && data[field] !== 0) {
 							missingFields.push(field)
@@ -2058,10 +2297,17 @@ class WebBrowser extends LitElement {
 					})
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
+						const tryAgain = get("walletpage.wchange44")
+						await showErrorAndWait(
+							"MISSING_FIELDS",
+							{
+								id1: missingFieldsString,
+								id2: tryAgain
+							}
+						)
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {}
-						data['error'] = errorMsg
-						response = JSON.stringify(data)
+						dataSentBack['error'] = errorMsg
+						response = JSON.stringify(dataSentBack)
 						break
 					}
 					try {
@@ -2069,8 +2315,11 @@ class WebBrowser extends LitElement {
 						const resDeployAt = await this._deployAt(data.name, data.description, data.tags, data.creationBytes, data.amount, data.assetId, data.type)
 						response = JSON.stringify(resDeployAt)
 					} catch (error) {
+						let myMsg1 = get("modals.mpchange49")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 						const obj = {}
-						obj['error'] = error.message || 'Failed to join the group.'
+						obj['error'] = error.message ? error.message : get("modals.mpchange49")
 						response = JSON.stringify(obj)
 					} finally {
 						this.loader.hide()
@@ -2082,6 +2331,7 @@ class WebBrowser extends LitElement {
 					const defaultProperties = ['tagline', 'bio', 'wallets']
 					const requiredFields = ['property']
 					const missingFields = []
+					let dataSentBack = {}
 					requiredFields.forEach((field) => {
 						if (!data[field] && data[field] !== 0) {
 							missingFields.push(field)
@@ -2089,16 +2339,27 @@ class WebBrowser extends LitElement {
 					})
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
+						const tryAgain = get("walletpage.wchange44")
+						await showErrorAndWait(
+							"MISSING_FIELDS",
+							{
+								id1: missingFieldsString,
+								id2: tryAgain
+							}
+						)
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {}
-						data['error'] = errorMsg
-						response = JSON.stringify(data)
+						dataSentBack['error'] = errorMsg
+						response = JSON.stringify(dataSentBack)
 						break
 					}
 					try {
 						const profileData = window.parent.reduxStore.getState().app.profileData
 						if (!profileData) {
-							throw new Error('User does not have a profile')
+							let myMsg1 = get("modals.mpchange50")
+							let myMsg2 = get("walletpage.wchange44")
+							await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
+							response = '{"error": "User does not have a profile."}'
+							break
 						}
 						const property = data.property
 						const propertyIndex = defaultProperties.indexOf(property)
@@ -2108,7 +2369,11 @@ class WebBrowser extends LitElement {
 								response = JSON.stringify(requestedData)
 								break
 							} else {
-								throw new Error('Cannot find requested data')
+								let myMsg1 = get("modals.mpchange51")
+								let myMsg2 = get("walletpage.wchange44")
+								await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
+								response = '{"error": "Cannot find requested data."}'
+								break
 							}
 						}
 						if (property.includes('-private')) {
@@ -2123,10 +2388,18 @@ class WebBrowser extends LitElement {
 									response = JSON.stringify(requestedData)
 									break
 								} else {
-									throw new Error('Cannot find requested data')
+									let myMsg1 = get("modals.mpchange51")
+									let myMsg2 = get("walletpage.wchange44")
+									await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
+									response = '{"error": "Cannot find requested data."}'
+									break
 								}
 							} else {
-								throw new Error('User denied permission for private property')
+								let myMsg1 = get("transactions.declined")
+								let myMsg2 = get("walletpage.wchange44")
+								await showErrorAndWait("DECLINED_REQUEST", { id1: myMsg1, id2: myMsg2 })
+								response = '{"error": "User declined request"}'
+								break
 							}
 						} else {
 							const requestedData = profileData.customData[property]
@@ -2134,22 +2407,28 @@ class WebBrowser extends LitElement {
 								response = JSON.stringify(requestedData)
 								break
 							} else {
-								throw new Error('Cannot find requested data')
+								let myMsg1 = get("modals.mpchange51")
+								let myMsg2 = get("walletpage.wchange44")
+								await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
+								response = '{"error": "Cannot find requested data."}'
+								break
 							}
 						}
 					} catch (error) {
+						let myMsg1 = get("modals.mpchange52")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 						const obj = {}
-						obj['error'] = error.message || 'Failed to join the group.'
+						obj['error'] = error.message ? error.message : get("modals.mpchange52")
 						response = JSON.stringify(obj)
-					} finally {
-						this.loader.hide()
+						break
 					}
-					break
 				}
 
 				case actions.SET_PROFILE_DATA: {
 					const requiredFields = ['property', 'data']
 					const missingFields = []
+					let dataSentBack = {}
 					requiredFields.forEach((field) => {
 						if (!data[field] && data[field] !== 0) {
 							missingFields.push(field)
@@ -2157,10 +2436,17 @@ class WebBrowser extends LitElement {
 					})
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
+						const tryAgain = get("walletpage.wchange44")
+						await showErrorAndWait(
+							"MISSING_FIELDS",
+							{
+								id1: missingFieldsString,
+								id2: tryAgain
+							}
+						)
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {}
-						data['error'] = errorMsg
-						response = JSON.stringify(data)
+						dataSentBack['error'] = errorMsg
+						response = JSON.stringify(dataSentBack)
 						break
 					}
 					try {
@@ -2174,8 +2460,14 @@ class WebBrowser extends LitElement {
 								fee: fee.feeToShow
 							}
 						)
-						if (resSetPrivateProperty.action !== 'accept') throw new Error('User declined permission')
-						//dispatch event and wait until I get a response to continue
+						if (resSetPrivateProperty.action !== 'accept') {
+							let myMsg1 = get("transactions.declined")
+							let myMsg2 = get("walletpage.wchange44")
+							await showErrorAndWait("DECLINED_REQUEST", { id1: myMsg1, id2: myMsg2 })
+							response = '{"error": "User declined request"}'
+							break
+						}
+						// Dispatch event and wait until I get a response to continue
 						// Create and dispatch custom event
 						const customEvent = new CustomEvent('qortal-request-set-profile-data', {
 							detail: {
@@ -2203,14 +2495,21 @@ class WebBrowser extends LitElement {
 							// Set up an event listener to wait for the response
 							window.addEventListener('qortal-request-set-profile-data-response', handleResponseEvent)
 						})
-						if (!res.response) throw new Error('Failed to set property')
+						if (!res.response) {
+							let myMsg1 = get("modals.mpchange53")
+							let myMsg2 = get("walletpage.wchange44")
+							await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
+							response = '{"error": "Failed to set property."}'
+							break
+						}
 						response = JSON.stringify(res.response)
 					} catch (error) {
+						let myMsg1 = get("modals.mpchange53")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 						const obj = {}
-						obj['error'] = error.message || 'Failed to set property.'
+						obj['error'] = error.message ? error.message : get("modals.mpchange53")
 						response = JSON.stringify(obj)
-					} finally {
-						this.loader.hide()
 					}
 					break
 				}
@@ -2218,6 +2517,7 @@ class WebBrowser extends LitElement {
 				case actions.OPEN_PROFILE: {
 					const requiredFields = ['name']
 					const missingFields = []
+					let dataSentBack = {}
 					requiredFields.forEach((field) => {
 						if (!data[field] && data[field] !== 0) {
 							missingFields.push(field)
@@ -2225,10 +2525,17 @@ class WebBrowser extends LitElement {
 					})
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
+						const tryAgain = get("walletpage.wchange44")
+						await showErrorAndWait(
+							"MISSING_FIELDS",
+							{
+								id1: missingFieldsString,
+								id2: tryAgain
+							}
+						)
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {}
-						data['error'] = errorMsg
-						response = JSON.stringify(data)
+						dataSentBack['error'] = errorMsg
+						response = JSON.stringify(dataSentBack)
 						break
 					}
 					try {
@@ -2237,17 +2544,22 @@ class WebBrowser extends LitElement {
 						})
 						window.parent.dispatchEvent(customEvent)
 						response = JSON.stringify(true)
+						break
 					} catch (error) {
+						let myMsg1 = get("modals.mpchange54")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 						const obj = {}
-						obj['error'] = error.message || 'Failed to open profile'
+						obj['error'] = error.message ? error.message : get("modals.mpchange54")
 						response = JSON.stringify(obj)
+						break
 					}
-					break
 				}
 
 				case actions.GET_USER_WALLET: {
 					const requiredFields = ['coin']
 					const missingFields = []
+					let dataSentBack = {}
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
@@ -2255,10 +2567,17 @@ class WebBrowser extends LitElement {
 					})
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
+						const tryAgain = get("walletpage.wchange44")
+						await showErrorAndWait(
+							"MISSING_FIELDS",
+							{
+								id1: missingFieldsString,
+								id2: tryAgain
+							}
+						)
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {}
-						data['error'] = errorMsg
-						response = JSON.stringify(data)
+						dataSentBack['error'] = errorMsg
+						response = JSON.stringify(dataSentBack)
 						break
 					}
 					const res3 = await showModalAndWait(
@@ -2309,14 +2628,20 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(userWallet)
 						break
 					} else if (res3.action === 'reject') {
+						let myMsg1 = get("transactions.declined")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("DECLINED_REQUEST", { id1: myMsg1, id2: myMsg2 })
 						response = '{"error": "User declined request"}'
+						break
 					}
-					break
 				}
 
 				case actions.GET_WALLET_BALANCE: {
 					const requiredFields = ['coin']
 					const missingFields = []
+					let dataSentBack = {}
+					let skip = false
+					let res3
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
@@ -2324,20 +2649,32 @@ class WebBrowser extends LitElement {
 					})
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
+						const tryAgain = get("walletpage.wchange44")
+						await showErrorAndWait(
+							"MISSING_FIELDS",
+							{
+								id1: missingFieldsString,
+								id2: tryAgain
+							}
+						)
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {}
-						data['error'] = errorMsg
-						response = JSON.stringify(data)
+						dataSentBack['error'] = errorMsg
+						response = JSON.stringify(dataSentBack)
 						break
 					}
 					// Params: data.coin (QORT / BTC / LTC / DOGE / DGB / RVN / ARRR)
 					// TODO: prompt user to share wallet balance. If they confirm, call `GET /crosschain/:coin/walletbalance`, or for QORT, call `GET /addresses/balance/:address`
 					// then set the response string from the core to the `response` variable (defined above)
 					// If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
-					const res3 = await showModalAndWait(
-						actions.GET_WALLET_BALANCE
-					)
-					if (res3.action === 'accept') {
+					if (window.parent.reduxStore.getState().app.qAPPAutoBalance) {
+						skip = true
+					}
+					if (!skip) {
+						res3 = await showModalAndWait(
+							actions.GET_WALLET_BALANCE
+						)
+					}
+					if ((res3 && res3.action === 'accept') || skip) {
 						let coin = data.coin
 						if (coin === "QORT") {
 							let qortAddress = window.parent.reduxStore.getState().app.selectedAddress.address
@@ -2346,14 +2683,14 @@ class WebBrowser extends LitElement {
 								response = await parentEpml.request('apiCall', {
 									url: `/addresses/balance/${qortAddress}?apiKey=${this.getApiKey()}`
 								})
-
-
 							} catch (error) {
-								console.error(error)
+								this.loader.hide()
+								let myMsg1 = get("browserpage.bchange21")
+								let myMsg2 = get("walletpage.wchange44")
+								await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 								const data = {}
-								data['error'] = error.message || get("browserpage.bchange21")
+								data['error'] = error.message ? error.message : get("browserpage.bchange21")
 								response = JSON.stringify(data)
-
 							} finally {
 								this.loader.hide()
 							}
@@ -2396,6 +2733,10 @@ class WebBrowser extends LitElement {
 									body: _body
 								})
 								if (isNaN(Number(res))) {
+									this.loader.hide()
+									let myMsg1 = get("browserpage.bchange21")
+									let myMsg2 = get("walletpage.wchange44")
+									await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 									const data = {}
 									data['error'] = get("browserpage.bchange21")
 									response = JSON.stringify(data)
@@ -2404,9 +2745,12 @@ class WebBrowser extends LitElement {
 									response = (Number(res) / 1e8).toFixed(8)
 								}
 							} catch (error) {
-								console.error(error)
+								this.loader.hide()
+								let myMsg1 = get("browserpage.bchange21")
+								let myMsg2 = get("walletpage.wchange44")
+								await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 								const data = {}
-								data['error'] = error.message || get("browserpage.bchange21")
+								data['error'] = error.message ? error.message : get("browserpage.bchange21")
 								response = JSON.stringify(data)
 								return
 							} finally {
@@ -2414,6 +2758,9 @@ class WebBrowser extends LitElement {
 							}
 						}
 					} else if (res3.action === 'reject') {
+						let myMsg1 = get("transactions.declined")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("DECLINED_REQUEST", { id1: myMsg1, id2: myMsg2 })
 						response = '{"error": "User declined request"}'
 					}
 					break
@@ -2422,6 +2769,7 @@ class WebBrowser extends LitElement {
 				case actions.GET_USER_WALLET_INFO: {
 					const requiredFields = ['coin']
 					const missingFields = []
+					let dataSentBack = {}
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
@@ -2429,10 +2777,17 @@ class WebBrowser extends LitElement {
 					})
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
+						const tryAgain = get("walletpage.wchange44")
+						await showErrorAndWait(
+							"MISSING_FIELDS",
+							{
+								id1: missingFieldsString,
+								id2: tryAgain
+							}
+						)
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {}
-						data['error'] = errorMsg
-						response = JSON.stringify(data)
+						dataSentBack['error'] = errorMsg
+						response = JSON.stringify(dataSentBack)
 						break
 					}
 					const userWallet = await showModalAndWait(
@@ -2457,22 +2812,30 @@ class WebBrowser extends LitElement {
 							})
 							response = JSON.stringify(res)
 						} catch (error) {
-							console.error(error)
+							this.loader.hide()
+							let myMsg1 = get("browserpage.bchange21")
+							let myMsg2 = get("walletpage.wchange44")
+							await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 							const data = {}
-							data['error'] = error.message || get("browserpage.bchange21")
+							data['error'] = error.message ? error.message : get("browserpage.bchange21")
 							response = JSON.stringify(data)
 							return
 						} finally {
 							this.loader.hide()
 						}
 					} else if (userWallet.action === 'reject') {
+						let myMsg1 = get("transactions.declined")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("DECLINED_REQUEST", { id1: myMsg1, id2: myMsg2 })
 						response = '{"error": "User declined request"}'
 					}
 					break
 				}
+
 				case actions.GET_CROSSCHAIN_SERVER_INFO: {
 					const requiredFields = ['coin']
 					const missingFields = []
+					let dataSentBack = {}
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
@@ -2480,10 +2843,17 @@ class WebBrowser extends LitElement {
 					})
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
+						const tryAgain = get("walletpage.wchange44")
+						await showErrorAndWait(
+							"MISSING_FIELDS",
+							{
+								id1: missingFieldsString,
+								id2: tryAgain
+							}
+						)
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {}
-						data['error'] = errorMsg
-						response = JSON.stringify(data)
+						dataSentBack['error'] = errorMsg
+						response = JSON.stringify(dataSentBack)
 						break
 					}
 					let _url = `/crosschain/` + data.coin.toLowerCase() + `/serverinfos`
@@ -2498,9 +2868,12 @@ class WebBrowser extends LitElement {
 						})
 						response = JSON.stringify(res.servers)
 					} catch (error) {
-						console.error(error)
+						this.loader.hide()
+						let myMsg1 = get("modals.mpchange55")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 						const data = {}
-						data['error'] = error.message || 'Error in retrieving server info'
+						data['error'] = error.message ? error.message : get("modals.mpchange55")
 						response = JSON.stringify(data)
 						return
 					} finally {
@@ -2512,6 +2885,7 @@ class WebBrowser extends LitElement {
 				case actions.GET_TX_ACTIVITY_SUMMARY: {
 					const requiredFields = ['coin']
 					const missingFields = []
+					let dataSentBack = {}
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
@@ -2519,10 +2893,17 @@ class WebBrowser extends LitElement {
 					})
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
+						const tryAgain = get("walletpage.wchange44")
+						await showErrorAndWait(
+							"MISSING_FIELDS",
+							{
+								id1: missingFieldsString,
+								id2: tryAgain
+							}
+						)
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {}
-						data['error'] = errorMsg
-						response = JSON.stringify(data)
+						dataSentBack['error'] = errorMsg
+						response = JSON.stringify(dataSentBack)
 						break
 					}
 					try {
@@ -2537,8 +2918,11 @@ class WebBrowser extends LitElement {
 							}
 						})
 					} catch (error) {
+						let myMsg1 = get("modals.mpchange56")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 						const data = {}
-						data['error'] = "Error in tx activity summary"
+						data['error'] = error.message ? error.message : get("modals.mpchange56")
 						response = JSON.stringify(data)
 					} finally {
 						break
@@ -2548,17 +2932,25 @@ class WebBrowser extends LitElement {
 				case actions.GET_FOREIGN_FEE: {
 					const requiredFields = ['coin','type']
 					const missingFields = []
+					let dataSentBack = {}
 		  			requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
 						}
 					})
-		  			if (missingFields.length > 0) {
+					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
+						const tryAgain = get("walletpage.wchange44")
+						await showErrorAndWait(
+							"MISSING_FIELDS",
+							{
+								id1: missingFieldsString,
+								id2: tryAgain
+							}
+						)
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {}
-						data['error'] = errorMsg
-						response = JSON.stringify(data)
+						dataSentBack['error'] = errorMsg
+						response = JSON.stringify(dataSentBack)
 						break
 					}
 					try {
@@ -2574,8 +2966,11 @@ class WebBrowser extends LitElement {
 							},
 						})
 					} catch (error) {
+						let myMsg1 = get("modals.mpchange57")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 						const data = {}
-						data['error'] = "Error in get foreign fee"
+						data['error'] = error.message ? error.message : get("modals.mpchange57")
 						response = JSON.stringify(data)
 					} finally {
 						break
@@ -2585,6 +2980,7 @@ class WebBrowser extends LitElement {
 				case actions.UPDATE_FOREIGN_FEE: {
 					const requiredFields = ['coin','type']
 					const missingFields = []
+					let dataSentBack = {}
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
@@ -2592,10 +2988,17 @@ class WebBrowser extends LitElement {
 					})
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
+						const tryAgain = get("walletpage.wchange44")
+						await showErrorAndWait(
+							"MISSING_FIELDS",
+							{
+								id1: missingFieldsString,
+								id2: tryAgain
+							}
+						)
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {}
-						data['error'] = errorMsg
-						response = JSON.stringify(data)
+						dataSentBack['error'] = errorMsg
+						response = JSON.stringify(dataSentBack)
 						break
 					}
 					try {
@@ -2613,8 +3016,11 @@ class WebBrowser extends LitElement {
 							body: `${value}`
 						})
 					} catch (error) {
+						let myMsg1 = get("modals.mpchange58")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 						const data = {}
-						data['error'] = "Error in update foreign fee"
+						data['error'] = error.message ? error.message : get("modals.mpchange58")
 						response = JSON.stringify(data)
 					} finally {
 						break
@@ -2624,6 +3030,7 @@ class WebBrowser extends LitElement {
 				case actions.GET_SERVER_CONNECTION_HISTORY: {
 					const requiredFields = ['coin']
 					const missingFields = []
+					let dataSentBack = {}
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
@@ -2631,10 +3038,17 @@ class WebBrowser extends LitElement {
 					})
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
+						const tryAgain = get("walletpage.wchange44")
+						await showErrorAndWait(
+							"MISSING_FIELDS",
+							{
+								id1: missingFieldsString,
+								id2: tryAgain
+							}
+						)
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {}
-						data['error'] = errorMsg
-						response = JSON.stringify(data)
+						dataSentBack['error'] = errorMsg
+						response = JSON.stringify(dataSentBack)
 						break
 					}
 					try {
@@ -2649,8 +3063,11 @@ class WebBrowser extends LitElement {
 							},
 						})
 					} catch (error) {
+						let myMsg1 = get("modals.mpchange59")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 						const data = {}
-						data['error'] = "Error in get server connection history"
+						data['error'] = error.message ? error.message : get("modals.mpchange59")
 						response = JSON.stringify(data)
 					} finally {
 						break
@@ -2660,6 +3077,7 @@ class WebBrowser extends LitElement {
 				case actions.SET_CURRENT_FOREIGN_SERVER: {
 					const requiredFields = ['coin']
 					const missingFields = []
+					let dataSentBack = {}
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
@@ -2667,10 +3085,17 @@ class WebBrowser extends LitElement {
 					})
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
+						const tryAgain = get("walletpage.wchange44")
+						await showErrorAndWait(
+							"MISSING_FIELDS",
+							{
+								id1: missingFieldsString,
+								id2: tryAgain
+							}
+						)
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {}
-						data['error'] = errorMsg
-						response = JSON.stringify(data)
+						dataSentBack['error'] = errorMsg
+						response = JSON.stringify(dataSentBack)
 						break
 					}
 					try {
@@ -2695,8 +3120,11 @@ class WebBrowser extends LitElement {
 							body: `${bodyToString}`
 						})
 					} catch (error) {
+						let myMsg1 = get("modals.mpchange60")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 						const data = {}
-						data['error'] = "Error in set current server"
+						data['error'] = error.message ? error.message : get("modals.mpchange60")
 						response = JSON.stringify(data)
 					} finally {
 						break
@@ -2706,6 +3134,7 @@ class WebBrowser extends LitElement {
 				case actions.ADD_FOREIGN_SERVER: {
 					const requiredFields = ['coin']
 					const missingFields = []
+					let dataSentBack = {}
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
@@ -2713,10 +3142,17 @@ class WebBrowser extends LitElement {
 					})
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
+						const tryAgain = get("walletpage.wchange44")
+						await showErrorAndWait(
+							"MISSING_FIELDS",
+							{
+								id1: missingFieldsString,
+								id2: tryAgain
+							}
+						)
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {}
-						data['error'] = errorMsg
-						response = JSON.stringify(data)
+						dataSentBack['error'] = errorMsg
+						response = JSON.stringify(dataSentBack)
 						break
 					}
 					try {
@@ -2741,8 +3177,11 @@ class WebBrowser extends LitElement {
 							body: `${bodyToString}`
 						})
 					} catch (error) {
+						let myMsg1 = get("modals.mpchange61")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 						const data = {}
-						data['error'] = "Error in add server"
+						data['error'] = error.message ? error.message : get("modals.mpchange61")
 						response = JSON.stringify(data)
 					} finally {
 						break
@@ -2752,6 +3191,7 @@ class WebBrowser extends LitElement {
 				case actions.REMOVE_FOREIGN_SERVER: {
 					const requiredFields = ['coin']
 					const missingFields = []
+					let dataSentBack = {}
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
@@ -2759,10 +3199,17 @@ class WebBrowser extends LitElement {
 					})
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
+						const tryAgain = get("walletpage.wchange44")
+						await showErrorAndWait(
+							"MISSING_FIELDS",
+							{
+								id1: missingFieldsString,
+								id2: tryAgain
+							}
+						)
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						let data = {}
-						data['error'] = errorMsg
-						response = JSON.stringify(data)
+						dataSentBack['error'] = errorMsg
+						response = JSON.stringify(dataSentBack)
 						break
 					}
 					try {
@@ -2787,8 +3234,11 @@ class WebBrowser extends LitElement {
 							body: `${bodyToString}`
 						})
 					} catch (error) {
+						let myMsg1 = get("modals.mpchange62")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 						const data = {}
-						data['error'] = "Error in remove server"
+						data['error'] = error.message ? error.message : get("modals.mpchange62")
 						response = JSON.stringify(data)
 					} finally {
 						break
@@ -2802,8 +3252,11 @@ class WebBrowser extends LitElement {
 							url: `/admin/summary?apiKey=${this.getApiKey()}`
 						})
 					} catch (error) {
+						let myMsg1 = get("modals.mpchange63")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 						const data = {}
-						data['error'] = "Error in retrieving summary"
+						data['error'] = error.message ? error.message : get("modals.mpchange63")
 						response = JSON.stringify(data)
 					} finally {
 						break
@@ -2816,26 +3269,29 @@ class WebBrowser extends LitElement {
 					const requiredFields = ['unsignedBytes']
 					const missingFields = []
 					let dataSentBack = {}
-
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
 						}
 					})
-
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
+						const tryAgain = get("walletpage.wchange44")
+						await showErrorAndWait(
+							"MISSING_FIELDS",
+							{
+								id1: missingFieldsString,
+								id2: tryAgain
+							}
+						)
 						const errorMsg = `Missing fields: ${missingFieldsString}`
 						dataSentBack['error'] = errorMsg
 						response = JSON.stringify(dataSentBack)
 						break
 					}
-
-					const shouldProcess = data.process || false
-
+					const shouldProcess = data.process ? data.process : false
 					let url = `${signUrl}/transactions/decode?ignoreValidityChecks=false`
 					let body = data.unsignedBytes
-
 					const resDecode = await fetch(url, {
 						method: "POST",
 						headers: {
@@ -2843,30 +3299,25 @@ class WebBrowser extends LitElement {
 						},
 						body: body
 					})
-
 					if (!resDecode.ok) {
-						let myMsg1 = "Failed to decode transaction."
+						let myMsg1 = get("modals.mpchange64")
 						let myMsg2 = get("walletpage.wchange44")
-						await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 						response = '{"error": "Failed to decode transaction."}'
 						break
 					}
-
 					const decodedData = await resDecode.json()
-
 					const signRequest = await showModalAndWait(
 						actions.SIGN_TRANSACTION,
 						{
-							text1: `Do you give this application permission to ${ shouldProcess ? 'SIGN and PROCESS' : 'SIGN' } a transaction?`,
-							text2: "Read the transaction carefully before accepting!",
-							text3: `Tx type: ${decodedData.type}`,
-							json: `TX Data: ${decodedData}`
+							text1: `${shouldProcess ? get("modals.mpchange65") : get("modals.mpchange6")}`,
+							text2: get("modals.mpchange67"),
+							text3: `${get("modals.mpchange68")} ${decodedData.type}`,
+							json: `${get("modals.mpchange69")} ${decodedData}`
 						}
 					)
-
 					if (signRequest.action === 'accept') {
 						let urlConverted = `${signUrl}/transactions/convert`
-
 						const responseConverted = await fetch(urlConverted, {
 							method: "POST",
 							headers: {
@@ -2874,81 +3325,69 @@ class WebBrowser extends LitElement {
 							},
 							body: data.unsignedBytes
 						})
-
 						const keyPair = window.parent.reduxStore.getState().app.selectedAddress.keyPair
 						const convertedBytes = await responseConverted.text()
 						const txBytes = Base58.decode(data.unsignedBytes)
-
 						const _arbitraryBytesBuffer = Object.keys(txBytes).map(function (key) {
 							return txBytes[key]
 						})
-
 						const arbitraryBytesBuffer = new Uint8Array(_arbitraryBytesBuffer)
 						const txByteSigned = Base58.decode(convertedBytes)
-
 						const _bytesForSigningBuffer = Object.keys(txByteSigned).map(function (key) {
 							return txByteSigned[key]
 						})
-
 						const bytesForSigningBuffer = new Uint8Array(_bytesForSigningBuffer)
-
 						const signature = nacl.sign.detached(
 							bytesForSigningBuffer,
 							keyPair.privateKey
 						)
-
 						const signedBytes = appendBuffer(arbitraryBytesBuffer, signature)
 						const signedBytesToBase58 = Base58.encode(signedBytes)
-
 						if(!shouldProcess) {
-							let myMsg1 = "Process transaction was not requested!"
-							let myMsg2 = "Signed bytes are: " + signedBytesToBase58
-							await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+							let myMsg1 = get("modals.mpchange70")
+							let myMsg2 = get("modals.mpchange71") + signedBytesToBase58
+							await showSuccessAndWait("REQUEST_SUCCESS", { id1: myMsg1, id2: myMsg2 })
 							response = '{"error": "Process transaction was not requested!"}'
 							break
 						}
-
 						try {
 							this.loader.show()
-
 							const res = await processTransactionV2(signedBytesToBase58)
-
 							if (res.signature) {
 								this.loader.hide()
-								let myMsg1 = "Transaction signed and processed successfully!"
-								let myMsg2 = ""
-								await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+								let myMsg1 = get("modals.mpchange72")
+								await showSuccessAndWait("REQUEST_SUCCESS", { id1: myMsg1 })
 								response = '{"success": "Transaction signed and processed successfully!"}'
 								break
 							} else {
 								this.loader.hide()
-								let myMsg1 = "Transaction was not able to be processed"
+								let myMsg1 = get("modals.mpchange73")
 								let myMsg2 = get("walletpage.wchange44")
-								await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+								await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 								response = '{"error": "Transaction was not able to be processed."}'
 								break
 							}
-
 						} catch (error) {
 							this.loader.hide()
 							let myMsg1 = get("managegroup.mg58")
 							let myMsg2 = get("walletpage.wchange44")
-							await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+							await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 							response = '{"error": "Transaction was not able to be processed."}'
 							break
 						}
 					} else if (signRequest.action === 'reject') {
 						let myMsg1 = get("transactions.declined")
 						let myMsg2 = get("walletpage.wchange44")
-						await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+						await showErrorAndWait("DECLINED_REQUEST", { id1: myMsg1, id2: myMsg2 })
 						response = '{"error": "User declined request"}'
 						break
 					}
 				}
 
 				case actions.SEND_COIN: {
-					const requiredFields = ['coin', 'destinationAddress', 'amount']
+					const requiredFields = ['coin', 'amount']
 					const missingFields = []
+					let dataSentBack = {}
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
@@ -2956,11 +3395,23 @@ class WebBrowser extends LitElement {
 					})
 					if (missingFields.length > 0) {
 						const missingFieldsString = missingFields.join(', ')
+						const tryAgain = get("walletpage.wchange44")
+						await showErrorAndWait(
+							"MISSING_FIELDS",
+							{
+								id1: missingFieldsString,
+								id2: tryAgain
+							}
+						)
 						const errorMsg = `Missing fields: ${missingFieldsString}`
-						await showErrorAndWait("MISSING_FIELDS", errorMsg)
-						let data = {}
-						data['error'] = errorMsg
-						response = JSON.stringify(data)
+						dataSentBack['error'] = errorMsg
+						response = JSON.stringify(dataSentBack)
+						break
+					}
+					if (!data.destinationAddress && !data.recipient) {
+						const missingFieldsString = "destinationAddress or recipient"
+						const tryAgain = get("walletpage.wchange44")
+						await showErrorAndWait("MISSING_FIELDS", { id1: missingFieldsString, id2: tryAgain })
 						break
 					}
 					let checkCoin = data.coin
@@ -2970,16 +3421,16 @@ class WebBrowser extends LitElement {
 						// then set the response string from the core to the `response` variable (defined above)
 						// If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
 						const amount = Number(data.amount)
-						const recipient = data.destinationAddress
+						const recipient = data.destinationAddress ? data.destinationAddress : data.recipient
 						const coin = data.coin
 						const walletBalance = await parentEpml.request('apiCall', {
 							url: `/addresses/balance/${this.myAddress.address}`
 						})
 						if (isNaN(Number(walletBalance))) {
-							let errorMsg = "Failed to Fetch QORT Balance. Try again!"
+							let errorMsg = get("modals.mpchange74")
 							let failedMsg = get("walletpage.wchange33") + " QORT " + get("general.balance")
 							let pleaseMsg = get("walletpage.wchange44")
-							await showErrorAndWait("FAILED_FETCH", failedMsg, pleaseMsg)
+							await showErrorAndWait("ACTION_FAILED", { id1: errorMsg, id2: failedMsg, id3: pleaseMsg })
 							let obj = {}
 							obj['error'] = errorMsg
 							response = JSON.stringify(obj)
@@ -2995,28 +3446,30 @@ class WebBrowser extends LitElement {
 						const balance = (Number(transformDecimals) / 1e8).toFixed(8)
 						const fee = await this.sendQortFee()
 						if (amountDecimals + (fee * QORT_DECIMALS) > walletBalanceDecimals) {
-							let errorMsg = "Insufficient Funds!"
-							let failedMsg = get("walletpage.wchange26")
-							let pleaseMsg = get("walletpage.wchange44")
-							await showErrorAndWait("INSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
+							let myMsg1 = get("chatpage.cchange51")
+							let myMsg2 = get("walletpage.wchange26")
+							let myMsg3 = get("walletpage.wchange44")
+							await showErrorAndWait("ACTION_FAILED", { id1: myMsg2, id2: myMsg3 })
 							let obj = {}
-							obj['error'] = errorMsg
+							obj['error'] = myMsg1
 							response = JSON.stringify(obj)
 							break
 						}
 						if (amount <= 0) {
-							let errorMsg = "Invalid Amount!"
-							await showErrorAndWait("INVALID_AMOUNT", errorMsg)
+							let myMsg1 = get("chatpage.cchange52")
+							let myMsg2 = get("walletpage.wchange44")
+							await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 							let obj = {}
-							obj['error'] = errorMsg
+							obj['error'] = myMsg1
 							response = JSON.stringify(obj)
 							break
 						}
 						if (recipient.length === 0) {
-							let errorMsg = "Receiver cannot be empty!"
-							await showErrorAndWait("NO_RECEIVER", errorMsg)
+							let myMsg1 = get("chatpage.cchange53")
+							let myMsg2 = get("walletpage.wchange44")
+							await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 							let obj = {}
-							obj['error'] = errorMsg
+							obj['error'] = myMsg1
 							response = JSON.stringify(obj)
 							break
 						}
@@ -3033,7 +3486,7 @@ class WebBrowser extends LitElement {
 						if (processPayment.action === 'reject') {
 							let myMsg1 = get("transactions.declined")
 							let myMsg2 = get("walletpage.wchange44")
-							await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+							await showErrorAndWait("DECLINED_REQUEST", { id1: myMsg1, id2: myMsg2 })
 							response = '{"error": "User declined request"}'
 							break
 						}
@@ -3073,7 +3526,7 @@ class WebBrowser extends LitElement {
 								} else {
 									let errorMsg = get("walletpage.wchange29")
 									let pleaseMsg = get("walletpage.wchange44")
-									await showErrorAndWait("INVALID_RECEIVER", errorMsg, pleaseMsg)
+									await showErrorAndWait("ACTION_FAILED", { id1: errorMsg, id2: pleaseMsg })
 									throw new Error(errorMsg)
 								}
 							}
@@ -3122,19 +3575,30 @@ class WebBrowser extends LitElement {
 						const getTxnRequestResponse = (txnResponse) => {
 							if (txnResponse.success === false && txnResponse.message) {
 								this.loader.hide()
+								let myMsg1 = txnResponse.message
+								let myMsg2 = get("walletpage.wchange44")
+								showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })	
 								throw new Error(txnResponse.message)
 							} else if (txnResponse.success === true && !txnResponse.data.error) {
 								this.loader.hide()
+								let successMsg = get("walletpage.wchange30")
+								let patientMsg = get("walletpage.wchange43")
+								showSuccessAndWait("REQUEST_SUCCESS", { id1: successMsg, id2: patientMsg })
 								return txnResponse.data
 							} else {
 								this.loader.hide()
-								throw new Error('Error: could not send coin')
+								let myMsg1 = get("modals.mpchange75")
+								let myMsg2 = get("walletpage.wchange44")
+								showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
+								throw new Error('Error: could not send coin.')
 							}
 						}
 						try {
 							response = await validateReceiver(recipient)
 						} catch (error) {
-							console.error(error)
+							let errorMsg = get("modals.mpchange38")
+							let pleaseMsg = get("walletpage.wchange44")
+							await showErrorAndWait("ACTION_FAILED", { id1: errorMsg, id2: pleaseMsg })
 							response = '{"error": "Request could not be fulfilled"}'
 						} finally {
 							this.loader.hide()
@@ -3143,7 +3607,7 @@ class WebBrowser extends LitElement {
 					} else if (checkCoin === "BTC") {
 						this.loader.show()
 						const amount = Number(data.amount)
-						const recipient = data.destinationAddress
+						const recipient = data.destinationAddress ? data.destinationAddress : data.recipient
 						const coin = data.coin
 						const xprv58 = this.btcWallet.derivedMasterPrivateKey
 						const feePerByte = data.fee ? data.fee : this.btcFeePerByte
@@ -3154,10 +3618,10 @@ class WebBrowser extends LitElement {
 						})
 						if (isNaN(Number(btcWalletBalance))) {
 							this.loader.hide()
-							let errorMsg = "Failed to Fetch BTC Balance. Try again!"
+							let errorMsg = get("modals.mpchange76")
 							let failedMsg = get("walletpage.wchange33") + " BTC " + get("general.balance")
 							let pleaseMsg = get("walletpage.wchange44")
-							await showErrorAndWait("FAILED_FETCH", failedMsg, pleaseMsg)
+							await showErrorAndWait("ACTION_FAILED", { id1: errorMsg, id2: failedMsg, id3: pleaseMsg })
 							let obj = {}
 							obj['error'] = errorMsg
 							response = JSON.stringify(obj)
@@ -3169,12 +3633,12 @@ class WebBrowser extends LitElement {
 						const fee = feePerByte * 500 // default 0.00050000
 						if (btcAmountDecimals + (fee * QORT_DECIMALS) > btcWalletBalanceDecimals) {
 							this.loader.hide()
-							let errorMsg = "Insufficient Funds!"
-							let failedMsg = get("walletpage.wchange26")
-							let pleaseMsg = get("walletpage.wchange44")
-							await showErrorAndWait("INSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
+							let myMsg1 = get("chatpage.cchange51")
+							let myMsg2 = get("walletpage.wchange26")
+							let myMsg3 = get("walletpage.wchange44")
+							await showErrorAndWait("ACTION_FAILED", { id1: myMsg2, id2: myMsg3 })
 							let obj = {}
-							obj['error'] = errorMsg
+							obj['error'] = myMsg1
 							response = JSON.stringify(obj)
 							break
 						}
@@ -3192,7 +3656,7 @@ class WebBrowser extends LitElement {
 						if (processPayment.action === 'reject') {
 							let myMsg1 = get("transactions.declined")
 							let myMsg2 = get("walletpage.wchange44")
-							await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+							await showErrorAndWait("DECLINED_REQUEST", { id1: myMsg1, id2: myMsg2 })
 							response = '{"error": "User declined request"}'
 							break
 						}
@@ -3211,18 +3675,18 @@ class WebBrowser extends LitElement {
 								this.loader.hide()
 								let successMsg = get("walletpage.wchange30")
 								let patientMsg = get("walletpage.wchange43")
-								showErrorAndWait("TRANSACTION_SUCCESS", successMsg, patientMsg)
+								showSuccessAndWait("REQUEST_SUCCESS", { id1: successMsg, id2: patientMsg })
 							} else if (response === false) {
 								this.loader.hide()
 								let errorMsg = get("walletpage.wchange31")
 								let pleaseMsg = get("walletpage.wchange44")
-								showErrorAndWait("TRANSACTION_FAILED", errorMsg, pleaseMsg)
+								showErrorAndWait("ACTION_FAILED", { id1: errorMsg, id2: pleaseMsg })
 								throw new Error(response)
 							} else {
 								this.loader.hide()
 								let errorMsg = response.message
 								let pleaseMsg = get("walletpage.wchange44")
-								showErrorAndWait("TRANSACTION_FAILED", errorMsg, pleaseMsg)
+								showErrorAndWait("ACTION_FAILED", { id1: errorMsg, id2: pleaseMsg })
 								throw new Error(response)
 							}
 						}
@@ -3231,7 +3695,9 @@ class WebBrowser extends LitElement {
 							manageResponse(res)
 							response = res
 						} catch (error) {
-							console.error(error)
+							let errorMsg = get("modals.mpchange38")
+							let pleaseMsg = get("walletpage.wchange44")
+							await showErrorAndWait("ACTION_FAILED", { id1: errorMsg, id2: pleaseMsg })
 							response = '{"error": "Request could not be fulfilled"}'
 						} finally {
 							this.loader.hide()
@@ -3251,10 +3717,10 @@ class WebBrowser extends LitElement {
 						})
 						if (isNaN(Number(ltcWalletBalance))) {
 							this.loader.hide()
-							let errorMsg = "Failed to Fetch LTC Balance. Try again!"
+							let errorMsg = get("modals.mpchange77")
 							let failedMsg = get("walletpage.wchange33") + " LTC " + get("general.balance")
 							let pleaseMsg = get("walletpage.wchange44")
-							await showErrorAndWait("FAILED_FETCH", failedMsg, pleaseMsg)
+							await showErrorAndWait("ACTION_FAILED", { id1: errorMsg, id2: failedMsg, id3: pleaseMsg })
 							let obj = {}
 							obj['error'] = errorMsg
 							response = JSON.stringify(obj)
@@ -3266,12 +3732,12 @@ class WebBrowser extends LitElement {
 						const fee = feePerByte * 1000 // default 0.00030000
 						if (ltcAmountDecimals + (fee * QORT_DECIMALS) > ltcWalletBalanceDecimals) {
 							this.loader.hide()
-							let errorMsg = "Insufficient Funds!"
-							let failedMsg = get("walletpage.wchange26")
-							let pleaseMsg = get("walletpage.wchange44")
-							await showErrorAndWait("INSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
+							let myMsg1 = get("chatpage.cchange51")
+							let myMsg2 = get("walletpage.wchange26")
+							let myMsg3 = get("walletpage.wchange44")
+							await showErrorAndWait("ACTION_FAILED", { id1: myMsg2, id2: myMsg3 })
 							let obj = {}
-							obj['error'] = errorMsg
+							obj['error'] = myMsg1
 							response = JSON.stringify(obj)
 							break
 						}
@@ -3289,7 +3755,7 @@ class WebBrowser extends LitElement {
 						if (processPayment.action === 'reject') {
 							let myMsg1 = get("transactions.declined")
 							let myMsg2 = get("walletpage.wchange44")
-							await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+							await showErrorAndWait("DECLINED_REQUEST", { id1: myMsg1, id2: myMsg2 })
 							response = '{"error": "User declined request"}'
 							break
 						}
@@ -3308,18 +3774,18 @@ class WebBrowser extends LitElement {
 								this.loader.hide()
 								let successMsg = get("walletpage.wchange30")
 								let patientMsg = get("walletpage.wchange43")
-								showErrorAndWait("TRANSACTION_SUCCESS", successMsg, patientMsg)
+								showSuccessAndWait("REQUEST_SUCCESS", { id1: successMsg, id2: patientMsg })
 							} else if (response === false) {
 								this.loader.hide()
 								let errorMsg = get("walletpage.wchange31")
 								let pleaseMsg = get("walletpage.wchange44")
-								showErrorAndWait("TRANSACTION_FAILED", errorMsg, pleaseMsg)
+								showErrorAndWait("ACTION_FAILED", { id1: errorMsg, id2: pleaseMsg })
 								throw new Error(response)
 							} else {
 								this.loader.hide()
 								let errorMsg = response.message
 								let pleaseMsg = get("walletpage.wchange44")
-								showErrorAndWait("TRANSACTION_FAILED", errorMsg, pleaseMsg)
+								showErrorAndWait("ACTION_FAILED", { id1: errorMsg, id2: pleaseMsg })
 								throw new Error(response)
 							}
 						}
@@ -3328,7 +3794,9 @@ class WebBrowser extends LitElement {
 							manageResponse(res)
 							response = res
 						} catch (error) {
-							console.error(error)
+							let errorMsg = get("modals.mpchange38")
+							let pleaseMsg = get("walletpage.wchange44")
+							await showErrorAndWait("ACTION_FAILED", { id1: errorMsg, id2: pleaseMsg })
 							response = '{"error": "Request could not be fulfilled"}'
 						} finally {
 							this.loader.hide()
@@ -3337,7 +3805,7 @@ class WebBrowser extends LitElement {
 					} else if (checkCoin === "DOGE") {
 						this.loader.show()
 						const amount = Number(data.amount)
-						const recipient = data.destinationAddress
+						const recipient = data.destinationAddress ? data.destinationAddress : data.recipient
 						const coin = data.coin
 						const xprv58 = this.dogeWallet.derivedMasterPrivateKey
 						const feePerByte = data.fee ? data.fee : this.dogeFeePerByte
@@ -3348,10 +3816,10 @@ class WebBrowser extends LitElement {
 						})
 						if (isNaN(Number(dogeWalletBalance))) {
 							this.loader.hide()
-							let errorMsg = "Failed to Fetch DOGE Balance. Try again!"
+							let errorMsg = get("modals.mpchange78")
 							let failedMsg = get("walletpage.wchange33") + " DOGE " + get("general.balance")
 							let pleaseMsg = get("walletpage.wchange44")
-							await showErrorAndWait("FAILED_FETCH", failedMsg, pleaseMsg)
+							await showErrorAndWait("ACTION_FAILED", { id1: errorMsg, id2: failedMsg, id3: pleaseMsg })
 							let obj = {}
 							obj['error'] = errorMsg
 							response = JSON.stringify(obj)
@@ -3363,12 +3831,12 @@ class WebBrowser extends LitElement {
 						const fee = feePerByte * 5000 // default 0.05000000
 						if (dogeAmountDecimals + (fee * QORT_DECIMALS) > dogeWalletBalanceDecimals) {
 							this.loader.hide()
-							let errorMsg = "Insufficient Funds!"
-							let failedMsg = get("walletpage.wchange26")
-							let pleaseMsg = get("walletpage.wchange44")
-							await showErrorAndWait("INSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
+							let myMsg1 = get("chatpage.cchange51")
+							let myMsg2 = get("walletpage.wchange26")
+							let myMsg3 = get("walletpage.wchange44")
+							await showErrorAndWait("ACTION_FAILED", { id1: myMsg2, id2: myMsg3 })
 							let obj = {}
-							obj['error'] = errorMsg
+							obj['error'] = myMsg1
 							response = JSON.stringify(obj)
 							break
 						}
@@ -3386,7 +3854,7 @@ class WebBrowser extends LitElement {
 						if (processPayment.action === 'reject') {
 							let myMsg1 = get("transactions.declined")
 							let myMsg2 = get("walletpage.wchange44")
-							await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+							await showErrorAndWait("DECLINED_REQUEST", { id1: myMsg1, id2: myMsg2 })
 							response = '{"error": "User declined request"}'
 							break
 						}
@@ -3405,18 +3873,18 @@ class WebBrowser extends LitElement {
 								this.loader.hide()
 								let successMsg = get("walletpage.wchange30")
 								let patientMsg = get("walletpage.wchange43")
-								showErrorAndWait("TRANSACTION_SUCCESS", successMsg, patientMsg)
+								showSuccessAndWait("REQUEST_SUCCESS", { id1: successMsg, id2: patientMsg })
 							} else if (response === false) {
 								this.loader.hide()
 								let errorMsg = get("walletpage.wchange31")
 								let pleaseMsg = get("walletpage.wchange44")
-								showErrorAndWait("TRANSACTION_FAILED", errorMsg, pleaseMsg)
+								showErrorAndWait("ACTION_FAILED", { id1: errorMsg, id2: pleaseMsg })
 								throw new Error(response)
 							} else {
 								this.loader.hide()
 								let errorMsg = response.message
 								let pleaseMsg = get("walletpage.wchange44")
-								showErrorAndWait("TRANSACTION_FAILED", errorMsg, pleaseMsg)
+								showErrorAndWait("ACTION_FAILED", { id1: errorMsg, id2: pleaseMsg })
 								throw new Error(response)
 							}
 						}
@@ -3425,7 +3893,9 @@ class WebBrowser extends LitElement {
 							manageResponse(res)
 							response = res
 						} catch (error) {
-							console.error(error)
+							let errorMsg = get("modals.mpchange38")
+							let pleaseMsg = get("walletpage.wchange44")
+							await showErrorAndWait("ACTION_FAILED", { id1: errorMsg, id2: pleaseMsg })
 							response = '{"error": "Request could not be fulfilled"}'
 						} finally {
 							this.loader.hide()
@@ -3434,7 +3904,7 @@ class WebBrowser extends LitElement {
 					} else if (checkCoin === "DGB") {
 						this.loader.show()
 						const amount = Number(data.amount)
-						const recipient = data.destinationAddress
+						const recipient = data.destinationAddress ? data.destinationAddress : data.recipient
 						const coin = data.coin
 						const xprv58 = this.dgbWallet.derivedMasterPrivateKey
 						const feePerByte = data.fee ? data.fee : this.dgbFeePerByte
@@ -3445,10 +3915,10 @@ class WebBrowser extends LitElement {
 						})
 						if (isNaN(Number(dgbWalletBalance))) {
 							this.loader.hide()
-							let errorMsg = "Failed to Fetch DGB Balance. Try again!"
+							let errorMsg = get("modals.mpchange79")
 							let failedMsg = get("walletpage.wchange33") + " DGB " + get("general.balance")
 							let pleaseMsg = get("walletpage.wchange44")
-							await showErrorAndWait("FAILED_FETCH", failedMsg, pleaseMsg)
+							await showErrorAndWait("ACTION_FAILED", { id1: errorMsg, id2: failedMsg, id3: pleaseMsg })
 							let obj = {}
 							obj['error'] = errorMsg
 							response = JSON.stringify(obj)
@@ -3460,12 +3930,12 @@ class WebBrowser extends LitElement {
 						const fee = feePerByte * 500 // default 0.00005000
 						if (dgbAmountDecimals + (fee * QORT_DECIMALS) > dgbWalletBalanceDecimals) {
 							this.loader.hide()
-							let errorMsg = "Insufficient Funds!"
-							let failedMsg = get("walletpage.wchange26")
-							let pleaseMsg = get("walletpage.wchange44")
-							await showErrorAndWait("INSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
+							let myMsg1 = get("chatpage.cchange51")
+							let myMsg2 = get("walletpage.wchange26")
+							let myMsg3 = get("walletpage.wchange44")
+							await showErrorAndWait("ACTION_FAILED", { id1: myMsg2, id2: myMsg3 })
 							let obj = {}
-							obj['error'] = errorMsg
+							obj['error'] = myMsg1
 							response = JSON.stringify(obj)
 							break
 						}
@@ -3483,7 +3953,7 @@ class WebBrowser extends LitElement {
 						if (processPayment.action === 'reject') {
 							let myMsg1 = get("transactions.declined")
 							let myMsg2 = get("walletpage.wchange44")
-							await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+							await showErrorAndWait("DECLINED_REQUEST", { id1: myMsg1, id2: myMsg2 })
 							response = '{"error": "User declined request"}'
 							break
 						}
@@ -3502,18 +3972,18 @@ class WebBrowser extends LitElement {
 								this.loader.hide()
 								let successMsg = get("walletpage.wchange30")
 								let patientMsg = get("walletpage.wchange43")
-								showErrorAndWait("TRANSACTION_SUCCESS", successMsg, patientMsg)
+								showSuccessAndWait("REQUEST_SUCCESS", { id1: successMsg, id2: patientMsg })
 							} else if (response === false) {
 								this.loader.hide()
 								let errorMsg = get("walletpage.wchange31")
 								let pleaseMsg = get("walletpage.wchange44")
-								showErrorAndWait("TRANSACTION_FAILED", errorMsg, pleaseMsg)
+								showErrorAndWait("ACTION_FAILED", { id1: errorMsg, id2: pleaseMsg })
 								throw new Error(response)
 							} else {
 								this.loader.hide()
 								let errorMsg = response.message
 								let pleaseMsg = get("walletpage.wchange44")
-								showErrorAndWait("TRANSACTION_FAILED", errorMsg, pleaseMsg)
+								showErrorAndWait("ACTION_FAILED", { id1: errorMsg, id2: pleaseMsg })
 								throw new Error(response)
 							}
 						}
@@ -3522,7 +3992,9 @@ class WebBrowser extends LitElement {
 							manageResponse(res)
 							response = res
 						} catch (error) {
-							console.error(error)
+							let errorMsg = get("modals.mpchange38")
+							let pleaseMsg = get("walletpage.wchange44")
+							await showErrorAndWait("ACTION_FAILED", { id1: errorMsg, id2: pleaseMsg })
 							response = '{"error": "Request could not be fulfilled"}'
 						} finally {
 							this.loader.hide()
@@ -3531,7 +4003,7 @@ class WebBrowser extends LitElement {
 					} else if (checkCoin === "RVN") {
 						this.loader.show()
 						const amount = Number(data.amount)
-						const recipient = data.destinationAddress
+						const recipient = data.destinationAddress ? data.destinationAddress : data.recipient
 						const coin = data.coin
 						const xprv58 = this.rvnWallet.derivedMasterPrivateKey
 						const feePerByte = data.fee ? data.fee : this.rvnFeePerByte
@@ -3542,10 +4014,10 @@ class WebBrowser extends LitElement {
 						})
 						if (isNaN(Number(rvnWalletBalance))) {
 							this.loader.hide()
-							let errorMsg = "Failed to Fetch RVN Balance. Try again!"
+							let errorMsg = get("modals.mpchange80")
 							let failedMsg = get("walletpage.wchange33") + " RVN " + get("general.balance")
 							let pleaseMsg = get("walletpage.wchange44")
-							await showErrorAndWait("FAILED_FETCH", failedMsg, pleaseMsg)
+							await showErrorAndWait("ACTION_FAILED", { id1: errorMsg, id2: failedMsg, id3: pleaseMsg })
 							let obj = {}
 							obj['error'] = errorMsg
 							response = JSON.stringify(obj)
@@ -3557,12 +4029,12 @@ class WebBrowser extends LitElement {
 						const fee = feePerByte * 500 // default 0.00562500
 						if (rvnAmountDecimals + (fee * QORT_DECIMALS) > rvnWalletBalanceDecimals) {
 							this.loader.hide()
-							let errorMsg = "Insufficient Funds!"
-							let failedMsg = get("walletpage.wchange26")
-							let pleaseMsg = get("walletpage.wchange44")
-							await showErrorAndWait("INSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
+							let myMsg1 = get("chatpage.cchange51")
+							let myMsg2 = get("walletpage.wchange26")
+							let myMsg3 = get("walletpage.wchange44")
+							await showErrorAndWait("ACTION_FAILED", { id1: myMsg2, id2: myMsg3 })
 							let obj = {}
-							obj['error'] = errorMsg
+							obj['error'] = myMsg1
 							response = JSON.stringify(obj)
 							break
 						}
@@ -3580,7 +4052,7 @@ class WebBrowser extends LitElement {
 						if (processPayment.action === 'reject') {
 							let myMsg1 = get("transactions.declined")
 							let myMsg2 = get("walletpage.wchange44")
-							await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+							await showErrorAndWait("DECLINED_REQUEST", { id1: myMsg1, id2: myMsg2 })
 							response = '{"error": "User declined request"}'
 							break
 						}
@@ -3599,18 +4071,18 @@ class WebBrowser extends LitElement {
 								this.loader.hide()
 								let successMsg = get("walletpage.wchange30")
 								let patientMsg = get("walletpage.wchange43")
-								showErrorAndWait("TRANSACTION_SUCCESS", successMsg, patientMsg)
+								showSuccessAndWait("REQUEST_SUCCESS", { id1: successMsg, id2: patientMsg })
 							} else if (response === false) {
 								this.loader.hide()
 								let errorMsg = get("walletpage.wchange31")
 								let pleaseMsg = get("walletpage.wchange44")
-								showErrorAndWait("TRANSACTION_FAILED", errorMsg, pleaseMsg)
+								showErrorAndWait("ACTION_FAILED", { id1: errorMsg, id2: pleaseMsg })
 								throw new Error(response)
 							} else {
 								this.loader.hide()
 								let errorMsg = response.message
 								let pleaseMsg = get("walletpage.wchange44")
-								showErrorAndWait("TRANSACTION_FAILED", errorMsg, pleaseMsg)
+								showErrorAndWait("ACTION_FAILED", { id1: errorMsg, id2: pleaseMsg })
 								throw new Error(response)
 							}
 						}
@@ -3619,7 +4091,9 @@ class WebBrowser extends LitElement {
 							manageResponse(res)
 							response = res
 						} catch (error) {
-							console.error(error)
+							let errorMsg = get("modals.mpchange38")
+							let pleaseMsg = get("walletpage.wchange44")
+							await showErrorAndWait("ACTION_FAILED", { id1: errorMsg, id2: pleaseMsg })
 							response = '{"error": "Request could not be fulfilled"}'
 						} finally {
 							this.loader.hide()
@@ -3628,7 +4102,7 @@ class WebBrowser extends LitElement {
 					} else if (checkCoin === "ARRR") {
 						this.loader.show()
 						const amount = Number(data.amount)
-						const recipient = data.destinationAddress
+						const recipient = data.destinationAddress ? data.destinationAddress : data.recipient
 						const coin = data.coin
 						const memo = data.memo
 						const seed58 = this.arrrWallet.seed58
@@ -3639,10 +4113,10 @@ class WebBrowser extends LitElement {
 						})
 						if (isNaN(Number(arrrWalletBalance))) {
 							this.loader.hide()
-							let errorMsg = "Failed to Fetch ARRR Balance. Try again!"
+							let errorMsg = get("modals.mpchange81")
 							let failedMsg = get("walletpage.wchange33") + " ARRR " + get("general.balance")
 							let pleaseMsg = get("walletpage.wchange44")
-							await showErrorAndWait("FAILED_FETCH", failedMsg, pleaseMsg)
+							await showErrorAndWait("ACTION_FAILED", { id1: errorMsg, id2: failedMsg, id3: pleaseMsg })
 							let obj = {}
 							obj['error'] = errorMsg
 							response = JSON.stringify(obj)
@@ -3654,12 +4128,12 @@ class WebBrowser extends LitElement {
 						const fee = 0.00010000
 						if (arrrAmountDecimals + (fee * QORT_DECIMALS) > arrrWalletBalanceDecimals) {
 							this.loader.hide()
-							let errorMsg = "Insufficient Funds!"
-							let failedMsg = get("walletpage.wchange26")
-							let pleaseMsg = get("walletpage.wchange44")
-							await showErrorAndWait("INSUFFICIENT_FUNDS", failedMsg, pleaseMsg)
+							let myMsg1 = get("chatpage.cchange51")
+							let myMsg2 = get("walletpage.wchange26")
+							let myMsg3 = get("walletpage.wchange44")
+							await showErrorAndWait("ACTION_FAILED", { id1: myMsg2, id2: myMsg3 })
 							let obj = {}
-							obj['error'] = errorMsg
+							obj['error'] = myMsg1
 							response = JSON.stringify(obj)
 							break
 						}
@@ -3677,7 +4151,7 @@ class WebBrowser extends LitElement {
 						if (processPayment.action === 'reject') {
 							let myMsg1 = get("transactions.declined")
 							let myMsg2 = get("walletpage.wchange44")
-							await showErrorAndWait("DECLINED_REQUEST", myMsg1, myMsg2)
+							await showErrorAndWait("DECLINED_REQUEST", { id1: myMsg1, id2: myMsg2 })
 							response = '{"error": "User declined request"}'
 							break
 						}
@@ -3696,18 +4170,18 @@ class WebBrowser extends LitElement {
 								this.loader.hide()
 								let successMsg = get("walletpage.wchange30")
 								let patientMsg = get("walletpage.wchange43")
-								showErrorAndWait("TRANSACTION_SUCCESS", successMsg, patientMsg)
+								showSuccessAndWait("REQUEST_SUCCESS", { id1: successMsg, id2: patientMsg })
 							} else if (response === false) {
 								this.loader.hide()
 								let errorMsg = get("walletpage.wchange31")
 								let pleaseMsg = get("walletpage.wchange44")
-								showErrorAndWait("TRANSACTION_FAILED", errorMsg, pleaseMsg)
+								showErrorAndWait("ACTION_FAILED", { id1: errorMsg, id2: pleaseMsg })
 								throw new Error(response)
 							} else {
 								this.loader.hide()
 								let errorMsg = response.message
 								let pleaseMsg = get("walletpage.wchange44")
-								showErrorAndWait("TRANSACTION_FAILED", errorMsg, pleaseMsg)
+								showErrorAndWait("ACTION_FAILED", { id1: errorMsg, id2: pleaseMsg })
 								throw new Error(response)
 							}
 						}
@@ -3717,7 +4191,9 @@ class WebBrowser extends LitElement {
 							response = res
 							break
 						} catch (error) {
-							console.error(error)
+							let errorMsg = get("modals.mpchange38")
+							let pleaseMsg = get("walletpage.wchange44")
+							await showErrorAndWait("ACTION_FAILED", { id1: errorMsg, id2: pleaseMsg })
 							response = '{"error": "Request could not be fulfilled"}'
 						} finally {
 							this.loader.hide()
@@ -4608,7 +5084,7 @@ async function showModalAndWait(type, data) {
 									`).join('')}
 								</table>
 								<div class="checkbox-row">
-									<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph">${get('browserpage.bchange47')} <span style="font-weight: bold">${data.resources.length * data.feeAmount} QORT fee</span></p>
+									<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph">${get('browserpage.bchange47')} <span style="font-weight: bold">${data.resources.length * data.feeAmount} QORT ${get("walletpage.wchange36")}</span></p>
 								</div>
 							</div>
 						` : ''}
@@ -4621,7 +5097,7 @@ async function showModalAndWait(type, data) {
 								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("browserpage.bchange32")}:</span> ${data.identifier}</p>
 								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph"><span style="font-weight: bold">${get("browserpage.bchange45")}:</span> ${(!!data.encrypt)}</p>
 								<div class="checkbox-row">
-								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph">${get('browserpage.bchange47')} <span style="font-weight: bold">${data.feeAmount} QORT fee</span></p>
+								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph">${get('browserpage.bchange47')} <span style="font-weight: bold">${data.feeAmount} QORT ${get("walletpage.wchange36")}</span></p>
 								</div>
 							</div>
 						` : ''}
@@ -4646,6 +5122,12 @@ async function showModalAndWait(type, data) {
 						${type === actions.GET_WALLET_BALANCE ? `
 							<div class="modal-subcontainer">
 								<p class="modal-paragraph">${get("browserpage.bchange20")}</p>
+								<div class="checkbox-row">
+									<label for="balanceButton" id="balanceButtonLabel" style="color: var(--black);">
+										${get('modals.mpchange86')}
+									</label>
+									<mwc-checkbox style="margin-right: -15px;" id="balanceButton" ?checked=${window.parent.reduxStore.getState().app.qAPPAutoBalance}></mwc-checkbox>
+								</div>
 							</div>
 						` : ''}
 
@@ -4699,7 +5181,7 @@ async function showModalAndWait(type, data) {
 							<div class="modal-subcontainer">
 								<p class="modal-paragraph">${get("browserpage.bchange50")} <span style="font-weight: bold"> ${data.property}</span></p>
 								<br>
-								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph">${get('browserpage.bchange47')} <span style="font-weight: bold">${data.fee} QORT fee</span></p>
+								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph">${get('browserpage.bchange47')} <span style="font-weight: bold">${data.fee} QORT ${get("walletpage.wchange36")}</span></p>
 								<br>
 								<p style="font-size: 16px;overflow-wrap: anywhere;" class="modal-paragraph">${get('browserpage.bchange51')} </p>
 							</div>
@@ -4735,21 +5217,28 @@ async function showModalAndWait(type, data) {
 							<p class="modal-paragraph">${data.text1}</p>
 							<p class="modal-paragraph">${data.text2}</p>
 							<p class="modal-paragraph">${data.text3}</p>
-							<p class="modal-paragraph">Fee: <span>${data.foreignFee}</span></p>
+							<p class="modal-paragraph">${get("walletpage.wchange36")}: <span>${data.foreignFee}</span></p>
 						` : ''}
 
 						${type === actions.CREATE_TRADE_SELL_ORDER ? `
 							<p class="modal-paragraph">${data.text1}</p>
 							<p class="modal-paragraph">${data.text2}</p>
 							<p class="modal-paragraph">${data.text3}</p>
-							<p class="modal-paragraph">Fee: <span>${data.fee}</span></p>
+							<p class="modal-paragraph">${get("walletpage.wchange36")}: <span>${data.fee}</span></p>
 						` : ''}
 
 						${type === actions.CANCEL_TRADE_SELL_ORDER ? `
 							<p class="modal-paragraph">${data.text1}</p>
 							<p class="modal-paragraph">${data.text2}</p>
 							<p class="modal-paragraph">${data.text3}</p>
-							<p class="modal-paragraph">Fee: <span>${data.fee}</span></p>
+							<p class="modal-paragraph">${get("walletpage.wchange36")}: <span>${data.fee}</span></p>
+						` : ''}
+
+						${type === actions.JOIN_GROUP ? `
+							<p class="modal-paragraph">${data.text1}</p>
+							<p class="modal-paragraph">${data.text2}</p>
+							<p class="modal-paragraph">${data.text3}</p>
+							<p class="modal-paragraph">${get("walletpage.wchange36")}: <span>${data.fee}</span></p>
 						` : ''}
 					</div>
 					<div class="modal-buttons">
@@ -4788,6 +5277,7 @@ async function showModalAndWait(type, data) {
 			}
 			resolve({ action: 'reject' })
 		})
+
 		const cancelButton = modal.querySelector('#cancel-button')
 		cancelButton.addEventListener('click', () => {
 			if (modal.parentNode === document.body) {
@@ -4811,6 +5301,24 @@ async function showModalAndWait(type, data) {
 					return
 				}
 				window.parent.reduxStore.dispatch(window.parent.reduxAction.allowQAPPAutoAuth(true))
+			})
+		}
+
+		const labelButton1 = modal.querySelector('#balanceButtonLabel')
+		if (labelButton1) {
+			labelButton1.addEventListener('click', () => {
+				this.shadowRoot.getElementById('balanceButton').click()
+			})
+		}
+
+		const checkbox1 = modal.querySelector('#abalanceButton')
+		if (checkbox1) {
+			checkbox1.addEventListener('click', (e) => {
+				if (e.target.checked) {
+					window.parent.reduxStore.dispatch(window.parent.reduxAction.removeQAPPAutoBalance(false))
+					return
+				}
+				window.parent.reduxStore.dispatch(window.parent.reduxAction.allowQAPPAutoBalance(true))
 			})
 		}
 
@@ -4852,76 +5360,40 @@ async function showModalAndWait(type, data) {
 	})
 }
 
-async function showErrorAndWait(type, data, data1) {
+async function showErrorAndWait(type, data) {
 	// Create the modal and add it to the DOM
 	const modalDelay = ms => new Promise(res => setTimeout(res, ms))
 	const error = document.createElement('div')
 	error.id = "backdrop"
 	error.classList.add("backdrop")
 	error.innerHTML = `
-		<div class="modal my-modal-class">
-			<div class="modal-content">
+		<div class="modal">
+			<div class="modal-content-error">
 				<div class="modal-body">
 					${type === "MISSING_FIELDS" ? `
 						<div class="modal-subcontainer-error">
-							<p class="modal-paragraph-error">${data}</p>
-							<p class="modal-paragraph-error">${data1}<</p>
-						</div>
-					` : ''}
-
-					${type === "FAILED_FETCH" ? `
-						<div class="modal-subcontainer-error">
-							<p class="modal-paragraph-error">${data}</p>
-							<p class="modal-paragraph-error">${data1}</p>
-						</div>
-					` : ''}
-
-					${type === "INSUFFICIENT_FUNDS" ? `
-						<div class="modal-subcontainer-error">
-							<p class="modal-paragraph-error">${data}</p>
-							<p class="modal-paragraph-error">${data1}</p>
-						</div>
-					` : ''}
-
-					${type === "INVALID_AMOUNT" ? `
-						<div class="modal-subcontainer-error">
-							<p class="modal-paragraph-error">${data}</p>
-							<p class="modal-paragraph-error">${data1}</p>
-						</div>
-					` : ''}
-
-					${type === "NO_RECEIVER" ? `
-						<div class="modal-subcontainer-error">
-							<p class="modal-paragraph-error">${data}</p>
-							<p class="modal-paragraph-error">${data1}</p>
-						</div>
-					` : ''}
-
-					${type === "INVALID_RECEIVER" ? `
-						<div class="modal-subcontainer-error">
-							<p class="modal-paragraph-error">${data}</p>
-							<p class="modal-paragraph-error">${data1}</p>
+							<p class="modal-paragraph-error-header">${get("modals.mpchange82")}</p>
+							${data.id1 ? `<p class="modal-paragraph-error">${data.id1}</p>` : ''}
+							${data.id2 ? `<p class="modal-paragraph-error">${data.id2}</p>` : ''}
+							${data.id3 ? `<p class="modal-paragraph-error">${data.id3}</p>` : ''}
 						</div>
 					` : ''}
 
 					${type === "DECLINED_REQUEST" ? `
 						<div class="modal-subcontainer-error">
-							<p class="modal-paragraph-error">${data}</p>
-							<p class="modal-paragraph-error">${data1}</p>
+							<p class="modal-paragraph-error-header">${get("modals.mpchange83")}</p>
+							${data.id1 ? `<p class="modal-paragraph-error">${data.id1}</p>` : ''}
+							${data.id2 ? `<p class="modal-paragraph-error">${data.id2}</p>` : ''}
+							${data.id3 ? `<p class="modal-paragraph-error">${data.id3}</p>` : ''}
 						</div>
 					` : ''}
 
-					${type === "TRANSACTION_FAILED" ? `
+					${type === "ACTION_FAILED" ? `
 						<div class="modal-subcontainer-error">
-							<p class="modal-paragraph-error">${data}</p>
-							<p class="modal-paragraph-error">${data1}</p>
-						</div>
-					` : ''}
-
-					${type === "TRANSACTION_SUCCESS" ? `
-						<div class="modal-subcontainer-error">
-							<p class="modal-paragraph-error">${data}</p>
-							<p class="modal-paragraph-error">${data1}</p>
+							<p class="modal-paragraph-error-header">${get("modals.mpchange84")}</p>
+							${data.id1 ? `<p class="modal-paragraph-error">${data.id1}</p>` : ''}
+							${data.id2 ? `<p class="modal-paragraph-error">${data.id2}</p>` : ''}
+							${data.id3 ? `<p class="modal-paragraph-error">${data.id3}</p>` : ''}
 						</div>
 					` : ''}
 				</div>
@@ -4929,8 +5401,35 @@ async function showErrorAndWait(type, data, data1) {
 		</div>
 	`
 	document.body.appendChild(error)
-	await modalDelay(5000)
+	await modalDelay(3000)
 	document.body.removeChild(error)
+}
+
+async function showSuccessAndWait(type, data) {
+	// Create the modal and add it to the DOM
+	const modalDelay = ms => new Promise(res => setTimeout(res, ms))
+	const success = document.createElement('div')
+	success.id = "backdrop"
+	success.classList.add("backdrop")
+	success.innerHTML = `
+		<div class="modal">
+			<div class="modal-content-success">
+				<div class="modal-body">
+					${type === "REQUEST_SUCCESS" ? `
+						<div class="modal-subcontainer-success">
+							<p class="modal-paragraph-success-header">${get("modals.mpchange85")}</p>
+							${data.id1 ? `<p class="modal-paragraph-success">${data.id1}</p>` : ''}
+							${data.id2 ? `<p class="modal-paragraph-success">${data.id2}</p>` : ''}
+							${data.id3 ? `<p class="modal-paragraph-success">${data.id3}</p>` : ''}
+						</div>
+					` : ''}
+				</div>
+			</div>
+		</div>
+	`
+	document.body.appendChild(success)
+	await modalDelay(3000)
+	document.body.removeChild(success)
 }
 
 // Add the styles for the modal
