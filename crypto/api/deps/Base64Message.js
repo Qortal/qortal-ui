@@ -4,6 +4,12 @@ import {
 	uint8ArrayToObject,
 	decryptSingle
 } from '../../../plugins/plugins/core/components/GroupEncryption.js'
+import {
+	extensionToPointer,
+	encodedToChar,
+	embedToString,
+	parseQortalLink
+} from '../../../plugins/plugins/core/components/qdn-action-constants.js'
 
 const Base64Message = {}
 
@@ -29,13 +35,16 @@ Base64Message.decode = function (string, keys, ref) {
 		}
 	} else {
 		let repliedToStr = ''
+		let addedFileStr = ''
 		let messageStr = ''
 		let hubString = ''
+		let messageRep = ''
+		let messageUseEmbed = {}
 
 		const res = decryptSingle(string, keys, false)
 
 		if (res === 'noKey' || res === 'decryptionFailed') {
-			return '{"messageText":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"This message could not be decrypted"}]}]},"images":[""],"repliedTo":"","version":3}'
+			return '{"messageText":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"This message could not be decrypted"}]}]}' + addedFileStr + ',"repliedTo":"","version":3,"isFromHub":true}'
 		}
 
 		const decryptToUnit8Array = base64ToUint8Array(res)
@@ -54,7 +63,26 @@ Base64Message.decode = function (string, keys, ref) {
 		}
 
 		if (responseData.hasOwnProperty('message') && typeof responseData['message'] === 'string' && responseData['message'].length) {
-			const messageRep = responseData.message
+			if (responseData.message.includes('qortal://use-embed/')) {
+				const useEmbed1 = extensionToPointer(responseData.message)
+				const useEmbed2 = /<newpointer>(.*?)<\/newpointer>/g.exec(useEmbed1)
+				const useEmbed3 = encodedToChar(useEmbed2[1])
+
+				messageUseEmbed = parseQortalLink(useEmbed3)
+				addedFileStr = embedToString(messageUseEmbed)
+
+				const useEmbed4 = responseData.message.split(useEmbed2[1]).join('')
+
+				if (useEmbed4 === "<p></p>") {
+					messageRep = useEmbed4.split('<p></p>').join('<p>Qortal-Hub embed link</p>')
+				} else {
+					messageRep = useEmbed4
+				}
+			} else {
+				messageRep = responseData.message
+				addedFileStr = ',"images":[""]'
+			}
+
 			const messageRep1 = messageRep.split('"').join('<upvote>')
 			const messageRep2 = messageRep1.split('</p><p></p><p></p><p></p><p>').join('"},{"type":"hardBreak"},{"type":"hardBreak"},{"type":"hardBreak"},{"type":"hardBreak"},{"type":"text","text":"')
 			const messageRep3 = messageRep2.split('</p><p></p><p></p><p>').join('"},{"type":"hardBreak"},{"type":"hardBreak"},{"type":"hardBreak"},{"type":"text","text":"')
@@ -77,11 +105,11 @@ Base64Message.decode = function (string, keys, ref) {
 		}
 
 		if (responseData.type === "edit") {
-			hubString = '{"messageText":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"' + messageStr + '"}]}]},"images":[""],"repliedTo":"' + repliedToStr + '","version":3,"isEdited":true}'
+			hubString = '{"messageText":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"' + messageStr + '"}]}]}' + addedFileStr + ',"repliedTo":"' + repliedToStr + '","version":3,"isEdited":true,"isFromHub":true}'
 		} else if (responseData.type === "reaction") {
-			hubString = '{"messageText":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"' + messageStr + '"}]}]},"images":[""],"repliedTo":"' + repliedToStr + '","version":3,"isReaction":true}'
+			hubString = '{"messageText":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"' + messageStr + '"}]}]}' + addedFileStr + ',"repliedTo":"' + repliedToStr + '","version":3,"isReaction":true,"isFromHub":true}'
 		} else {
-			hubString = '{"messageText":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"' + messageStr + '"}]}]},"images":[""],"repliedTo":"' + repliedToStr + '","version":3}'
+			hubString = '{"messageText":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"' + messageStr + '"}]}]}' + addedFileStr + ',"repliedTo":"' + repliedToStr + '","version":3,"isFromHub":true}'
 		}
 
 		const preparedString = hubString.split('<upvote>').join('\\"')

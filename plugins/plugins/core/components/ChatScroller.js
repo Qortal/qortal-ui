@@ -177,7 +177,7 @@ function processText(input) {
 									})
 								)
 							} catch (error) {
-								console.log({ error })
+								console.error({ error })
 							}
 						})
 
@@ -1081,7 +1081,7 @@ class MessageTemplate extends LitElement {
 		let version = 0
 		let isForwarded = false
 		let isEdited = false
-
+		let isFromHub = false
 
 		try {
 			const parsedMessageObj = JSON.parse(this.messageObj.decodedMessage)
@@ -1101,6 +1101,7 @@ class MessageTemplate extends LitElement {
 			version = parsedMessageObj.version
 			isForwarded = parsedMessageObj.type === 'forward'
 			isEdited = parsedMessageObj.isEdited && true
+			isFromHub = parsedMessageObj.isFromHub && true
 
 			if (parsedMessageObj.images && Array.isArray(parsedMessageObj.images) && parsedMessageObj.images.length > 0) {
 				image = parsedMessageObj.images[0]
@@ -1132,6 +1133,8 @@ class MessageTemplate extends LitElement {
 		let hideit = hidemsg.includes(this.messageObj.sender)
 		let forwarded = ''
 		let edited = ''
+		let fromHubOk = ''
+		let fromHubNo = ''
 
 		levelFounder = html`<level-founder checkleveladdress="${this.messageObj.sender}"></level-founder>`
 
@@ -1245,6 +1248,18 @@ class MessageTemplate extends LitElement {
 				${translate('chatpage.cchange68')}
 				<message-time timestamp=${(this.messageObj.editedTimestamp === undefined ? Date.now() : this.messageObj.editedTimestamp)}></message-time>
 			</span>
+		`
+
+		fromHubOk = html`
+			<div style="margin-top:3px;">
+				<mwc-icon style="font-size:16px; color: var(--chat-group);">key</mwc-icon>&nbsp;&nbsp;
+			</div>
+		`
+
+		fromHubNo = html`
+			<div style="margin-top:3px;">
+				<mwc-icon style="font-size:16px; color: var(--chat-group);">key_off</mwc-icon>&nbsp;&nbsp;
+			</div>
 		`
 
 		if (repliedToData) {
@@ -1536,9 +1551,10 @@ class MessageTemplate extends LitElement {
 												<p class="attachment-name">
 													${attachment && attachment.attachmentName}
 												</p>
-												<p class="attachment-size">
+												${attachment.attachmentSize > 0 ?
+												`<p class="attachment-size">
 													${roundToNearestDecimal(attachment.attachmentSize)} mb
-												</p>
+												</p>` : ''}
 											</div>
 											<vaadin-icon
 												@click=${async () => await this.downloadAttachment(attachment)}
@@ -1662,18 +1678,21 @@ class MessageTemplate extends LitElement {
 										${this.isInProgress ? html`
 											<p>${translate('chatpage.cchange91')}</p>
 											` : this.isAgo ? html`
+												${isFromHub ? html`<span>${fromHubOk}</span>` : html`<span>${fromHubNo}</span>`}
 												<div id="timeformat">
 													<span>
 														<message-time timestamp=${this.messageObj.timestamp}></message-time>
 													</span>
 												</div>
 											` : this.isIso ? html`
+												${isFromHub ? html`<span>${fromHubOk}</span>` : html`<span>${fromHubNo}</span>`}
 												<div id="timeformat">
 													<span>
 														${new Date(this.messageObj.timestamp).toLocaleString()}
 													</span>
 												</div>
 											` : this.isBoth ? html`
+												${isFromHub ? html`<span>${fromHubOk}</span>` : html`<span>${fromHubNo}</span>`}
 												<div id="timeformat">
 													<span>
 														${new Date(this.messageObj.timestamp).toLocaleString()}
@@ -2176,7 +2195,7 @@ class MessageTemplate extends LitElement {
 
 			await writeFile(fileHandle, blob).then(() => console.log('FILE SAVED'))
 		} catch (error) {
-			console.log(error)
+			console.error(error)
 		}
 	}
 
