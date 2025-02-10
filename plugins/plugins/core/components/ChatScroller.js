@@ -1250,17 +1250,9 @@ class MessageTemplate extends LitElement {
 			</span>
 		`
 
-		fromHubOk = html`
-			<div style="margin-top:3px;">
-				<mwc-icon style="font-size:16px; color: var(--chat-group);">key</mwc-icon>&nbsp;&nbsp;
-			</div>
-		`
+		fromHubOk = html`&nbsp;&nbsp;&nbsp;<mwc-icon style="font-size:16px; color: var(--chat-group);">key</mwc-icon>&nbsp;&nbsp;&nbsp;`
 
-		fromHubNo = html`
-			<div style="margin-top:3px;">
-				<mwc-icon style="font-size:16px; color: var(--chat-group);">key_off</mwc-icon>&nbsp;&nbsp;
-			</div>
-		`
+		fromHubNo = html`&nbsp;&nbsp;&nbsp;<mwc-icon style="font-size:16px; color: var(--chat-group);">key_off</mwc-icon>&nbsp;&nbsp;&nbsp;`
 
 		if (repliedToData) {
 			try {
@@ -1678,26 +1670,38 @@ class MessageTemplate extends LitElement {
 										${this.isInProgress ? html`
 											<p>${translate('chatpage.cchange91')}</p>
 											` : this.isAgo ? html`
-												${isFromHub ? html`<span>${fromHubOk}</span>` : html`<span>${fromHubNo}</span>`}
-												<div id="timeformat">
-													<span>
-														<message-time timestamp=${this.messageObj.timestamp}></message-time>
-													</span>
+												<div style="display: flex; align-items: center;">
+													<div style="margin-top: 4px;">
+														${isFromHub ? html`${fromHubOk}` : html`${fromHubNo}`}
+													</div>
+													<div id="timeformat">
+														<span>
+															<message-time timestamp=${this.messageObj.timestamp}></message-time>
+														</span>
+													</div>
 												</div>
 											` : this.isIso ? html`
-												${isFromHub ? html`<span>${fromHubOk}</span>` : html`<span>${fromHubNo}</span>`}
-												<div id="timeformat">
-													<span>
-														${new Date(this.messageObj.timestamp).toLocaleString()}
-													</span>
+												<div style="display: flex; align-items: center;">
+													<div style="margin-top: 4px;">
+														${isFromHub ? html`${fromHubOk}` : html`${fromHubNo}`}
+													</div>
+													<div id="timeformat">
+														<span>
+															${new Date(this.messageObj.timestamp).toLocaleString()}
+														</span>
+													</div>
 												</div>
 											` : this.isBoth ? html`
-												${isFromHub ? html`<span>${fromHubOk}</span>` : html`<span>${fromHubNo}</span>`}
-												<div id="timeformat">
-													<span>
-														${new Date(this.messageObj.timestamp).toLocaleString()}
-														( <message-time timestamp=${this.messageObj.timestamp}></message-time> )
-													</span>
+												<div style="display: flex; align-items: center;">
+													<div style="margin-top: 4px;">
+														${isFromHub ? html`${fromHubOk}` : html`${fromHubNo}`}
+													</div>
+													<div id="timeformat">
+														<span>
+															${new Date(this.messageObj.timestamp).toLocaleString()}
+															( <message-time timestamp=${this.messageObj.timestamp}></message-time> )
+														</span>
+													</div>
 												</div>
 											` : ''
 										}
