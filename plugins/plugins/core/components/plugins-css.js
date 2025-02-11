@@ -2014,8 +2014,13 @@ export const chatStyles = css`
     }
 
     #messageContent code {
-        background-color: rgba(#616161, 0.1);
-        color: #616161;
+        background: #0D0D0D;
+        color: #FFF;
+        font-family: 'JetBrainsMono', monospace;
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        white-space: pre-wrap;
+        margin-top: 10px;
     }
 
     #messageContent pre {
@@ -2034,12 +2039,10 @@ export const chatStyles = css`
         font-size: 0.8rem;
     }
 
-
     #messageContent img {
         width: 1.7em;
         height: 1.5em;
         margin: 0px;
-
     }
 
     #messageContent blockquote {
@@ -2078,8 +2081,13 @@ export const chatStyles = css`
     }
 
     .replied-message code {
-        background-color: rgba(#616161, 0.1);
-        color: #616161;
+        background: #0D0D0D;
+        color: #FFF;
+        font-family: 'JetBrainsMono', monospace;
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        white-space: pre-wrap;
+        margin: 0px;
     }
 
     .replied-message pre {

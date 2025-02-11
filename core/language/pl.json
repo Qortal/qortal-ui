@@ -1417,6 +1417,7 @@
 		"mpchange83": "ODRZUCONE",
 		"mpchange84": "NIEPOWODZENIE",
 		"mpchange85": "POWODZENIE",
-		"mpchange86": "Zawsze zezwalaj na automatyczne pobieranie salda portfela"
+		"mpchange86": "Zawsze zezwalaj na automatyczne pobieranie salda portfela",
+		"mpchange87": "Wprowadź identyfikator grupy"
 	}
 }

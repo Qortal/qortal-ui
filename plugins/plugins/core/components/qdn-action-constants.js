@@ -159,15 +159,15 @@ export const embedToString = (embed) => {
 		embedService = embed.service
 		embedName = embed.name
 		embedIdentifier = embed.identifier
-		embedString = ',"images":[{"service":"' + embedService + '","name":"' + embedName + '","identifier":"' + embedIdentifier + '"}],"isImageDeleted":false'
+		embedString = '"images":[{"service":"' + embedService + '","name":"' + embedName + '","identifier":"' + embedIdentifier + '"}],"isImageDeleted":false'
 	} else if (embed.type === "ATTACHMENT") {
 		embedService = embed.service
 		embedName = embed.name
 		embedIdentifier = embed.identifier
 		embedAttachmentName = embed.fileName
-		embedString = ',"attachments":[{"service":"' + embedService + '","name":"' + embedName + '","identifier":"' + embedIdentifier + '","attachmentName":"' + embedAttachmentName + '","attachmentSize":0}],"isAttachmentDeleted":false'
+		embedString = '"attachments":[{"service":"' + embedService + '","name":"' + embedName + '","identifier":"' + embedIdentifier + '","attachmentName":"' + embedAttachmentName + '","attachmentSize":0}],"isAttachmentDeleted":false'
 	} else {
-		embedString = ',"images":[""]'
+		embedString = '"images":[""]'
 	}
 
 	return embedString

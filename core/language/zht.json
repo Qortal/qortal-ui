@@ -1417,6 +1417,7 @@
 		"mpchange83": "拒絕",
 		"mpchange84": "失敗",
 		"mpchange85": "成功",
-		"mpchange86": "隨時允許自動取得錢包餘額"
+		"mpchange86": "隨時允許自動取得錢包餘額",
+		"mpchange87": "請輸入群組 ID"
 	}
 }

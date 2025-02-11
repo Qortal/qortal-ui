@@ -1417,6 +1417,7 @@
 		"mpchange83": "RIFIUTATO",
 		"mpchange84": "FALLITO",
 		"mpchange85": "RIUSCITO",
-		"mpchange86": "Consenti sempre di ottenere automaticamente il saldo del portafoglio"
+		"mpchange86": "Consenti sempre di ottenere automaticamente il saldo del portafoglio",
+		"mpchange87": "Inserisci l'ID del gruppo"
 	}
 }
