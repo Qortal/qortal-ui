@@ -1417,6 +1417,7 @@
 		"mpchange83": "DECLINED",
 		"mpchange84": "FAILURE",
 		"mpchange85": "EDU",
-		"mpchange86": "Luba alati rahakoti saldo automaatne hankimine"
+		"mpchange86": "Luba alati rahakoti saldo automaatne hankimine",
+		"mpchange87": "Palun sisestage grupi ID"
 	}
 }

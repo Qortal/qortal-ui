@@ -317,7 +317,7 @@ class Chat extends LitElement {
 				<!-- View Chat Over ID -->
 				<mwc-dialog id="viewChatDialog">
 					<div style="text-align: center;">
-						<h1>Please Enter The Group ID</h1>
+						<h1>${translate("modals.mpchange87")}</h1>
 						<hr>
 						<br>
 					</div>
@@ -326,7 +326,7 @@ class Chat extends LitElement {
 							style="width: 100%;"
 							required
 							id="groupIdInput"
-							label="Emter Group ID"
+							label="${translate("managegroup.mg8")}"
 							type="number"
 							auto-validate="false"
 							value=""

@@ -1081,17 +1081,22 @@ class MessageTemplate extends LitElement {
 		let version = 0
 		let isForwarded = false
 		let isEdited = false
-		let isFromHub = false
+		let isEncrypted = false
 
 		try {
 			const parsedMessageObj = JSON.parse(this.messageObj.decodedMessage)
 
-			if (+parsedMessageObj.version > 1 && parsedMessageObj.messageText) {
+			if (parsedMessageObj.version > 1 && parsedMessageObj.messageText) {
 				messageVersion2 = generateHTML(parsedMessageObj.messageText, [StarterKit, Underline, Highlight, Mention])
 				messageVersion2WithLink = processText(messageVersion2)
 			}
 
-			message = parsedMessageObj.messageText
+			if (parsedMessageObj.version > 1 && parsedMessageObj.message) {
+				messageVersion2 = parsedMessageObj.message
+				messageVersion2WithLink = processText(messageVersion2)
+			}
+
+			message = parsedMessageObj.messageText ? parsedMessageObj.messageText : parsedMessageObj.message
 			repliedToData = this.messageObj.repliedToData
 			isImageDeleted = parsedMessageObj.isImageDeleted
 			isGifDeleted = parsedMessageObj.isGifDeleted
@@ -1101,7 +1106,7 @@ class MessageTemplate extends LitElement {
 			version = parsedMessageObj.version
 			isForwarded = parsedMessageObj.type === 'forward'
 			isEdited = parsedMessageObj.isEdited && true
-			isFromHub = parsedMessageObj.isFromHub && true
+			isEncrypted = parsedMessageObj.isFromHub || parsedMessageObj.message ? true : false
 
 			if (parsedMessageObj.images && Array.isArray(parsedMessageObj.images) && parsedMessageObj.images.length > 0) {
 				image = parsedMessageObj.images[0]
@@ -1133,8 +1138,8 @@ class MessageTemplate extends LitElement {
 		let hideit = hidemsg.includes(this.messageObj.sender)
 		let forwarded = ''
 		let edited = ''
-		let fromHubOk = ''
-		let fromHubNo = ''
+		let encrypted = ''
+		let decrypted = ''
 
 		levelFounder = html`<level-founder checkleveladdress="${this.messageObj.sender}"></level-founder>`
 
@@ -1250,9 +1255,9 @@ class MessageTemplate extends LitElement {
 			</span>
 		`
 
-		fromHubOk = html`&nbsp;&nbsp;&nbsp;<mwc-icon style="font-size:16px; color: var(--chat-group);">key</mwc-icon>&nbsp;&nbsp;&nbsp;`
+		encrypted = html`&nbsp;&nbsp;&nbsp;<mwc-icon style="font-size:16px; color: var(--chat-group);">key</mwc-icon>&nbsp;&nbsp;&nbsp;`
 
-		fromHubNo = html`&nbsp;&nbsp;&nbsp;<mwc-icon style="font-size:16px; color: var(--chat-group);">key_off</mwc-icon>&nbsp;&nbsp;&nbsp;`
+		decrypted = html`&nbsp;&nbsp;&nbsp;<mwc-icon style="font-size:16px; color: var(--chat-group);">key_off</mwc-icon>&nbsp;&nbsp;&nbsp;`
 
 		if (repliedToData) {
 			try {
@@ -1672,7 +1677,7 @@ class MessageTemplate extends LitElement {
 											` : this.isAgo ? html`
 												<div style="display: flex; align-items: center;">
 													<div style="margin-top: 4px;">
-														${isFromHub ? html`${fromHubOk}` : html`${fromHubNo}`}
+														${isEncrypted ? html`${encrypted}` : html`${decrypted}`}
 													</div>
 													<div id="timeformat">
 														<span>
@@ -1683,7 +1688,7 @@ class MessageTemplate extends LitElement {
 											` : this.isIso ? html`
 												<div style="display: flex; align-items: center;">
 													<div style="margin-top: 4px;">
-														${isFromHub ? html`${fromHubOk}` : html`${fromHubNo}`}
+														${isEncrypted ? html`${encrypted}` : html`${decrypted}`}
 													</div>
 													<div id="timeformat">
 														<span>
@@ -1694,7 +1699,7 @@ class MessageTemplate extends LitElement {
 											` : this.isBoth ? html`
 												<div style="display: flex; align-items: center;">
 													<div style="margin-top: 4px;">
-														${isFromHub ? html`${fromHubOk}` : html`${fromHubNo}`}
+														${isEncrypted ? html`${encrypted}` : html`${decrypted}`}
 													</div>
 													<div id="timeformat">
 														<span>

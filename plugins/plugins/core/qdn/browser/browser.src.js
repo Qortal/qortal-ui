@@ -17,7 +17,7 @@ import {
 } from '../../../utils/classes'
 import {appendBuffer} from '../../../utils/utilities'
 import {QORT_DECIMALS} from '../../../../../crypto/api/constants'
-import {listOfAllQortalRequests} from '../../components/qdn-action-constants'
+import {mimeToExtensionMap, listOfAllQortalRequests} from '../../components/qdn-action-constants'
 import {
 	createSymmetricKeyAndNonce,
 	decryptGroupEncryptionWithSharingKey,
@@ -2248,6 +2248,108 @@ class WebBrowser extends LitElement {
 						obj['error'] = error.message ? error.message : get("modals.mpchange44")
 						response = JSON.stringify(obj)
 						break
+					}
+				}
+					break
+
+				case actions.SAVE_FILE: {
+					try {
+						const requiredFields = ['filename', 'blob']
+						const missingFields = []
+						let dataSentBack = {}
+						requiredFields.forEach((field) => {
+							if (!data[field]) {
+								missingFields.push(field)
+							}
+						})
+						if (missingFields.length > 0) {
+							const missingFieldsString = missingFields.join(', ')
+							const tryAgain = get("walletpage.wchange44")
+							await showErrorAndWait(
+								"MISSING_FIELDS",
+								{
+									id1: missingFieldsString,
+									id2: tryAgain
+								}
+							)
+							dataSentBack['error'] = `Missing fields: ${missingFieldsString}`
+							response = JSON.stringify(dataSentBack)
+							break
+						}
+						const filename = data.filename
+						const blob = data.blob
+						const res = await showModalAndWait(
+							actions.SAVE_FILE,
+							{
+								filename
+							}
+						)
+						if (res.action === 'reject') {
+							let myMsg1 = get("transactions.declined")
+							let myMsg2 = get("walletpage.wchange44")
+							await showErrorAndWait("DECLINED_REQUEST", { id1: myMsg1, id2: myMsg2 })
+							response = '{"error": "User declined request"}'
+							break
+						}
+						const mimeType = blob.type || data.mimeType
+						let backupExention = filename.split('.').pop()
+						if (backupExention) {
+							backupExention = '.' + backupExention
+						}
+						const fileExtension = mimeToExtensionMap[mimeType] || backupExention
+						let fileHandleOptions = {}
+						if (!mimeType) {
+							const obj = {}
+							obj['error'] = 'A mimeType could not be derived'
+							response = JSON.stringify(obj)
+							break
+						}
+						if (!fileExtension) {
+							const obj = {}
+							obj['error'] = 'A file extension could not be derived'
+							response = JSON.stringify(obj)
+							break
+						}
+						if (fileExtension && mimeType) {
+							fileHandleOptions = {
+								accept: {
+									[mimeType]: [fileExtension]
+								}
+							}
+						}
+						try {
+							const fileHandle = await self.showSaveFilePicker({
+								suggestedName: filename,
+								types: [
+									{
+										description: mimeType,
+										...fileHandleOptions
+									}
+								]
+							})
+							const writeFile = async (fileHandle, contents) => {
+								const writable = await fileHandle.createWritable()
+								await writable.write(contents)
+								await writable.close()
+							}
+							writeFile(fileHandle, blob).then(() => console.log("FILE SAVED"))
+						} catch (error) {
+							if (error.name === 'AbortError') {
+								const obj = {}
+								obj['error'] = 'User declined the download'
+								response = JSON.stringify(obj)
+								break
+							}
+							FileSaver.saveAs(blob, filename)
+						}
+						response = JSON.stringify(true)
+					} catch (error) {
+						let myMsg1 = get("managegroup.mg58")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
+						const obj = {}
+						obj['error'] = error.message || 'Failed to initiate download'
+						response = JSON.stringify(obj)
 					}
 				}
 					break
