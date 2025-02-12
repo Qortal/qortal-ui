@@ -136,9 +136,10 @@ function attemptReconnectNodeStatusSocket() {
 const initBlockSocket = () => {
 	let myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 	let nodeUrl = myNode.domain + ":" + myNode.port
+	let nodeProtocol = myNode.protocol
 	let activeBlockSocketLink
 
-	if (window.parent.location.protocol === "https:") {
+	if (nodeProtocol === "https") {
 		activeBlockSocketLink = `wss://${nodeUrl}/websockets/blocks`
 	} else {
 		activeBlockSocketLink = `ws://${nodeUrl}/websockets/blocks`
@@ -205,9 +206,10 @@ const pingactiveBlockSocket = () => {
 const initNodeStatusSocket = () => {
 	let myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 	let nodeUrl = myNode.domain + ":" + myNode.port
+	let nodeProtocol = myNode.protocol
 	let activeNodeStatusSocketLink
 
-	if (window.parent.location.protocol === "https:") {
+	if (nodeProtocol === "https") {
 		activeNodeStatusSocketLink = `wss://${nodeUrl}/websockets/admin/status`
 	} else {
 		activeNodeStatusSocketLink = `ws://${nodeUrl}/websockets/admin/status`
