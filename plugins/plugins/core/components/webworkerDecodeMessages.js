@@ -2771,8 +2771,8 @@ const decode = (string, keys, ref) => {
 	let hubSpecialId = ''
 	let hubMessageStr = ''
 	let newMessageObject = ''
+	let reactionStr = ''
 	let messageUseEmbed = {}
-	let isHubReaction = false
 	let editStr = false
 	let embedFileStr = '"images":[""]'
 
@@ -2799,23 +2799,11 @@ const decode = (string, keys, ref) => {
 		const res = decryptSingle(string, keys, false)
 
 		if (res === 'noKey' || res === 'decryptionFailed') {
-			return '{"specialId":"","message":"<p>This message could not be decrypted</p>","repliedTo":"","isEdited":false,"isFromHub":true,"isReaction":false,"version": 3}'
+			return '{"specialId":"","message":"<p>This message could not be decrypted</p>","repliedTo":"","isEdited":false,"isFromHub":true,"version": 3}'
 		}
 
 		const decryptToUnit8Array = base64ToUint8Array(res)
 		const responseData = uint8ArrayToObject(decryptToUnit8Array)
-
-		if (responseData.type === "notification") {
-			hubMessageStr = responseData.data.message
-		}
-
-		if (ref !== "noref") {
-			if (responseData.type === "reaction") {
-				isHubReaction = true
-				repliedToStr = ref
-				hubMessageStr = responseData.content
-			}
-		}
 
 		if (responseData.type === "edit") {
 			editStr = true
@@ -2829,11 +2817,16 @@ const decode = (string, keys, ref) => {
 			hubSpecialId = responseData.specialId
 		}
 
-		if (responseData.message.includes('qortal://use-embed/')) {
+		if (responseData.type === "notification") {
+			hubMessageStr = responseData.data.message
+		} else if (ref !== "noref" && responseData.type === "reaction") {
+			reactionStr = '"isReaction":true,'
+			repliedToStr = ref
+			hubMessageStr = responseData.content
+		} else if (responseData.message.includes('qortal://use-embed/')) {
 			const useEmbed1 = extensionToPointer(responseData.message)
 			const useEmbed2 = /<newpointer>(.*?)<\/newpointer>/g.exec(useEmbed1)
 			const useEmbed3 = encodedToChar(useEmbed2[1])
-
 			messageUseEmbed = parseQortalLink(useEmbed3)
 			embedFileStr = embedToString(messageUseEmbed)
 			hubMessageStr = responseData.message.split(useEmbed2[1]).join('')
@@ -2841,7 +2834,9 @@ const decode = (string, keys, ref) => {
 			hubMessageStr = responseData.message
 		}
 
-		newMessageObject = '{"specialId":"' + hubSpecialId + '","message":"' + hubMessageStr + '",' + embedFileStr + ',"repliedTo":"' + repliedToStr + '","isEdited":' + editStr + ',"isFromHub":true,"isReaction":' + isHubReaction + ',"version": 3}'
+		const hubMessageFinal = hubMessageStr.split('"').join('&quot;')
+
+		newMessageObject = '{"specialId":"' + hubSpecialId + '","message":"' + hubMessageFinal + '",' + embedFileStr + ',"repliedTo":"' + repliedToStr + '","isEdited":' + editStr + ',"isFromHub":true,' + reactionStr + '"version": 3}'
 
 		return newMessageObject
 	}
