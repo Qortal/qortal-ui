@@ -112,9 +112,10 @@ parentEpml.subscribe('logged_in', async isLoggedIn => {
 	const initChatHeadSocket = () => {
 		let myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 		let nodeUrl = myNode.domain + ":" + myNode.port
+		let nodeProtocol = myNode.protocol
 		let activeChatSocketLink
 
-		if (window.parent.location.protocol === "https:") {
+		if (nodeProtocol === "https") {
 			activeChatSocketLink = `wss://${nodeUrl}/websockets/chat/active/${window.parent.reduxStore.getState().app.selectedAddress.address}?encoding=BASE64`
 		} else {
 			activeChatSocketLink = `ws://${nodeUrl}/websockets/chat/active/${window.parent.reduxStore.getState().app.selectedAddress.address}?encoding=BASE64`
