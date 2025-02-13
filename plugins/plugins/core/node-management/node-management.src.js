@@ -12,6 +12,7 @@ import '@vaadin/grid'
 
 // Multi language support
 import { get, registerTranslateConfig, translate, use } from '../../../../core/translate'
+
 registerTranslateConfig({
 	loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
 })
@@ -427,7 +428,9 @@ class NodeManagement extends LitElement {
 
 	async addPeer() {
 		this.addPeerLoading = true
+
 		const addPeerAddress = this.shadowRoot.getElementById('addPeerAddress').value
+
 		await parentEpml.request('apiCall', {
 			url: `/peers?apiKey=${this.getApiKey()}`,
 			method: 'POST',
@@ -456,7 +459,6 @@ class NodeManagement extends LitElement {
 	addMintingAccount() {
 		this.addMintingAccountLoading = true
 		this.addMintingAccountMessage = 'Loading...'
-
 		this.addMintingAccountKey = this.shadowRoot.querySelector('#addMintingAccountKey').value
 
 		parentEpml.request('apiCall', {
@@ -479,6 +481,7 @@ class NodeManagement extends LitElement {
 
 	updateMintingAccounts() {
 		this.mintingAccounts = []
+
 		parentEpml.request('apiCall', {
 			url: `/admin/mintingaccounts?apiKey=${this.getApiKey()}`,
 			method: 'GET'
@@ -517,10 +520,6 @@ class NodeManagement extends LitElement {
 	isEmptyArray(arr) {
 		if (!arr) { return true }
 		return arr.length === 0
-	}
-
-	round(number) {
-		return (Math.round(parseFloat(number) * 1e8) / 1e8).toFixed(8)
 	}
 }
 
