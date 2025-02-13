@@ -1105,6 +1105,19 @@ export const publishData = async ({
 	}
 }
 
+export async function getNameInfo(address) {
+	const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+	const nodeUrl = `${myNode.protocol}://${myNode.domain}:${myNode.port}`
+	const response = await fetch(`${nodeUrl}/names/address/` + address)
+	const nameData = await response.json()
+
+	if (nameData.length > 0) {
+		return nameData[0].name
+	} else {
+		return ""
+	}
+}
+
 export const getPublishesFromAdmins = async (admins, groupId) => {
 	const queryString = admins.map((name) => `name=${name}`).join("&")
 	const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
@@ -1113,7 +1126,7 @@ export const getPublishesFromAdmins = async (admins, groupId) => {
 	const response = await fetch(url)
 
 	if (!response.ok) {
-		consoöe.error("network error")
+		console.error("network error")
 		return false
 	}
 
@@ -1178,7 +1191,7 @@ export const getPublishesFromAdminsAdminSpace = async (admins, groupId) => {
 	const response = await fetch(url)
 
 	if (!response.ok) {
-		consoöe.error("network error")
+		console.error("network error")
 		return false
 	}
 

@@ -1417,6 +1417,7 @@
 		"mpchange83": "hylätty",
 		"mpchange84": "FAILURE",
 		"mpchange85": "SUCCESS",
-		"mpchange86": "Salli aina saada lompakon saldo automaattisesti"
+		"mpchange86": "Salli aina saada lompakon saldo automaattisesti",
+		"mpchange87": "Anna ryhmän tunnus"
 	}
 }

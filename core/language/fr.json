@@ -1417,6 +1417,7 @@
 		"mpchange83": "REFUSÉ",
 		"mpchange84": "ÉCHEC",
 		"mpchange85": "SUCCÈS",
-		"mpchange86": "Toujours autoriser l'obtention automatique du solde du portefeuille"
+		"mpchange86": "Toujours autoriser l'obtention automatique du solde du portefeuille",
+		"mpchange87": "Veuillez saisir l'ID du groupe"
 	}
 }

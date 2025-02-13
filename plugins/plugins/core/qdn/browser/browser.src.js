@@ -1,29 +1,30 @@
-import { html, LitElement } from 'lit'
-import { Epml } from '../../../../epml'
+import {html, LitElement} from 'lit'
+import {Epml} from '../../../../epml'
+import {Sha256} from 'asmcrypto.js'
 import {
-	Loader,
-	publishData,
-	getPublishesFromAdmins,
-	getGroupAdmins,
-	getPublishesFromAdminsAdminSpace,
-	isUsingPublicNode,
-	createBuyOrderTx,
-	requestQueueGetAtAddresses,
-	getUserWalletFunc,
-	tradeBotCreateRequest,
 	cancelTradeOfferTradeBot,
-	processTransactionV2
+	createBuyOrderTx,
+	getGroupAdmins,
+	getPublishesFromAdmins,
+	getPublishesFromAdminsAdminSpace,
+	getUserWalletFunc,
+	isUsingPublicNode,
+	Loader,
+	processTransactionV2,
+	publishData,
+	requestQueueGetAtAddresses,
+	tradeBotCreateRequest
 } from '../../../utils/classes'
-import { appendBuffer } from '../../../utils/utilities'
-import { QORT_DECIMALS } from '../../../../../crypto/api/constants'
-import { mimeToExtensionMap, listOfAllQortalRequests } from '../../components/qdn-action-constants'
+import {appendBuffer} from '../../../utils/utilities'
+import {QORT_DECIMALS} from '../../../../../crypto/api/constants'
+import {mimeToExtensionMap, listOfAllQortalRequests} from '../../components/qdn-action-constants'
 import {
-	uint8ArrayToObject,
-	validateSecretKey,
-	encryptSingle,
-	decryptSingle,
 	createSymmetricKeyAndNonce,
-	decryptGroupEncryptionWithSharingKey
+	decryptGroupEncryptionWithSharingKey,
+	decryptSingle,
+	encryptSingle,
+	uint8ArrayToObject,
+	validateSecretKey
 } from '../../components/GroupEncryption'
 import {
 	base64ToUint8Array,
@@ -33,28 +34,28 @@ import {
 	encryptDataGroup,
 	encryptDataGroupNew,
 	fileToBase64,
-	uint8ArrayStartsWith,
-	uint8ArrayToBase64,
-	base64ToBlobUrl,
 	groupSecretkeys,
 	objectToBase64,
-	roundUpToDecimals
+	roundUpToDecimals,
+	uint8ArrayStartsWith,
+	uint8ArrayToBase64
 } from '../../components/qdn-action-encryption'
-import { webBrowserStyles, webBrowserModalStyles } from '../../components/plugins-css'
+import {webBrowserModalStyles, webBrowserStyles} from '../../components/plugins-css'
 import * as actions from '../../components/qdn-action-types'
 import isElectron from 'is-electron'
 import ShortUniqueId from 'short-unique-id'
-import FileSaver from 'file-saver'
 import WebWorker from 'web-worker:./computePowWorkerFile.js'
 import WebWorkerChat from 'web-worker:./computePowWorker.js'
 import Base58 from '../../../../../crypto/api/deps/Base58'
+import ed2curve from '../../../../../crypto/api/deps/ed2curve'
 import nacl from '../../../../../crypto/api/deps/nacl-fast'
 import '@material/mwc-button'
 import '@material/mwc-icon'
 import '@material/mwc-checkbox'
 
 // Multi language support
-import { get, registerTranslateConfig, translate, use } from '../../../../../core/translate'
+import {get, registerTranslateConfig, translate, use} from '../../../../../core/translate'
+
 registerTranslateConfig({
 	loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
 })
@@ -148,11 +149,11 @@ class WebBrowser extends LitElement {
 		} else {
 			displayUrl = 'qortal://' + this.service + '/' + this.name
 
-			if (this.identifier && this.identifier != 'null' && this.identifier != 'default') {
+			if (this.identifier && this.identifier !== 'null' && this.identifier !== 'default') {
 				displayUrl = displayUrl.concat('/' + this.identifier)
 			}
 
-			if (this.path != null && this.path != '/') {
+			if (this.path != null && this.path !== '/') {
 				displayUrl = displayUrl.concat(this.path)
 			}
 		}
@@ -192,7 +193,7 @@ class WebBrowser extends LitElement {
 				this.url = `${this.link}`
 			} else {
 				// Normal mode
-				this.url = `${nodeUrl}/render/${this.service}/${this.name}${this.path != null ? this.path : ''}?theme=${this.theme}&identifier=${(this.identifier != null && this.identifier != 'null') ? this.identifier : ''}`
+				this.url = `${nodeUrl}/render/${this.service}/${this.name}${this.path != null ? this.path : ''}?theme=${this.theme}&identifier=${(this.identifier != null && this.identifier !== 'null') ? this.identifier : ''}`
 			}
 		}
 
@@ -252,7 +253,7 @@ class WebBrowser extends LitElement {
 							<mwc-button @click=${() => this.goBackToList()} title="${translate('browserpage.bchange3')}" class="address-bar-button">
 							<mwc-icon>home</mwc-icon>
 						</mwc-button>
-							<input @keydown=${this._handleKeyDown} style="width: 550px; color: var(--black);" id="address" type="text" value="${this.displayUrl}"></input>
+							<input @keydown=${this._handleKeyDown} style="width: 550px; color: var(--black);" id="address" type="text" value="${this.displayUrl}">
 							${this.renderFullScreen()}
 							<mwc-button @click=${() => this.delete()} title="${translate('browserpage.bchange4')} ${this.service} ${this.name} ${translate('browserpage.bchange5')}" class="address-bar-button float-right">
 							<mwc-icon>delete</mwc-icon>
@@ -305,7 +306,7 @@ class WebBrowser extends LitElement {
 		}
 
 		window.addEventListener('message', async (event) => {
-			if (event == null || event.data == null || event.data.length == 0 || event.data.action == null) {
+			if (event == null || event.data == null || event.data.length === 0 || event.data.action == null) {
 				return
 			}
 
@@ -314,10 +315,9 @@ class WebBrowser extends LitElement {
 
 			switch (data.action) {
 				case actions.IS_USING_PUBLIC_NODE: {
-					const res = await isUsingPublicNode()
-					response = res
-					break
+					response = await isUsingPublicNode()
 				}
+					break
 
 				case actions.ADMIN_ACTION: {
 					let type = data.type
@@ -375,7 +375,8 @@ class WebBrowser extends LitElement {
 									includeValueInBody = true
 									break
 								default:
-									throw new Error(`Unknown admin action type: ${type}`)
+									console.error(`Unknown admin action type: ${type}`)
+									break
 							}
 							// Set up options for the API call
 							let options = {
@@ -402,13 +403,13 @@ class WebBrowser extends LitElement {
 						data['error'] = `User declined admin action: ${type}`
 						response = JSON.stringify(data)
 					}
-					break
 				}
+					break
 
 				case actions.SHOW_ACTIONS: {
 					response = listOfAllQortalRequests
-					break
 				}
+					break
 
 				case actions.GET_USER_ACCOUNT: {
 					let skip = false
@@ -436,9 +437,9 @@ class WebBrowser extends LitElement {
 						const data = {}
 						data['error'] = "User declined to share account details"
 						response = JSON.stringify(data)
-						break
 					}
 				}
+					break
 
 				case actions.ENCRYPT_DATA: {
 					try {
@@ -469,9 +470,9 @@ class WebBrowser extends LitElement {
 						const data = {}
 						data['error'] = error.message || "Error in encrypting data"
 						response = JSON.stringify(data)
-						break
 					}
 				}
+					break
 
 				case actions.DECRYPT_DATA: {
 					const { encryptedData, publicKey } = data
@@ -510,12 +511,12 @@ class WebBrowser extends LitElement {
 						const data = {}
 						data['error'] = error.message || "Error in decrypting data"
 						response = JSON.stringify(data)
-						break
 					}
 				}
+					break
 
 				case actions.ENCRYPT_QORTAL_GROUP_DATA: {
-					let data64 = data.data64 || data.base64
+					let data64 = data.data64 ? data.data64 : data.base64
 					let groupId = data.groupId
 					let isAdmins = data.isAdmins
 					let dataSentBack = {}
@@ -542,7 +543,6 @@ class WebBrowser extends LitElement {
 						) {
 							secretKeyObject = groupSecretkeys[groupId].secretKeyObject
 						}
-
 						if(!secretKeyObject) {
 							const { names } = await getGroupAdmins(groupId)
 							const publish = await getPublishesFromAdmins(names, groupId)
@@ -551,10 +551,10 @@ class WebBrowser extends LitElement {
 								response = JSON.stringify(dataSentBack)
 								break
 							}
-							const res = await parentEpml.request('apiCall', {
+							const resData = await parentEpml.request('apiCall', {
+								type: 'api',
 								url: `/arbitrary/DOCUMENT_PRIVATE/${publish.name}/${publish.identifier}?encoding=base64`
 							})
-							const resData = await res.text()
 							const decryptedKey = await this.decryptResourceQDN(resData)
 							const dataint8Array = base64ToUint8Array(decryptedKey.data)
 							const decryptedKeyToObject = uint8ArrayToObject(dataint8Array)
@@ -564,7 +564,8 @@ class WebBrowser extends LitElement {
 								break
 							}
 							secretKeyObject = decryptedKeyToObject
-							groupSecretkeys[groupId] = {
+							let groupSecretkeys = {}
+							groupSecretkeys[`${groupId}`] = {
 								secretKeyObject,
 								timestamp: Date.now()
 							}
@@ -586,10 +587,10 @@ class WebBrowser extends LitElement {
 								response = JSON.stringify(dataSentBack)
 								break
 							}
-							const res = await parentEpml.request('apiCall', {
+							const resData = await parentEpml.request('apiCall', {
+								type: 'api',
 								url: `/arbitrary/DOCUMENT_PRIVATE/${publish.name}/${publish.identifier}?encoding=base64`
 							})
-							const resData = await res.text()
 							const decryptedKey = await this.decryptResourceQDN(resData)
 							const dataint8Array = base64ToUint8Array(decryptedKey.data)
 							const decryptedKeyToObject = uint8ArrayToObject(dataint8Array)
@@ -599,26 +600,25 @@ class WebBrowser extends LitElement {
 								break
 							}
 							secretKeyObject = decryptedKeyToObject
+							let groupSecretkeys = {}
 							groupSecretkeys[`admins-${groupId}`] = {
 								secretKeyObject,
 								timestamp: Date.now()
 							}
 						}
 					}
-					const resGroupEncryptedResource = encryptSingle({
-						data64, secretKeyObject: secretKeyObject
-					})
+					const resGroupEncryptedResource = encryptSingle(data64, secretKeyObjec)
 					if (resGroupEncryptedResource) {
-						return resGroupEncryptedResource
+						response = resGroupEncryptedResource
 					} else {
 						dataSentBack['error'] = "Unable to encrypt"
 						response = JSON.stringify(dataSentBack)
-						break
 					}
 				}
+					break
 
 				case actions.DECRYPT_QORTAL_GROUP_DATA: {
-					let data64 = data.data64 || data.base64
+					let data64 = data.daat64 ? data.daat64 : data.base64
 					let groupId = data.groupId
 					let isAdmins = data.isAdmins
 					let dataSentBack = {}
@@ -642,7 +642,6 @@ class WebBrowser extends LitElement {
 						) {
 							secretKeyObject = groupSecretkeys[groupId].secretKeyObject
 						}
-
 						if (!secretKeyObject) {
 							const { names } = await getGroupAdmins(groupId)
 							const publish = await getPublishesFromAdmins(names, groupId)
@@ -651,10 +650,10 @@ class WebBrowser extends LitElement {
 								response = JSON.stringify(dataSentBack)
 								break
 							}
-							const res = await parentEpml.request('apiCall', {
+							const resData = await parentEpml.request('apiCall', {
+								type: 'api',
 								url: `/arbitrary/DOCUMENT_PRIVATE/${publish.name}/${publish.identifier}?encoding=base64`
 							})
-							const resData = await res.text()
 							const decryptedKey = await this.decryptResourceQDN(resData)
 							const dataint8Array = base64ToUint8Array(decryptedKey.data)
 							const decryptedKeyToObject = uint8ArrayToObject(dataint8Array)
@@ -664,7 +663,8 @@ class WebBrowser extends LitElement {
 								break
 							}
 							secretKeyObject = decryptedKeyToObject
-							groupSecretkeys[groupId] = {
+							let groupSecretkeys ={}
+							groupSecretkeys[`${groupId}`] = {
 								secretKeyObject,
 								timestamp: Date.now()
 							}
@@ -686,10 +686,10 @@ class WebBrowser extends LitElement {
 								response = JSON.stringify(dataSentBack)
 								break
 							}
-							const res = await parentEpml.request('apiCall', {
+							const resData = await parentEpml.request('apiCall', {
+								type: 'api',
 								url: `/arbitrary/DOCUMENT_PRIVATE/${publish.name}/${publish.identifier}?encoding=base64`
 							})
-							const resData = await res.text()
 							const decryptedKey = await this.decryptResourceQDN(resData)
 							const dataint8Array = base64ToUint8Array(decryptedKey.data)
 							const decryptedKeyToObject = uint8ArrayToObject(dataint8Array)
@@ -699,23 +699,22 @@ class WebBrowser extends LitElement {
 								break
 							}
 							secretKeyObject = decryptedKeyToObject
+							let groupSecretkeys ={}
 							groupSecretkeys[`admins-${groupId}`] = {
 								secretKeyObject,
 								timestamp: Date.now()
 							}
 						}
 					}
-					const resGroupDecryptResource = decryptSingle({
-						data64, secretKeyObject: secretKeyObject, skipDecodeBase64: true
-					})
+					const resGroupDecryptResource = decryptSingle(data64, secretKeyObject, false)
 					if (resGroupDecryptResource) {
-						return resGroupDecryptResource
+						response = resGroupDecryptResource
 					} else {
 						dataSentBack['error'] = "Unable to decrypt"
 						response = JSON.stringify(dataSentBack)
-						break
 					}
 				}
+					break
 
 				case actions.ENCRYPT_DATA_WITH_SHARING_KEY: {
 					let data64 = data.data64 || data.base64
@@ -749,9 +748,9 @@ class WebBrowser extends LitElement {
 					} else {
 						dataSentBack['error'] = "Unable to encrypt"
 						response = JSON.stringify(dataSentBack)
-						break
 					}
 				}
+					break
 
 				case actions.DECRYPT_DATA_WITH_SHARING_KEY: {
 					let dataSentBack = {}
@@ -771,9 +770,82 @@ class WebBrowser extends LitElement {
 					} else {
 						dataSentBack['error'] = "No data in the decrypted resource"
 						response = JSON.stringify(dataSentBack)
-						break
 					}
 				}
+					break
+
+				case actions.DECRYPT_AESGCM: {
+					const requiredFields = ["encryptedData", "iv", "senderPublicKey"]
+					const missingFields = []
+					let dataSentBack = {}
+					requiredFields.forEach((field) => {
+						if (!data[field]) {
+							missingFields.push(field)
+						}
+					})
+					if (missingFields.length > 0) {
+						const missingFieldsString = missingFields.join(', ')
+						const tryAgain = get("walletpage.wchange44")
+						await showErrorAndWait(
+							"MISSING_FIELDS",
+							{
+								id1: missingFieldsString,
+								id2: tryAgain
+							}
+						)
+						dataSentBack['error'] = `Missing fields: ${missingFieldsString}`
+						response = JSON.stringify(dataSentBack)
+						break
+					}
+					const encryptedData = data.encryptedData
+					const iv = data.iv
+					const senderPublicKeyBase58 = data.senderPublicKey
+					// Decode keys and IV
+					const senderPublicKey = Base58.decode(senderPublicKeyBase58)
+					const uint8PrivateKey = window.parent.reduxStore.getState().app.selectedAddress.keyPair.privateKey
+					// Convert ed25519 keys to Curve25519
+					const convertedPrivateKey = ed2curve.convertSecretKey(uint8PrivateKey)
+					const convertedPublicKey = ed2curve.convertPublicKey(senderPublicKey)
+					// Generate shared secret
+					const sharedSecret = new Uint8Array(32)
+					nacl.lowlevel.crypto_scalarmult(sharedSecret, convertedPrivateKey, convertedPublicKey)
+					// Derive encryption key
+					let encryptionKey = new Uint8Array(32)
+					encryptionKey = new Sha256().process(sharedSecret).finish().result
+					// Convert IV and ciphertext from Base64
+					const base64ToUint8Array = (base64) => Uint8Array.from(atob(base64), c => c.charCodeAt(0))
+					const ivUint8Array = base64ToUint8Array(iv)
+					const ciphertext = base64ToUint8Array(encryptedData)
+					// Validate IV and key lengths
+					if (ivUint8Array.length !== 12) {
+						let myMsg1 = get("managegroup.mg58")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
+						response = '{"error": "Invalid IV: AES-GCM requires a 12-byte IV."}'
+						break
+					}
+					if (encryptionKey.length !== 32) {
+						let myMsg1 = get("managegroup.mg58")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
+						response = '{"error": "Invalid key: AES-GCM requires a 256-bit key."}'
+						break
+					}
+					try {
+						// Decrypt data
+						const algorithm = { name: "AES-GCM", iv: ivUint8Array }
+						const cryptoKey = await crypto.subtle.importKey("raw", encryptionKey, algorithm, false, ["decrypt"])
+						const decryptedArrayBuffer = await crypto.subtle.decrypt(algorithm, cryptoKey, ciphertext)
+						// Return decrypted data as Base64
+						return uint8ArrayToBase64(new Uint8Array(decryptedArrayBuffer))
+					} catch (error) {
+						let myMsg1 = get("managegroup.mg58")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
+						response = '{"error": "Failed to decrypt the message. Ensure the data and keys are correct."}'
+					}
+				}
+					break
 
 				case actions.CREATE_TRADE_BUY_ORDER: {
 					const node = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
@@ -796,8 +868,7 @@ class WebBrowser extends LitElement {
 								id2: tryAgain
 							}
 						)
-						const errorMsg = `Missing fields: ${missingFieldsString}`
-						dataSentBack['error'] = errorMsg
+						dataSentBack['error'] = `Missing fields: ${missingFieldsString}`
 						response = JSON.stringify(dataSentBack)
 						break
 					}
@@ -809,7 +880,6 @@ class WebBrowser extends LitElement {
 							const url = `${nodeUrl}/crosschain/trade/${atAddress}`
 							const resAddress = await fetch(url)
 							const resData = await resAddress.json()
-
 							if (foreignBlockchain !== resData.foreignBlockchain) {
 								let myMsg1 = get("modals.mpchange1")
 								let myMsg2 = get("walletpage.wchange44")
@@ -817,7 +887,6 @@ class WebBrowser extends LitElement {
 								response = '{"error": "All requested ATs need to be of the same foreign Blockchain."}'
 								throw new Error("All requested ATs need to be of the same foreign Blockchain.")
 							}
-
 							return resData
 						})
 					)
@@ -873,6 +942,7 @@ class WebBrowser extends LitElement {
 						break
 					}
 				}
+					break
 
 				case actions.CREATE_TRADE_SELL_ORDER: {
 					const requiredFields = ["qortAmount", "foreignBlockchain", "foreignAmount"]
@@ -893,8 +963,7 @@ class WebBrowser extends LitElement {
 								id2: tryAgain
 							}
 						)
-						const errorMsg = `Missing fields: ${missingFieldsString}`
-						dataSentBack['error'] = errorMsg
+						dataSentBack['error'] = `Missing fields: ${missingFieldsString}`
 						response = JSON.stringify(dataSentBack)
 						break
 					}
@@ -952,6 +1021,7 @@ class WebBrowser extends LitElement {
 						break
 					}
 				}
+					break
 
 				case actions.CANCEL_TRADE_SELL_ORDER: {
 					const requiredFields = ["atAddress"]
@@ -972,8 +1042,7 @@ class WebBrowser extends LitElement {
 								id2: tryAgain
 							}
 						)
-						const errorMsg = `Missing fields: ${missingFieldsString}`
-						dataSentBack['error'] = errorMsg
+						dataSentBack['error'] = `Missing fields: ${missingFieldsString}`
 						response = JSON.stringify(dataSentBack)
 						break
 					}
@@ -1038,6 +1107,7 @@ class WebBrowser extends LitElement {
 						break
 					}
 				}
+					break
 
 				case actions.GET_LIST_ITEMS: {
 					const requiredFields = ['list_name']
@@ -1058,8 +1128,7 @@ class WebBrowser extends LitElement {
 								id2: tryAgain
 							}
 						)
-						const errorMsg = `Missing fields: ${missingFieldsString}`
-						dataSentBack['error'] = errorMsg
+						dataSentBack['error'] = `Missing fields: ${missingFieldsString}`
 						response = JSON.stringify(dataSentBack)
 						break
 					}
@@ -1083,6 +1152,7 @@ class WebBrowser extends LitElement {
 								url: `/lists/${data.list_name}?apiKey=${this.getApiKey()}`
 							})
 							response = JSON.stringify(list)
+							break
 						} catch (error) {
 							let myMsg1 = get("modals.mpchange16")
 							let myMsg2 = get("walletpage.wchange44")
@@ -1090,7 +1160,6 @@ class WebBrowser extends LitElement {
 							const data = {}
 							data['error'] = "Error in retrieving list."
 							response = JSON.stringify(data)
-						} finally {
 							break
 						}
 					} else {
@@ -1098,9 +1167,9 @@ class WebBrowser extends LitElement {
 						let myMsg2 = get("walletpage.wchange44")
 						await showErrorAndWait("DECLINED_REQUEST", { id1: myMsg1, id2: myMsg2 })
 						response = '{"error": "User declined request"}'
-						break
 					}
 				}
+					break
 
 				case actions.ADD_LIST_ITEMS: {
 					const requiredFields = ['list_name', 'items']
@@ -1121,8 +1190,7 @@ class WebBrowser extends LitElement {
 								id2: tryAgain
 							}
 						)
-						const errorMsg = `Missing fields: ${missingFieldsString}`
-						dataSentBack['error'] = errorMsg
+						dataSentBack['error'] = `Missing fields: ${missingFieldsString}`
 						response = JSON.stringify(dataSentBack)
 						break
 					}
@@ -1150,6 +1218,7 @@ class WebBrowser extends LitElement {
 									'Content-Type': 'application/json'
 								}
 							})
+							break
 						} catch (error) {
 							let myMsg1 = get("modals.mpchange17")
 							let myMsg2 = get("walletpage.wchange44")
@@ -1157,7 +1226,6 @@ class WebBrowser extends LitElement {
 							const data = {}
 							data['error'] = "Error in adding to list."
 							response = JSON.stringify(data)
-						} finally {
 							break
 						}
 					} else {
@@ -1165,9 +1233,9 @@ class WebBrowser extends LitElement {
 						let myMsg2 = get("walletpage.wchange44")
 						await showErrorAndWait("DECLINED_REQUEST", { id1: myMsg1, id2: myMsg2 })
 						response = '{"error": "User declined request"}'
-						break
 					}
 				}
+					break
 
 				case actions.DELETE_LIST_ITEM: {
 					const requiredFields = ['list_name', 'item']
@@ -1188,8 +1256,7 @@ class WebBrowser extends LitElement {
 								id2: tryAgain
 							}
 						)
-						const errorMsg = `Missing fields: ${missingFieldsString}`
-						dataSentBack['error'] = errorMsg
+						dataSentBack['error'] = `Missing fields: ${missingFieldsString}`
 						response = JSON.stringify(dataSentBack)
 						break
 					}
@@ -1217,6 +1284,7 @@ class WebBrowser extends LitElement {
 									'Content-Type': 'application/json'
 								}
 							})
+							break
 						} catch (error) {
 							let myMsg1 = get("modals.mpchange18")
 							let myMsg2 = get("walletpage.wchange44")
@@ -1224,7 +1292,6 @@ class WebBrowser extends LitElement {
 							const data = {}
 							data['error'] = "Error in delete list."
 							response = JSON.stringify(data)
-						} finally {
 							break
 						}
 					} else {
@@ -1232,9 +1299,9 @@ class WebBrowser extends LitElement {
 						let myMsg2 = get("walletpage.wchange44")
 						await showErrorAndWait("DECLINED_REQUEST", { id1: myMsg1, id2: myMsg2 })
 						response = '{"error": "User declined request"}'
-						break
 					}
 				}
+					break
 
 				case actions.GET_FRIENDS_LIST: {
 					let skip = false
@@ -1252,6 +1319,7 @@ class WebBrowser extends LitElement {
 							let list = JSON.parse(localStorage.getItem('friends-my-friend-list') || "[]")
 							list = list.map((friend) => friend.name || "")
 							response = JSON.stringify(list)
+							break
 						} catch (error) {
 							let myMsg1 = get("modals.mpchange19")
 							let myMsg2 = get("walletpage.wchange44")
@@ -1259,7 +1327,6 @@ class WebBrowser extends LitElement {
 							const data = {}
 							data['error'] = "Error in retrieving friends list."
 							response = JSON.stringify(data)
-						} finally {
 							break
 						}
 					} else {
@@ -1267,9 +1334,9 @@ class WebBrowser extends LitElement {
 						let myMsg2 = get("walletpage.wchange44")
 						await showErrorAndWait("DECLINED_REQUEST", { id1: myMsg1, id2: myMsg2 })
 						response = '{"error": "User declined request"}'
-						break
 					}
 				}
+					break
 
 				case actions.LINK_TO_QDN_RESOURCE:
 				case actions.QDN_RESOURCE_DISPLAYED:
@@ -1277,14 +1344,14 @@ class WebBrowser extends LitElement {
 					// Note: don't update this.url here, as we don't want to force reload the iframe each time.
 					if (this.preview != null && this.preview.length > 0) {
 						this.displayUrl = translate("appspage.schange40")
-						return
+						break
 					}
 					let url = 'qortal://' + data.service + '/' + data.name
 					this.path = data.path != null ? (data.path.startsWith('/') ? '' : '/') + data.path : null
-					if (data.identifier != null && data.identifier != '' && data.identifier != 'default') {
+					if (data.identifier != null && data.identifier !== '' && data.identifier !== 'default') {
 						url = url.concat('/' + data.identifier)
 					}
-					if (this.path != null && this.path != '/') {
+					if (this.path != null && this.path !== '/') {
 						url = url.concat(this.path)
 					}
 					this.name = data.name
@@ -1304,7 +1371,7 @@ class WebBrowser extends LitElement {
 						service: data.service,
 						id: tabId ? tabId : ''
 					}))
-					return
+					break
 
 				case actions.SET_TAB_NOTIFICATIONS: {
 					const { count } = data
@@ -1327,8 +1394,8 @@ class WebBrowser extends LitElement {
 						count: count
 					}))
 					response = true
-					break
 				}
+					break
 
 				case actions.PUBLISH_QDN_RESOURCE: {
 					// optional fields: encrypt:boolean recipientPublicKey:string
@@ -1350,8 +1417,7 @@ class WebBrowser extends LitElement {
 								id2: tryAgain
 							}
 						)
-						const errorMsg = `Missing fields: ${missingFieldsString}`
-						dataSentBack['error'] = errorMsg
+						dataSentBack['error'] = `Missing fields: ${missingFieldsString}`
 						response = JSON.stringify(dataSentBack)
 						break
 					}
@@ -1422,7 +1488,6 @@ class WebBrowser extends LitElement {
 							response = JSON.stringify(obj)
 							break
 						}
-
 					}
 					const res2 = await showModalAndWait(
 						actions.PUBLISH_QDN_RESOURCE,
@@ -1489,8 +1554,8 @@ class WebBrowser extends LitElement {
 					// TODO: prompt user for publish. If they confirm, call `POST /arbitrary/{service}/{name}/{identifier}/base64` and sign+process transaction
 					// then set the response string from the core to the `response` variable (defined above)
 					// If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
-					break
 				}
+					break
 
 				case actions.PUBLISH_MULTIPLE_QDN_RESOURCES: {
 					const requiredFields = ['resources']
@@ -1512,8 +1577,7 @@ class WebBrowser extends LitElement {
 								id2: tryAgain
 							}
 						)
-						const errorMsg = `Missing fields: ${missingFieldsString}`
-						dataSentBack['error'] = errorMsg
+						dataSentBack['error'] = `Missing fields: ${missingFieldsString}`
 						response = JSON.stringify(dataSentBack)
 						break
 					}
@@ -1591,7 +1655,6 @@ class WebBrowser extends LitElement {
 								})
 								continue
 							}
-
 							const service = resource.service
 							const name = resource.name
 							let identifier = resource.identifier
@@ -1699,8 +1762,8 @@ class WebBrowser extends LitElement {
 						break
 					}
 					response = true
-					break
 				}
+					break
 
 				case actions.VOTE_ON_POLL: {
 					const requiredFields = ['pollName', 'optionIndex']
@@ -1721,8 +1784,7 @@ class WebBrowser extends LitElement {
 								id2: tryAgain
 							}
 						)
-						const errorMsg = `Missing fields: ${missingFieldsString}`
-						dataSentBack['error'] = errorMsg
+						dataSentBack['error'] = `Missing fields: ${missingFieldsString}`
 						response = JSON.stringify(dataSentBack)
 						break
 					}
@@ -1768,8 +1830,8 @@ class WebBrowser extends LitElement {
 					} finally {
 						this.loader.hide()
 					}
-					break
 				}
+					break
 
 				case actions.CREATE_POLL: {
 					const requiredFields = ['pollName', 'pollDescription', 'pollOptions', 'pollOwnerAddress']
@@ -1790,8 +1852,7 @@ class WebBrowser extends LitElement {
 								id2: tryAgain
 							}
 						)
-						const errorMsg = `Missing fields: ${missingFieldsString}`
-						dataSentBack['error'] = errorMsg
+						dataSentBack['error'] = `Missing fields: ${missingFieldsString}`
 						response = JSON.stringify(dataSentBack)
 						break
 					}
@@ -1813,8 +1874,8 @@ class WebBrowser extends LitElement {
 					} finally {
 						this.loader.hide()
 					}
-					break
 				}
+					break
 
 				case actions.OPEN_NEW_TAB: {
 					if (!data.qortalLink) {
@@ -1837,9 +1898,9 @@ class WebBrowser extends LitElement {
 						const obj = {}
 						obj['error'] = "Invalid qortal link."
 						response = JSON.stringify(obj)
-						break
 					}
 				}
+					break
 
 				case actions.NOTIFICATIONS_PERMISSION: {
 					try {
@@ -1858,16 +1919,25 @@ class WebBrowser extends LitElement {
 							break
 						}
 					} catch (error) {
-						break
+						console.error(error)
 					}
 				}
+					break
 
 				case actions.SEND_LOCAL_NOTIFICATION: {
 					const { title, url, icon, message } = data
 					try {
 						const id = `appNotificationList-${this.selectedAddress.address}`
 						const checkData = localStorage.getItem(id) ? JSON.parse(localStorage.getItem(id)) : null
-						if (!checkData || !checkData[this.name]) throw new Error('App not on permission list')
+						if (!checkData || !checkData[this.name]) {
+							let myMsg1 = get("modals.mpchange34")
+							let myMsg2 = get("walletpage.wchange44")
+							await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
+							const obj = {}
+							obj['error'] = "App not on permission list"
+							response = JSON.stringify(obj)
+							break
+						}
 						const appInfo = checkData[this.name]
 						const lastNotification = appInfo.lastNotification
 						const interval = appInfo.interval
@@ -1881,7 +1951,13 @@ class WebBrowser extends LitElement {
 								this.updateLastNotification(id, this.name)
 								break
 							} else {
-								throw new Error(`invalid data`)
+								let myMsg1 = get("modals.mpchange34")
+								let myMsg2 = get("walletpage.wchange44")
+								await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
+								const obj = {}
+								obj['error'] = "Invalid data"
+								response = JSON.stringify(obj)
+								break
 							}
 						} else if (!lastNotification) {
 							parentEpml.request('showNotification', {
@@ -1891,11 +1967,13 @@ class WebBrowser extends LitElement {
 							this.updateLastNotification(id)
 							break
 						} else {
-							let myMsg1 = get("modals.mpchange27")
+							let myMsg1 = get("modals.mpchange34")
 							let myMsg2 = get("walletpage.wchange44")
 							await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
-							throw new Error(`invalid data.`)
-						}
+							const obj = {}
+							obj['error'] = "Invalid data"
+							response = JSON.stringify(obj)
+							break						}
 					} catch (error) {
 						let myMsg1 = get("modals.mpchange35")
 						let myMsg2 = get("walletpage.wchange44")
@@ -1903,9 +1981,9 @@ class WebBrowser extends LitElement {
 						const obj = {}
 						obj['error'] = error.message ? error.message : get("modals.mpchange35")
 						response = JSON.stringify(obj)
-						break
 					}
 				}
+					break
 
 				case actions.SEND_CHAT_MESSAGE: {
 					const message = data.message
@@ -2073,8 +2151,8 @@ class WebBrowser extends LitElement {
 					// TODO: prompt user to send chat message. If they confirm, sign+process a CHAT transaction
 					// then set the response string from the core to the `response` variable (defined above)
 					// If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
-					break
 				}
+					break
 
 				case actions.JOIN_GROUP: {
 					const requiredFields = ['groupId']
@@ -2095,8 +2173,7 @@ class WebBrowser extends LitElement {
 								id2: tryAgain
 							}
 						)
-						const errorMsg = `Missing fields: ${missingFieldsString}`
-						dataSentBack['error'] = errorMsg
+						dataSentBack['error'] = `Missing fields: ${missingFieldsString}`
 						response = JSON.stringify(dataSentBack)
 						break
 					}
@@ -2173,6 +2250,7 @@ class WebBrowser extends LitElement {
 						break
 					}
 				}
+					break
 
 				case actions.SAVE_FILE: {
 					try {
@@ -2188,14 +2266,13 @@ class WebBrowser extends LitElement {
 							const missingFieldsString = missingFields.join(', ')
 							const tryAgain = get("walletpage.wchange44")
 							await showErrorAndWait(
-							"MISSING_FIELDS",
+								"MISSING_FIELDS",
 								{
 									id1: missingFieldsString,
 									id2: tryAgain
 								}
 							)
-							const errorMsg = `Missing fields: ${missingFieldsString}`
-							dataSentBack['error'] = errorMsg
+							dataSentBack['error'] = `Missing fields: ${missingFieldsString}`
 							response = JSON.stringify(dataSentBack)
 							break
 						}
@@ -2222,20 +2299,14 @@ class WebBrowser extends LitElement {
 						const fileExtension = mimeToExtensionMap[mimeType] || backupExention
 						let fileHandleOptions = {}
 						if (!mimeType) {
-							let myMsg1 = get("modals.mpchange45")
-							let myMsg2 = get("walletpage.wchange44")
-							await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 							const obj = {}
-							obj['error'] = 'A mime type could not be derived.'
+							obj['error'] = 'A mimeType could not be derived'
 							response = JSON.stringify(obj)
 							break
 						}
 						if (!fileExtension) {
-							let myMsg1 = get("modals.mpchange46")
-							let myMsg2 = get("walletpage.wchange44")
-							await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 							const obj = {}
-							obj['error'] = 'A file extension could not be derived.'
+							obj['error'] = 'A file extension could not be derived'
 							response = JSON.stringify(obj)
 							break
 						}
@@ -2264,11 +2335,8 @@ class WebBrowser extends LitElement {
 							writeFile(fileHandle, blob).then(() => console.log("FILE SAVED"))
 						} catch (error) {
 							if (error.name === 'AbortError') {
-								let myMsg1 = get("modals.mpchange47")
-								let myMsg2 = get("walletpage.wchange44")
-								await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 								const obj = {}
-								obj['error'] = 'User declined the download.'
+								obj['error'] = 'User declined the download'
 								response = JSON.stringify(obj)
 								break
 							}
@@ -2276,15 +2344,15 @@ class WebBrowser extends LitElement {
 						}
 						response = JSON.stringify(true)
 					} catch (error) {
-						let myMsg1 = get("modals.mpchange48")
+						let myMsg1 = get("managegroup.mg58")
 						let myMsg2 = get("walletpage.wchange44")
 						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 						const obj = {}
-						obj['error'] = error.message ? error.message : get("modals.mpchange48")
+						obj['error'] = error.message || 'Failed to initiate download'
 						response = JSON.stringify(obj)
 					}
-					break
 				}
+					break
 
 				case actions.DEPLOY_AT: {
 					const requiredFields = ['name', 'description', 'tags', 'creationBytes', 'amount', 'assetId', 'type']
@@ -2305,8 +2373,7 @@ class WebBrowser extends LitElement {
 								id2: tryAgain
 							}
 						)
-						const errorMsg = `Missing fields: ${missingFieldsString}`
-						dataSentBack['error'] = errorMsg
+						dataSentBack['error'] = `Missing fields: ${missingFieldsString}`
 						response = JSON.stringify(dataSentBack)
 						break
 					}
@@ -2314,18 +2381,19 @@ class WebBrowser extends LitElement {
 						this.loader.show()
 						const resDeployAt = await this._deployAt(data.name, data.description, data.tags, data.creationBytes, data.amount, data.assetId, data.type)
 						response = JSON.stringify(resDeployAt)
+						this.loader.hide()
+						break
 					} catch (error) {
+						this.loader.hide()
 						let myMsg1 = get("modals.mpchange49")
 						let myMsg2 = get("walletpage.wchange44")
 						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 						const obj = {}
 						obj['error'] = error.message ? error.message : get("modals.mpchange49")
 						response = JSON.stringify(obj)
-					} finally {
-						this.loader.hide()
 					}
-					break
 				}
+					break
 
 				case actions.GET_PROFILE_DATA: {
 					const defaultProperties = ['tagline', 'bio', 'wallets']
@@ -2347,8 +2415,7 @@ class WebBrowser extends LitElement {
 								id2: tryAgain
 							}
 						)
-						const errorMsg = `Missing fields: ${missingFieldsString}`
-						dataSentBack['error'] = errorMsg
+						dataSentBack['error'] = `Missing fields: ${missingFieldsString}`
 						response = JSON.stringify(dataSentBack)
 						break
 					}
@@ -2421,9 +2488,9 @@ class WebBrowser extends LitElement {
 						const obj = {}
 						obj['error'] = error.message ? error.message : get("modals.mpchange52")
 						response = JSON.stringify(obj)
-						break
 					}
 				}
+					break
 
 				case actions.SET_PROFILE_DATA: {
 					const requiredFields = ['property', 'data']
@@ -2444,8 +2511,7 @@ class WebBrowser extends LitElement {
 								id2: tryAgain
 							}
 						)
-						const errorMsg = `Missing fields: ${missingFieldsString}`
-						dataSentBack['error'] = errorMsg
+						dataSentBack['error'] = `Missing fields: ${missingFieldsString}`
 						response = JSON.stringify(dataSentBack)
 						break
 					}
@@ -2511,8 +2577,8 @@ class WebBrowser extends LitElement {
 						obj['error'] = error.message ? error.message : get("modals.mpchange53")
 						response = JSON.stringify(obj)
 					}
-					break
 				}
+					break
 
 				case actions.OPEN_PROFILE: {
 					const requiredFields = ['name']
@@ -2533,8 +2599,7 @@ class WebBrowser extends LitElement {
 								id2: tryAgain
 							}
 						)
-						const errorMsg = `Missing fields: ${missingFieldsString}`
-						dataSentBack['error'] = errorMsg
+						dataSentBack['error'] = `Missing fields: ${missingFieldsString}`
 						response = JSON.stringify(dataSentBack)
 						break
 					}
@@ -2552,9 +2617,9 @@ class WebBrowser extends LitElement {
 						const obj = {}
 						obj['error'] = error.message ? error.message : get("modals.mpchange54")
 						response = JSON.stringify(obj)
-						break
 					}
 				}
+					break
 
 				case actions.GET_USER_WALLET: {
 					const requiredFields = ['coin']
@@ -2575,8 +2640,7 @@ class WebBrowser extends LitElement {
 								id2: tryAgain
 							}
 						)
-						const errorMsg = `Missing fields: ${missingFieldsString}`
-						dataSentBack['error'] = errorMsg
+						dataSentBack['error'] = `Missing fields: ${missingFieldsString}`
 						response = JSON.stringify(dataSentBack)
 						break
 					}
@@ -2635,6 +2699,7 @@ class WebBrowser extends LitElement {
 						break
 					}
 				}
+					break
 
 				case actions.GET_WALLET_BALANCE: {
 					const requiredFields = ['coin']
@@ -2657,8 +2722,7 @@ class WebBrowser extends LitElement {
 								id2: tryAgain
 							}
 						)
-						const errorMsg = `Missing fields: ${missingFieldsString}`
-						dataSentBack['error'] = errorMsg
+						dataSentBack['error'] = `Missing fields: ${missingFieldsString}`
 						response = JSON.stringify(dataSentBack)
 						break
 					}
@@ -2683,16 +2747,16 @@ class WebBrowser extends LitElement {
 								response = await parentEpml.request('apiCall', {
 									url: `/addresses/balance/${qortAddress}?apiKey=${this.getApiKey()}`
 								})
+								this.loader.hide()
+								break
 							} catch (error) {
 								this.loader.hide()
 								let myMsg1 = get("browserpage.bchange21")
 								let myMsg2 = get("walletpage.wchange44")
-								await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
+								await showErrorAndWait("ACTION_FAILED", {id1: myMsg1, id2: myMsg2})
 								const data = {}
 								data['error'] = error.message ? error.message : get("browserpage.bchange21")
 								response = JSON.stringify(data)
-							} finally {
-								this.loader.hide()
 							}
 						} else {
 							let _url = ``
@@ -2740,9 +2804,11 @@ class WebBrowser extends LitElement {
 									const data = {}
 									data['error'] = get("browserpage.bchange21")
 									response = JSON.stringify(data)
-									return
+									break
 								} else {
+									this.loader.hide()
 									response = (Number(res) / 1e8).toFixed(8)
+									break
 								}
 							} catch (error) {
 								this.loader.hide()
@@ -2752,9 +2818,7 @@ class WebBrowser extends LitElement {
 								const data = {}
 								data['error'] = error.message ? error.message : get("browserpage.bchange21")
 								response = JSON.stringify(data)
-								return
-							} finally {
-								this.loader.hide()
+								break
 							}
 						}
 					} else if (res3.action === 'reject') {
@@ -2762,9 +2826,10 @@ class WebBrowser extends LitElement {
 						let myMsg2 = get("walletpage.wchange44")
 						await showErrorAndWait("DECLINED_REQUEST", { id1: myMsg1, id2: myMsg2 })
 						response = '{"error": "User declined request"}'
+						break
 					}
-					break
 				}
+					break
 
 				case actions.GET_USER_WALLET_INFO: {
 					const requiredFields = ['coin']
@@ -2785,8 +2850,7 @@ class WebBrowser extends LitElement {
 								id2: tryAgain
 							}
 						)
-						const errorMsg = `Missing fields: ${missingFieldsString}`
-						dataSentBack['error'] = errorMsg
+						dataSentBack['error'] = `Missing fields: ${missingFieldsString}`
 						response = JSON.stringify(dataSentBack)
 						break
 					}
@@ -2829,8 +2893,8 @@ class WebBrowser extends LitElement {
 						await showErrorAndWait("DECLINED_REQUEST", { id1: myMsg1, id2: myMsg2 })
 						response = '{"error": "User declined request"}'
 					}
-					break
 				}
+					break
 
 				case actions.GET_CROSSCHAIN_SERVER_INFO: {
 					const requiredFields = ['coin']
@@ -2851,8 +2915,7 @@ class WebBrowser extends LitElement {
 								id2: tryAgain
 							}
 						)
-						const errorMsg = `Missing fields: ${missingFieldsString}`
-						dataSentBack['error'] = errorMsg
+						dataSentBack['error'] = `Missing fields: ${missingFieldsString}`
 						response = JSON.stringify(dataSentBack)
 						break
 					}
@@ -2879,8 +2942,8 @@ class WebBrowser extends LitElement {
 					} finally {
 						this.loader.hide()
 					}
-					break
 				}
+					break
 
 				case actions.GET_TX_ACTIVITY_SUMMARY: {
 					const requiredFields = ['coin']
@@ -2901,8 +2964,7 @@ class WebBrowser extends LitElement {
 								id2: tryAgain
 							}
 						)
-						const errorMsg = `Missing fields: ${missingFieldsString}`
-						dataSentBack['error'] = errorMsg
+						dataSentBack['error'] = `Missing fields: ${missingFieldsString}`
 						response = JSON.stringify(dataSentBack)
 						break
 					}
@@ -2917,6 +2979,7 @@ class WebBrowser extends LitElement {
 								'Content-Type': 'application/json'
 							}
 						})
+						break
 					} catch (error) {
 						let myMsg1 = get("modals.mpchange56")
 						let myMsg2 = get("walletpage.wchange44")
@@ -2924,10 +2987,9 @@ class WebBrowser extends LitElement {
 						const data = {}
 						data['error'] = error.message ? error.message : get("modals.mpchange56")
 						response = JSON.stringify(data)
-					} finally {
-						break
 					}
 				}
+					break
 
 				case actions.GET_FOREIGN_FEE: {
 					const requiredFields = ['coin','type']
@@ -2948,13 +3010,12 @@ class WebBrowser extends LitElement {
 								id2: tryAgain
 							}
 						)
-						const errorMsg = `Missing fields: ${missingFieldsString}`
-						dataSentBack['error'] = errorMsg
+						dataSentBack['error'] = `Missing fields: ${missingFieldsString}`
 						response = JSON.stringify(dataSentBack)
 						break
 					}
 					try {
-						let coin = data.coin
+						let coin = data.coin.toLowerCase()
 						let type = data.type
 						response = await parentEpml.request('apiCall', {
 							type: 'api',
@@ -2965,6 +3026,7 @@ class WebBrowser extends LitElement {
 								'Content-Type': 'application/json'
 							},
 						})
+						break
 					} catch (error) {
 						let myMsg1 = get("modals.mpchange57")
 						let myMsg2 = get("walletpage.wchange44")
@@ -2972,10 +3034,9 @@ class WebBrowser extends LitElement {
 						const data = {}
 						data['error'] = error.message ? error.message : get("modals.mpchange57")
 						response = JSON.stringify(data)
-					} finally {
-						break
 					}
 				}
+					break
 
 				case actions.UPDATE_FOREIGN_FEE: {
 					const requiredFields = ['coin','type']
@@ -2996,13 +3057,12 @@ class WebBrowser extends LitElement {
 								id2: tryAgain
 							}
 						)
-						const errorMsg = `Missing fields: ${missingFieldsString}`
-						dataSentBack['error'] = errorMsg
+						dataSentBack['error'] = `Missing fields: ${missingFieldsString}`
 						response = JSON.stringify(dataSentBack)
 						break
 					}
 					try {
-						let coin = data.coin
+						let coin = data.coin.toLowerCase()
 						let type = data.type
 						let value = data.value
 						response = await parentEpml.request('apiCall', {
@@ -3015,6 +3075,7 @@ class WebBrowser extends LitElement {
 							},
 							body: `${value}`
 						})
+						break
 					} catch (error) {
 						let myMsg1 = get("modals.mpchange58")
 						let myMsg2 = get("walletpage.wchange44")
@@ -3022,10 +3083,9 @@ class WebBrowser extends LitElement {
 						const data = {}
 						data['error'] = error.message ? error.message : get("modals.mpchange58")
 						response = JSON.stringify(data)
-					} finally {
-						break
 					}
 				}
+					break
 
 				case actions.GET_SERVER_CONNECTION_HISTORY: {
 					const requiredFields = ['coin']
@@ -3046,8 +3106,7 @@ class WebBrowser extends LitElement {
 								id2: tryAgain
 							}
 						)
-						const errorMsg = `Missing fields: ${missingFieldsString}`
-						dataSentBack['error'] = errorMsg
+						dataSentBack['error'] = `Missing fields: ${missingFieldsString}`
 						response = JSON.stringify(dataSentBack)
 						break
 					}
@@ -3062,6 +3121,7 @@ class WebBrowser extends LitElement {
 								'Content-Type': 'application/json'
 							},
 						})
+						break
 					} catch (error) {
 						let myMsg1 = get("modals.mpchange59")
 						let myMsg2 = get("walletpage.wchange44")
@@ -3069,10 +3129,9 @@ class WebBrowser extends LitElement {
 						const data = {}
 						data['error'] = error.message ? error.message : get("modals.mpchange59")
 						response = JSON.stringify(data)
-					} finally {
-						break
 					}
 				}
+					break
 
 				case actions.SET_CURRENT_FOREIGN_SERVER: {
 					const requiredFields = ['coin']
@@ -3093,13 +3152,12 @@ class WebBrowser extends LitElement {
 								id2: tryAgain
 							}
 						)
-						const errorMsg = `Missing fields: ${missingFieldsString}`
-						dataSentBack['error'] = errorMsg
+						dataSentBack['error'] = `Missing fields: ${missingFieldsString}`
 						response = JSON.stringify(dataSentBack)
 						break
 					}
 					try {
-						let coin = data.coin
+						let coin = data.coin.toLowerCase()
 						let host = data.host
 						let port = data.port
 						let type = data.type
@@ -3119,6 +3177,7 @@ class WebBrowser extends LitElement {
 							},
 							body: `${bodyToString}`
 						})
+						break
 					} catch (error) {
 						let myMsg1 = get("modals.mpchange60")
 						let myMsg2 = get("walletpage.wchange44")
@@ -3126,10 +3185,9 @@ class WebBrowser extends LitElement {
 						const data = {}
 						data['error'] = error.message ? error.message : get("modals.mpchange60")
 						response = JSON.stringify(data)
-					} finally {
-						break
 					}
 				}
+					break
 
 				case actions.ADD_FOREIGN_SERVER: {
 					const requiredFields = ['coin']
@@ -3150,13 +3208,12 @@ class WebBrowser extends LitElement {
 								id2: tryAgain
 							}
 						)
-						const errorMsg = `Missing fields: ${missingFieldsString}`
-						dataSentBack['error'] = errorMsg
+						dataSentBack['error'] = `Missing fields: ${missingFieldsString}`
 						response = JSON.stringify(dataSentBack)
 						break
 					}
 					try {
-						let coin = data.coin
+						let coin = data.coin.toLowerCase()
 						let host = data.host
 						let port = data.port
 						let type = data.type
@@ -3176,6 +3233,7 @@ class WebBrowser extends LitElement {
 							},
 							body: `${bodyToString}`
 						})
+						break
 					} catch (error) {
 						let myMsg1 = get("modals.mpchange61")
 						let myMsg2 = get("walletpage.wchange44")
@@ -3183,10 +3241,9 @@ class WebBrowser extends LitElement {
 						const data = {}
 						data['error'] = error.message ? error.message : get("modals.mpchange61")
 						response = JSON.stringify(data)
-					} finally {
-						break
 					}
 				}
+					break
 
 				case actions.REMOVE_FOREIGN_SERVER: {
 					const requiredFields = ['coin']
@@ -3207,13 +3264,12 @@ class WebBrowser extends LitElement {
 								id2: tryAgain
 							}
 						)
-						const errorMsg = `Missing fields: ${missingFieldsString}`
-						dataSentBack['error'] = errorMsg
+						dataSentBack['error'] = `Missing fields: ${missingFieldsString}`
 						response = JSON.stringify(dataSentBack)
 						break
 					}
 					try {
-						let coin = data.coin
+						let coin = data.coin.toLowerCase()
 						let host = data.host
 						let port = data.port
 						let type = data.type
@@ -3233,6 +3289,7 @@ class WebBrowser extends LitElement {
 							},
 							body: `${bodyToString}`
 						})
+						break
 					} catch (error) {
 						let myMsg1 = get("modals.mpchange62")
 						let myMsg2 = get("walletpage.wchange44")
@@ -3240,10 +3297,9 @@ class WebBrowser extends LitElement {
 						const data = {}
 						data['error'] = error.message ? error.message : get("modals.mpchange62")
 						response = JSON.stringify(data)
-					} finally {
-						break
 					}
 				}
+					break
 
 				case actions.GET_DAY_SUMMARY: {
 					try {
@@ -3251,6 +3307,7 @@ class WebBrowser extends LitElement {
 							type: 'api',
 							url: `/admin/summary?apiKey=${this.getApiKey()}`
 						})
+						break
 					} catch (error) {
 						let myMsg1 = get("modals.mpchange63")
 						let myMsg2 = get("walletpage.wchange44")
@@ -3258,10 +3315,9 @@ class WebBrowser extends LitElement {
 						const data = {}
 						data['error'] = error.message ? error.message : get("modals.mpchange63")
 						response = JSON.stringify(data)
-					} finally {
-						break
 					}
 				}
+					break
 
 				case actions.SIGN_TRANSACTION: {
 					const signNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
@@ -3284,8 +3340,7 @@ class WebBrowser extends LitElement {
 								id2: tryAgain
 							}
 						)
-						const errorMsg = `Missing fields: ${missingFieldsString}`
-						dataSentBack['error'] = errorMsg
+						dataSentBack['error'] = `Missing fields: ${missingFieldsString}`
 						response = JSON.stringify(dataSentBack)
 						break
 					}
@@ -3380,9 +3435,9 @@ class WebBrowser extends LitElement {
 						let myMsg2 = get("walletpage.wchange44")
 						await showErrorAndWait("DECLINED_REQUEST", { id1: myMsg1, id2: myMsg2 })
 						response = '{"error": "User declined request"}'
-						break
 					}
 				}
+					break
 
 				case actions.SEND_COIN: {
 					const requiredFields = ['coin', 'amount']
@@ -3403,8 +3458,7 @@ class WebBrowser extends LitElement {
 								id2: tryAgain
 							}
 						)
-						const errorMsg = `Missing fields: ${missingFieldsString}`
-						dataSentBack['error'] = errorMsg
+						dataSentBack['error'] = `Missing fields: ${missingFieldsString}`
 						response = JSON.stringify(dataSentBack)
 						break
 					}
@@ -3577,7 +3631,7 @@ class WebBrowser extends LitElement {
 								this.loader.hide()
 								let myMsg1 = txnResponse.message
 								let myMsg2 = get("walletpage.wchange44")
-								showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })	
+								showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
 								throw new Error(txnResponse.message)
 							} else if (txnResponse.success === true && !txnResponse.data.error) {
 								this.loader.hide()
@@ -4201,10 +4255,11 @@ class WebBrowser extends LitElement {
 						break
 					}
 				}
-				break
+					break
+
 				default:
 					console.log('Unhandled message: ' + JSON.stringify(data))
-					return
+					break
 			}
 			// Parse response
 			let responseObj
@@ -4234,7 +4289,7 @@ class WebBrowser extends LitElement {
 	}
 
 	renderFullScreen() {
-		if (window.innerHeight == screen.height) {
+		if (window.innerHeight === screen.height) {
 			return html`
 				<mwc-button
 					@click=${() => this.exitFullScreen()}
@@ -4862,7 +4917,7 @@ class WebBrowser extends LitElement {
 	}
 
 	goBackToList() {
-		if (this.service == "APP") {
+		if (this.service === "APP") {
 			this.exitFullScreen()
 			window.location = '../../q-app/index.html'
 		}
@@ -4908,7 +4963,7 @@ class WebBrowser extends LitElement {
 			// Remove it first by filtering the list - doing it this way ensures the UI updates
 			// immediately, as apposed to only adding if it doesn't already exist
 			this.followedNames = this.followedNames.filter(
-				(item) => item != name
+				(item) => item !== name
 			)
 			this.followedNames.push(name)
 		} else {
@@ -4932,7 +4987,7 @@ class WebBrowser extends LitElement {
 		if (ret === true) {
 			// Successfully unfollowed - remove from local list
 			this.followedNames = this.followedNames.filter(
-				(item) => item != name
+				(item) => item !== name
 			)
 		} else {
 			let err2string = get('browserpage.bchange12')
@@ -4957,7 +5012,7 @@ class WebBrowser extends LitElement {
 			// Remove it first by filtering the list - doing it this way ensures the UI updates
 			// immediately, as apposed to only adding if it doesn't already exist
 			this.blockedNames = this.blockedNames.filter(
-				(item) => item != name
+				(item) => item !== name
 			)
 			this.blockedNames.push(name)
 		} else {
@@ -4980,7 +5035,7 @@ class WebBrowser extends LitElement {
 		})
 		if (ret === true) {
 			// Successfully unblocked - remove from local list
-			this.blockedNames = this.blockedNames.filter((item) => item != name)
+			this.blockedNames = this.blockedNames.filter((item) => item !== name)
 		} else {
 			let err4string = get('browserpage.bchange14')
 			parentEpml.request('showSnackBar', `${err4string}`)
@@ -4989,13 +5044,13 @@ class WebBrowser extends LitElement {
 	}
 
 	async deleteCurrentResource() {
-		if (this.followedNames.indexOf(this.name) != -1) {
+		if (this.followedNames.indexOf(this.name) !== -1) {
 			// Following name - so deleting won't work
 			let err5string = get('browserpage.bchange15')
 			parentEpml.request('showSnackBar', `${err5string}`)
 			return
 		}
-		let identifier = (this.identifier == null || this.identifier.length == 0) ? 'default' : this.identifier
+		let identifier = (this.identifier == null || this.identifier.length === 0) ? 'default' : this.identifier
 		let ret = await parentEpml.request('apiCall', {
 			url: `/arbitrary/resource/${this.service}/${this.name}/${identifier}?apiKey=${this.getApiKey()}`,
 			method: 'DELETE'

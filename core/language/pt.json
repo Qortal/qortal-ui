@@ -1417,6 +1417,7 @@
 		"mpchange83": "RECLINADO",
 		"mpchange84": "FALHA",
 		"mpchange85": "SUCESSO",
-		"mpchange86": "Permitir sempre obter saldo da carteira automaticamente"
+		"mpchange86": "Permitir sempre obter saldo da carteira automaticamente",
+		"mpchange87": "Por favor introduza o ID do grupo"
 	}
 }

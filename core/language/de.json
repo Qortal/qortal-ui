@@ -1417,6 +1417,7 @@
 		"mpchange83": "ABGELEHNT",
 		"mpchange84": "FEHLER",
 		"mpchange85": "ERFOLGREICH",
-		"mpchange86": "Immer automatisches Abrufen des Wallet-Guthabens zulassen"
+		"mpchange86": "Immer automatisches Abrufen des Wallet-Guthabens zulassen",
+		"mpchange87": "Bitte geben Sie die Gruppen-ID ein"
 	}
 }

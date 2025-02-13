@@ -1417,6 +1417,7 @@
 		"mpchange83": "AVSLAGT",
 		"mpchange84": "FEIL",
 		"mpchange85": "SUKSESS",
-		"mpchange86": "Tillat alltid få lommeboksaldo automatisk"
+		"mpchange86": "Tillat alltid få lommeboksaldo automatisk",
+		"mpchange87": "Vennligst skriv inn gruppe-ID"
 	}
 }

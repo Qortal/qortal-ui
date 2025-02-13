@@ -2551,15 +2551,13 @@ class ChatPage extends LitElement {
 		const initDirect = async (cid, noInitial) => {
 			let timeoutId
 			let initial = 0
-
 			let directSocketTimeout
-
 			let myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 			let nodeUrl = myNode.domain + ":" + myNode.port
-
+			let nodeProtocol = myNode.protocol
 			let directSocketLink
 
-			if (window.parent.location.protocol === "https:") {
+			if (nodeProtocol === "https") {
 				directSocketLink = `wss://${nodeUrl}/websockets/chat/messages?involving=${window.parent.reduxStore.getState().app.selectedAddress.address}&involving=${cid}&encoding=BASE64&limit=1`
 			} else {
 				// Fallback to http
@@ -2675,17 +2673,15 @@ class ChatPage extends LitElement {
 		const initGroup = (gId, noInitial) => {
 			let timeoutId
 			let groupId = Number(gId)
-
 			let initial = 0
 			let count = 0
 			let groupSocketTimeout
-
 			let myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 			let nodeUrl = myNode.domain + ":" + myNode.port
-
+			let nodeProtocol = myNode.protocol
 			let groupSocketLink
 
-			if (window.parent.location.protocol === "https:") {
+			if (nodeProtocol === "https") {
 				groupSocketLink = `wss://${nodeUrl}/websockets/chat/messages?txGroupId=${groupId}&encoding=BASE64&limit=1`
 			} else {
 				// Fallback to http

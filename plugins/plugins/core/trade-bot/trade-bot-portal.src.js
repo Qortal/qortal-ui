@@ -2882,7 +2882,7 @@ class TradeBotPortal extends LitElement {
 		const initTradeOffersWebSocket = (restarted = false) => {
 			let tradeOffersSocketCounter = 0
 			let socketTimeout
-			let socketLink = `ws://NODEURL/websockets/crosschain/tradeoffers?foreignBlockchain=FOREIGN_BLOCKCHAIN&includeHistoric=true`
+			let socketLink = `PROTOCOL://NODEURL/websockets/crosschain/tradeoffers?foreignBlockchain=FOREIGN_BLOCKCHAIN&includeHistoric=true`
 			const socket = new WebSocket(socketLink)
 			socket.onopen = () => {
 				setTimeout(pingSocket, 50)
@@ -2914,7 +2914,7 @@ class TradeBotPortal extends LitElement {
 
 		const initTradeBotWebSocket = (restarted = false) => {
 			let socketTimeout
-			let socketLink = `ws://NODEURL/websockets/crosschain/tradebot?foreignBlockchain=FOREIGN_BLOCKCHAIN`
+			let socketLink = `PROTOCOL://NODEURL/websockets/crosschain/tradebot?foreignBlockchain=FOREIGN_BLOCKCHAIN`
 			const socket = new WebSocket(socketLink)
 			socket.onopen = () => {
 				setTimeout(pingSocket, 50)
@@ -2943,7 +2943,7 @@ class TradeBotPortal extends LitElement {
 
 		const initTradePresenceWebSocket = (restarted = false) => {
 			let socketTimeout
-			let socketLink = `ws://NODEURL/websockets/crosschain/tradepresence`
+			let socketLink = `PROTOCOL://NODEURL/websockets/crosschain/tradepresence`
 			const socket = new WebSocket(socketLink)
 			socket.onopen = () => {
 				setTimeout(pingSocket, 50)
@@ -3289,10 +3289,19 @@ class TradeBotPortal extends LitElement {
 
 		let myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 		let nodeUrl = myNode.domain + ':' + myNode.port
+		let nodeProtocol = myNode.protocol
+		let checkProtocol
+
+		if (nodeProtocol === "https") {
+			checkProtocol = 'wss'
+		} else {
+			checkProtocol = 'ws'
+		}
 
 		const modifiers = [
+			{ searchValue: 'PROTOCOL', replaceValue: checkProtocol },
 			{ searchValue: 'NODEURL', replaceValue: nodeUrl },
-			{ searchValue: 'FOREIGN_BLOCKCHAIN', replaceValue: this.selectedCoin },
+			{ searchValue: 'FOREIGN_BLOCKCHAIN', replaceValue: this.selectedCoin }
 		]
 
 		workers.get(this.selectedCoin).tradesConnectedWorker = this.inlineWorker(this.initSocket, modifiers)

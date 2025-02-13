@@ -1417,6 +1417,7 @@
 		"mpchange83": "RECHAZADO",
 		"mpchange84": "ERROR",
 		"mpchange85": "ÉXITO",
-		"mpchange86": "Permitir siempre obtener el saldo de la billetera automáticamente"
+		"mpchange86": "Permitir siempre obtener el saldo de la billetera automáticamente",
+		"mpchange87": "Por favor, introduzca el ID del grupo"
 	}
 }

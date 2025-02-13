@@ -1417,6 +1417,7 @@
 		"mpchange83": "DECLINED",
 		"mpchange84": "FAILURE",
 		"mpchange85": "SUCCESS",
-		"mpchange86": "Always allow get wallet balance automatically"
+		"mpchange86": "Always allow get wallet balance automatically",
+		"mpchange87": "Please Enter The Group ID"
 	}
 }
