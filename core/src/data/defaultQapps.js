@@ -86,5 +86,16 @@ export const defaultQappsTabs = [
         "pluginNumber": "plugin-GGHiHzW6pe",
         "menus": [],
         "parent": false
+    },
+    {
+        "url": "myapp",
+        "domain": "core",
+        "page": "qdn/browser/index.html?name=Q-Mintership&service=APP",
+        "title": "Q-Mintership",
+        "icon": "vaadin:external-browser",
+        "mwcicon": "apps",
+        "pluginNumber": "plugin-GGJJPqW6pe",
+        "menus": [],
+        "parent": false
     }
 ]

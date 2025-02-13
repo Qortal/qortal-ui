@@ -129,7 +129,19 @@ class ChatHead extends LitElement {
 							>
 								${this.chatInfo.groupName ? this.chatInfo.groupName : this.chatInfo.name !== undefined ? this.chatInfo.name : this.chatInfo.address.substr(0, 15)}
 							</span>
-							<mwc-icon style="font-size:18px; color: var(--chat-group);">${this.chatInfo.groupId !== undefined ? 'lock_open' : 'lock'}</mwc-icon>
+							<mwc-icon
+								style="font-size:18px; color:${
+								this.chatInfo.groupId === undefined ? '#f0ad4e' :
+								this.chatInfo.isOpen === false ? '#C6011F' :
+								this.chatInfo.isOpen === true ? '#198754' : '#198754'}"
+							>
+								${
+									this.chatInfo.groupId === undefined ? 'private_connectivity' :
+									this.chatInfo.isOpen === false ? 'lock_outline' :
+									this.chatInfo.isOpen === true ? 'lock_open' :
+									'lock_open'
+								}
+							</mwc-icon>
 						</div>
 					</div>
 					<div class="about" style="margin-top:7px">
