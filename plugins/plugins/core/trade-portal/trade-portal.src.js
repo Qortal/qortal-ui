@@ -2181,7 +2181,7 @@ class TradePortal extends LitElement {
 		const initTradeOffersWebSocket = (restarted = false) => {
 			let tradeOffersSocketCounter = 0
 			let socketTimeout
-			let socketLink = `ws://NODEURL/websockets/crosschain/tradeoffers?foreignBlockchain=FOREIGN_BLOCKCHAIN&includeHistoric=true`
+			let socketLink = `PROTOCOL://NODEURL/websockets/crosschain/tradeoffers?foreignBlockchain=FOREIGN_BLOCKCHAIN&includeHistoric=true`
 			const socket = new WebSocket(socketLink)
 			socket.onopen = () => {
 				setTimeout(pingSocket, 50)
@@ -2213,7 +2213,7 @@ class TradePortal extends LitElement {
 
 		const initTradeBotWebSocket = (restarted = false) => {
 			let socketTimeout
-			let socketLink = `ws://NODEURL/websockets/crosschain/tradebot?foreignBlockchain=FOREIGN_BLOCKCHAIN`
+			let socketLink = `PROTOCOL://NODEURL/websockets/crosschain/tradebot?foreignBlockchain=FOREIGN_BLOCKCHAIN`
 			const socket = new WebSocket(socketLink)
 			socket.onopen = () => {
 				setTimeout(pingSocket, 50)
@@ -2242,7 +2242,7 @@ class TradePortal extends LitElement {
 
 		const initTradePresenceWebSocket = (restarted = false) => {
 			let socketTimeout
-			let socketLink = `ws://NODEURL/websockets/crosschain/tradepresence`
+			let socketLink = `PROTOCOL://NODEURL/websockets/crosschain/tradepresence`
 			const socket = new WebSocket(socketLink)
 			socket.onopen = () => {
 				setTimeout(pingSocket, 50)
@@ -2726,10 +2726,19 @@ class TradePortal extends LitElement {
 
 		let myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 		let nodeUrl = myNode.domain + ':' + myNode.port
+		let nodeProtocol = myNode.protocol
+		let checkProtocol
+
+		if (nodeProtocol === "https") {
+			checkProtocol = 'wss'
+		} else {
+			checkProtocol = 'ws'
+		}
 
 		const modifiers = [
+			{ searchValue: 'PROTOCOL', replaceValue: checkProtocol },
 			{ searchValue: 'NODEURL', replaceValue: nodeUrl },
-			{ searchValue: 'FOREIGN_BLOCKCHAIN', replaceValue: this.selectedCoin },
+			{ searchValue: 'FOREIGN_BLOCKCHAIN', replaceValue: this.selectedCoin }
 		]
 
 		workers.get(this.selectedCoin).tradesConnectedWorker = this.inlineWorker(this.initSocket, modifiers)
@@ -2791,7 +2800,7 @@ class TradePortal extends LitElement {
 		})
 
 		const getCompletedTrades = async () => {
-			const url = `http://NODEURL/crosschain/trades?limit=25&reverse=true&foreignBlockchain=FOREIGN_BLOCKCHAIN`
+			const url = `PROTOCOL://NODEURL/crosschain/trades?limit=25&reverse=true&foreignBlockchain=FOREIGN_BLOCKCHAIN`
 			const res = await fetch(url)
 			const historicTrades = await res.json()
 			const compareFn = (a, b) => {
@@ -2810,7 +2819,7 @@ class TradePortal extends LitElement {
 		}
 
 		const getOffers = async () => {
-			const url = `http://NODEURL/crosschain/tradeoffers?foreignBlockchain=FOREIGN_BLOCKCHAIN`
+			const url = `PROTOCOL://NODEURL/crosschain/tradeoffers?foreignBlockchain=FOREIGN_BLOCKCHAIN`
 			const res = await fetch(url)
 			const openTradeOrders = await res.json()
 			const myOpenTradeOrders = await openTradeOrders.filter((order) => order.mode === 'OFFERING' && order.qortalCreator === 'SELECTED_ADDRESS')
@@ -2872,11 +2881,20 @@ class TradePortal extends LitElement {
 
 		let myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 		let nodeUrl = myNode.domain + ':' + myNode.port
+		let nodeProtocol = myNode.protocol
+		let checkProtocol
+
+		if (nodeProtocol === "https") {
+			checkProtocol = 'https'
+		} else {
+			checkProtocol = 'http'
+		}
 
 		const modifiers = [
+			{ searchValue: 'PROTOCOL', replaceValue: checkProtocol },
 			{ searchValue: 'NODEURL', replaceValue: nodeUrl },
-			{ searchValue: 'SELECTED_ADDRESS', replaceValue: this.selectedAddress.address, },
-			{ searchValue: 'FOREIGN_BLOCKCHAIN', replaceValue: this.selectedCoin, },
+			{ searchValue: 'SELECTED_ADDRESS', replaceValue: this.selectedAddress.address },
+			{ searchValue: 'FOREIGN_BLOCKCHAIN', replaceValue: this.selectedCoin, }
 		]
 
 		workers.get(this.selectedCoin).handleStuckTradesConnectedWorker = this.inlineWorker(this.handleStuckTrades, modifiers)
