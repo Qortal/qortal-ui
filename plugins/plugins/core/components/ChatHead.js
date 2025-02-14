@@ -5,7 +5,7 @@ import localForage from 'localforage'
 import '@material/mwc-icon'
 
 // Multi language support
-import { translate } from '../../../../core/translate'
+import { get, translate } from '../../../../core/translate'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -65,6 +65,9 @@ class ChatHead extends LitElement {
 			this.avatarImg = this.createImage(avatarUrl)
 		} else if (groupString === 'Group_1') {
 			const avatarUrl = `/img/qdcgroup.png`
+			this.avatarImg = this.createImage(avatarUrl)
+		} else if (groupString === 'Group_694') {
+			const avatarUrl = `/img/minter.png`
 			this.avatarImg = this.createImage(avatarUrl)
 		} else if (this.chatInfo.name) {
 			const avatarUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${this.chatInfo.name}/qortal_avatar?async=true`
@@ -146,7 +149,7 @@ class ChatHead extends LitElement {
 					</div>
 					<div class="about" style="margin-top:7px">
 						<div class="name">
-							<span style="float:left; padding-left: 8px; color: var(--chat-group);font-size:12px">${this.chatInfo.groupId !== undefined ? 'id: ' + this.chatInfo.groupId : ''}</span>
+							<span style="float:left; padding-left: 8px; color: var(--chat-group);font-size:12px">${this.chatInfo.groupId !== undefined ? 'id: ' + this.chatInfo.groupId : 'Private Chat'}</span>
 							<div style="color: var(--black); display: flex;font-size: 12px; align-items:center">
 								<div style="width: 8px; height: 8px;border-radius: 50%;background: ${isUnread ? 'var(--error)' : 'none'} ; margin-right:5px;"></div>
 								<message-time style="display: ${(this.chatInfo.timestamp && this.chatInfo.timestamp > 100000) ? 'block' : 'none'}" timestamp=${this.chatInfo.timestamp}></message-time>
