@@ -1649,7 +1649,7 @@ export const chatStyles = css`
         position: absolute;
         top: 5px;
         left: 10px;
-        height: 75%;
+        height: 85%;
         width: 2.6px;
         background-color: var(--mdc-theme-primary);
     }
@@ -1669,7 +1669,7 @@ export const chatStyles = css`
         overflow: hidden;
         text-overflow: ellipsis;
         max-width: 500px;
-        max-height: 40px;
+        max-height: 80px;
         margin: 0;
         padding: 0;
     }
@@ -8524,7 +8524,7 @@ export const groupManagementStyles = css`
         position: absolute;
         top: 5px;
         left: 10px;
-        height: 75%;
+        height: 85%;
         width: 2.6px;
         background-color: var(--mdc-theme-primary);
     }
@@ -8548,7 +8548,7 @@ export const groupManagementStyles = css`
         overflow: hidden;
         text-overflow: ellipsis;
         max-width: 500px;
-        max-height: 40px;
+        max-height: 80px;
         margin: 0;
         padding: 0;
     }

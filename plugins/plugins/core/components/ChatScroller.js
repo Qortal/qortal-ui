@@ -3,7 +3,7 @@ import { repeat } from 'lit/directives/repeat.js'
 import { unsafeHTML } from 'lit/directives/unsafe-html.js'
 import { Epml } from '../../../epml'
 import { cropAddress, roundToNearestDecimal } from '../../utils/functions'
-import { generateHTML } from '@tiptap/core'
+import { generateHTML, generateJSON } from '@tiptap/core'
 import { chatLimit, totalMsgCount } from './ChatPage'
 import { chatStyles } from './plugins-css'
 import isElectron from 'is-electron'
@@ -280,6 +280,7 @@ class ChatScroller extends LitElement {
 
 	render() {
 		let formattedMessages = this.messagesToRender
+
 		return html`
 			${this.isLoadingBefore
 				? html`
@@ -1091,7 +1092,7 @@ class MessageTemplate extends LitElement {
 				messageVersion2WithLink = processText(messageVersion2)
 			}
 
-			if (parsedMessageObj.version > 1 && parsedMessageObj.message) {
+			if (parsedMessageObj.version > 1 && parsedMessageObj.message && !parsedMessageObj.messageText) {
 				messageVersion2 = parsedMessageObj.message
 				messageVersion2WithLink = processText(messageVersion2)
 			}
@@ -1270,6 +1271,10 @@ class MessageTemplate extends LitElement {
 		if (repliedToData && repliedToData.decodedMessage && repliedToData.decodedMessage.messageText) {
 			try {
 				repliedToMessageText = generateHTML(repliedToData.decodedMessage.messageText, [StarterKit, Underline, Highlight, Mention])
+			} catch (error) { /* empty */ }
+		} else if (repliedToData && repliedToData.decodedMessage && repliedToData.decodedMessage.message) {
+			try {
+				repliedToMessageText = this.convertHubMessageToJson(repliedToData.decodedMessage.message)
 			} catch (error) { /* empty */ }
 		}
 
@@ -2072,6 +2077,11 @@ class MessageTemplate extends LitElement {
 		}, 60000)
 	}
 
+	convertHubMessageToJson(message) {
+		let newJson = generateJSON(`${message}`, [StarterKit, Underline, Highlight, Mention])
+		return generateHTML(newJson, [StarterKit, Underline, Highlight, Mention])
+	}
+
 	async closeDownloadProgressDialog() {
 		const closeDelay = ms => new Promise(res => setTimeout(res, ms))
 		this.shadowRoot.getElementById('downloadProgressDialog').close()
@@ -2355,7 +2365,13 @@ class ChatMenu extends LitElement {
 						<div
 							class=${`menu-icon ${!this.firstMessageInChat ? 'tooltip' : ''}`}
 							data-text="${translate('blockpage.bcchange12')}"
-							@click=${() => {if (this.version === '0') {this.versionErrorSnack(); return;} this.setEditedMessageObj(this.originalMessage);}}
+							@click=${() => {
+								if (this.version === '0') {
+									this.versionErrorSnack(); 
+									return;
+								}
+								this.setEditedMessageObj(this.originalMessage);
+							}}
 						>
 							<vaadin-icon icon="vaadin:pencil" slot="icon"></vaadin-icon>
 						</div>
