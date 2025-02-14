@@ -1207,6 +1207,20 @@ class Chat extends LitElement {
 		}
 	}
 
+	async getGroupType(newGroupId) {
+		try {
+			const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+			const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
+			const response = await fetch(`${nodeUrl}/groups/${newGroupId}`)
+			const data = await response.json()
+
+			return data.isOpen
+		} catch (error) {
+			console.error('Error fetching group type', error)
+			throw error
+		}
+	}
+
 	async setChatHeads(chatObj) {
 		const chatObjGroups = Array.isArray(chatObj.groups) ? chatObj.groups : []
 		const chatObjDirect = Array.isArray(chatObj.direct) ? chatObj.direct : []
@@ -1216,12 +1230,14 @@ class Chat extends LitElement {
 			url: `group/${group.groupId}`,
 			groupName: 'Qortal General Chat',
 			timestamp: group.timestamp === undefined ? 2 : group.timestamp,
-			sender: group.sender
+			sender: group.sender,
+			isOpen: true
 		} : {
 			...group,
 			timestamp: group.timestamp === undefined ? 1 : group.timestamp,
 			url: `group/${group.groupId}`,
-			ownerName: group.ownerName === undefined ? await this.getOwnerName(group.groupId) : 'undefined'
+			ownerName: group.ownerName === undefined ? await this.getOwnerName(group.groupId) : 'undefined',
+			isOpen: group.isOpen === undefined ? await this.getGroupType(group.groupId) : true
 		}))
 
 		let directList = chatObjDirect.map(dc => {

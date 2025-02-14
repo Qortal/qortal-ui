@@ -5,7 +5,7 @@ import localForage from 'localforage'
 import '@material/mwc-icon'
 
 // Multi language support
-import { translate } from '../../../../core/translate'
+import { get, translate } from '../../../../core/translate'
 
 const parentEpml = new Epml({ type: 'WINDOW', source: window.parent })
 
@@ -65,6 +65,9 @@ class ChatHead extends LitElement {
 			this.avatarImg = this.createImage(avatarUrl)
 		} else if (groupString === 'Group_1') {
 			const avatarUrl = `/img/qdcgroup.png`
+			this.avatarImg = this.createImage(avatarUrl)
+		} else if (groupString === 'Group_694') {
+			const avatarUrl = `/img/minter.png`
 			this.avatarImg = this.createImage(avatarUrl)
 		} else if (this.chatInfo.name) {
 			const avatarUrl = `${nodeUrl}/arbitrary/THUMBNAIL/${this.chatInfo.name}/qortal_avatar?async=true`
@@ -129,12 +132,24 @@ class ChatHead extends LitElement {
 							>
 								${this.chatInfo.groupName ? this.chatInfo.groupName : this.chatInfo.name !== undefined ? this.chatInfo.name : this.chatInfo.address.substr(0, 15)}
 							</span>
-							<mwc-icon style="font-size:18px; color: var(--chat-group);">${this.chatInfo.groupId !== undefined ? 'lock_open' : 'lock'}</mwc-icon>
+							<mwc-icon
+								style="font-size:18px; color:${
+								this.chatInfo.groupId === undefined ? '#f0ad4e' :
+								this.chatInfo.isOpen === false ? '#C6011F' :
+								this.chatInfo.isOpen === true ? '#198754' : '#198754'}"
+							>
+								${
+									this.chatInfo.groupId === undefined ? 'private_connectivity' :
+									this.chatInfo.isOpen === false ? 'lock_outline' :
+									this.chatInfo.isOpen === true ? 'lock_open' :
+									'lock_open'
+								}
+							</mwc-icon>
 						</div>
 					</div>
 					<div class="about" style="margin-top:7px">
 						<div class="name">
-							<span style="float:left; padding-left: 8px; color: var(--chat-group);font-size:12px">${this.chatInfo.groupId !== undefined ? 'id: ' + this.chatInfo.groupId : ''}</span>
+							<span style="float:left; padding-left: 8px; color: var(--chat-group);font-size:12px">${this.chatInfo.groupId !== undefined ? 'id: ' + this.chatInfo.groupId : 'Private Chat'}</span>
 							<div style="color: var(--black); display: flex;font-size: 12px; align-items:center">
 								<div style="width: 8px; height: 8px;border-radius: 50%;background: ${isUnread ? 'var(--error)' : 'none'} ; margin-right:5px;"></div>
 								<message-time style="display: ${(this.chatInfo.timestamp && this.chatInfo.timestamp > 100000) ? 'block' : 'none'}" timestamp=${this.chatInfo.timestamp}></message-time>

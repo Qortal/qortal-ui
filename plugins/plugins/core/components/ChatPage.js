@@ -3,7 +3,7 @@ import { ifDefined } from 'lit/directives/if-defined.js'
 import { unsafeHTML } from 'lit/directives/unsafe-html.js'
 import { animate } from '@lit-labs/motion'
 import { Epml } from '../../../epml'
-import { Editor, Extension, generateHTML } from '@tiptap/core'
+import { Editor, Extension, generateHTML, generateJSON } from '@tiptap/core'
 import { escape } from 'html-escaper'
 import { inputKeyCodes, replaceMessagesEdited, generateIdFromAddresses } from '../../utils/functions'
 import { publishData, modalHelper, RequestQueue } from '../../utils/classes'
@@ -345,7 +345,12 @@ class ChatPage extends LitElement {
 												}
 												${+this.repliedToMessageObj.version > 1 ?
 													html`
-														<span style="color: var(--black);">${unsafeHTML(generateHTML(this.repliedToMessageObj.message, [StarterKit, Underline, Highlight, Mention]))}</span>
+														<span style="color: var(--black);">
+															${this.repliedToMessageObj.decodedMessage.includes('specialId') ?
+																this.convertHubMessageToJson(this.repliedToMessageObj.message) :
+																unsafeHTML(generateHTML(this.repliedToMessageObj.message, [StarterKit, Underline, Highlight, Mention]))
+															}
+														</span>
 													`
 													: ''
 												}
@@ -362,7 +367,12 @@ class ChatPage extends LitElement {
 											<vaadin-icon class="reply-icon" icon="vaadin:pencil" slot="icon"></vaadin-icon>
 											<div class="repliedTo-message">
 												<p class="senderName">${translate("chatpage.cchange25")}</p>
-												<span style="color: var(--black);">${unsafeHTML(generateHTML(this.editedMessageObj.message, [StarterKit, Underline, Highlight, Mention]))}</span>
+												<span style="color: var(--black);">
+													${this.editedMessageObj.decodedMessage.includes('specialId') && !this.editedMessageObj.decodedMessage.includes('messageText') ?
+														this.convertHubMessageToJson(this.editedMessageObj.message) :
+														unsafeHTML(generateHTML(this.editedMessageObj.message, [StarterKit, Underline, Highlight, Mention]))
+													}
+												</span>
 											</div>
 											<vaadin-icon class="close-icon" icon="vaadin:close-big" slot="icon" @click=${() => this.closeEditMessageContainer()}></vaadin-icon>
 										</div>
@@ -845,7 +855,12 @@ class ChatPage extends LitElement {
 		if (isEnabledChatEnter) {
 			this.isEnabledChatEnter = isEnabledChatEnter === 'false' ? false : true
 		}
+	}
 
+	convertHubMessageToJson(message) {
+		let newJson = generateJSON(`${message}`, [StarterKit, Underline, Highlight, Mention])
+
+		return unsafeHTML(generateHTML(newJson, [StarterKit, Underline, Highlight, Mention]))
 	}
 
 	getNodeUrl() {

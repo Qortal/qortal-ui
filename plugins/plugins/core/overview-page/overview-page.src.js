@@ -10,6 +10,7 @@ import '@vaadin/button'
 
 // Multi language support
 import { get, registerTranslateConfig, translate, use } from '../../../../core/translate'
+
 registerTranslateConfig({
 	loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
 })
@@ -144,7 +145,6 @@ class OverviewPage extends LitElement {
 	async firstUpdated() {
 		this.changeTheme()
 		this.changeLanguage()
-
 		this.nodeConfig = window.parent.reduxStore.getState().app.nodeConfig
 		this.accountInfo = window.parent.reduxStore.getState().app.accountInfo
 
@@ -199,11 +199,13 @@ class OverviewPage extends LitElement {
 
 	changeTheme() {
 		const checkTheme = localStorage.getItem('qortalTheme')
+
 		if (checkTheme === 'dark') {
 			this.theme = 'dark'
 		} else {
 			this.theme = 'light'
 		}
+
 		document.querySelector('html').setAttribute('theme', this.theme)
 	}
 
@@ -225,6 +227,7 @@ class OverviewPage extends LitElement {
 	async refreshItems() {
 		this.nodeConfig = window.parent.reduxStore.getState().app.nodeConfig
 		this.accountInfo = window.parent.reduxStore.getState().app.accountInfo
+
 		await this.getNodeInfo()
 		await this.getCoreInfo()
 		await this.getBalanceInfo()
@@ -234,12 +237,14 @@ class OverviewPage extends LitElement {
 	async getMintingKeysList() {
 		this.check1 = false
 		this.check2 = false
+
 		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 		const nodeStatus = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-		const statusUrl = `${nodeStatus}/admin/mintingaccounts`
+		const statusUrl = `${nodeStatus}/admin/mintingaccounts?apiKey=${this.getApiKey()}`
 
 		try {
 			const res = await fetch(statusUrl)
+
 			this.listAccounts = await res.json()
 
 			const addressInfo = window.parent.reduxStore.getState().app.accountInfo.addressInfo
@@ -249,7 +254,6 @@ class OverviewPage extends LitElement {
 			const findRemovedSponsorsKey = this.listAccounts.filter((my) => my.address)
 
 			this.check1 = findMyMintingAccount !== undefined
-
 			this.check2 = findMyMintingRecipient !== undefined
 
 			if (findRemovedSponsorsKey.length > 0) {
@@ -285,8 +289,7 @@ class OverviewPage extends LitElement {
 			this.cssStatus = ''
 			return html`<span class="btn btn-sm btn-info float-right">${translate("walletprofile.wp1")}</span>`
 		} else if (this.nodeInfo.isMintingPossible === true && this.nodeInfo.isSynchronizing === false && this.check1 === false && this.check2 === true && addressInfo.level == 0 && addressInfo.blocksMinted < 7200) {
-			this.cssStatus = ''
-			return html`<span class="btn btn-sm btn-info float-right">${translate("becomeMinterPage.bchange12")}</span>`
+			return html`<span class="float-right"><start-minting-now></start-minting-now></span>`
 		} else if (this.check1 === false && this.check2 === false && myMintingKey === true) {
 			return html`<span class="float-right"><start-minting-now></start-minting-now></span>`
 		} else if (myMintingKey === false) {
@@ -319,6 +322,7 @@ class OverviewPage extends LitElement {
 		const infoNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 		const infoNodeUrl = infoNode.protocol + '://' + infoNode.domain + ':' + infoNode.port
 		const nodeUrl = `${infoNodeUrl}/admin/status`
+
 		await fetch(nodeUrl).then(response => {
 			return response.json()
 		}).then(data => {
@@ -332,6 +336,7 @@ class OverviewPage extends LitElement {
 		const infoCore = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 		const infoCoreUrl = infoCore.protocol + '://' + infoCore.domain + ':' + infoCore.port
 		const coreUrl = `${infoCoreUrl}/admin/info`
+
 		await fetch(coreUrl).then(response => {
 			return response.json()
 		}).then(data => {
@@ -344,6 +349,7 @@ class OverviewPage extends LitElement {
 		const infoBalance = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 		const infoBalanceUrl = infoBalance.protocol + '://' + infoBalance.domain + ':' + infoBalance.port
 		const balanceUrl = `${infoBalanceUrl}/addresses/balance/${this.accountInfo.addressInfo.address}`
+
 		await fetch(balanceUrl).then(response => {
 			return response.json()
 		}).then(data => {
@@ -422,7 +428,7 @@ class StartMintingNow extends LitElement {
 	async getMintingAcccounts() {
 		const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
 		const nodeUrl = myNode.protocol + '://' + myNode.domain + ':' + myNode.port
-		const url = `${nodeUrl}/admin/mintingaccounts`
+		const url = `${nodeUrl}/admin/mintingaccounts?apiKey=${this.getApiKey()}`
 		try {
 			const res = await fetch(url)
 			this.mintingAccountData = await res.json()
@@ -484,7 +490,9 @@ class StartMintingNow extends LitElement {
 
 		let interval = null
 		let stop = false
+
 		this.status = 2
+
 		const getAnswer = async () => {
 			const rewardShares = async (minterAddr) => {
 				const url = `${nodeUrl}/addresses/rewardshares?minters=${minterAddr}&recipients=${minterAddr}`
@@ -508,6 +516,7 @@ class StartMintingNow extends LitElement {
 				stop = false
 			}
 		}
+
 		interval = setInterval(getAnswer, 5000)
 	}
 

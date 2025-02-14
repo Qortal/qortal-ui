@@ -13,6 +13,7 @@ import '@vaadin/grid'
 
 // Multi language support
 import { get, registerTranslateConfig, translate, use } from '../../../../core/translate'
+
 registerTranslateConfig({
 	loader: lang => fetch(`/language/${lang}.json`).then(res => res.json())
 })
@@ -361,7 +362,6 @@ class RewardShare extends LitElement {
 						getTxnRequestResponse(myTransaction)
 					}
 				} else if (accountDetails.level >= 5) {
-
 					this.error = false
 					this.message = ''
 					let myTransaction = await makeTransactionRequest(lastRef)
@@ -519,7 +519,6 @@ class RewardShare extends LitElement {
 						getTxnRequestResponse(myTransaction)
 					}
 				} else if (accountDetails.level >= 5) {
-
 					this.error = false
 					this.message = ''
 					let myTransaction = await makeTransactionRequest(lastRef)

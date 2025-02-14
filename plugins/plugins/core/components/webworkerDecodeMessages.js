@@ -2893,6 +2893,14 @@ export const decryptChatMessageBase64 = (encryptedMessage, privateKey, recipient
 		return _decryptedMessage
 	}
 
+	let decrypted1 = new TextDecoder('utf-8').decode(_decryptedMessage)
+
+	if (decrypted1.includes('messageText')) {
+		let decrypted2 = JSON.parse(decrypted1)
+		let decrypted3 = Object.assign(decrypted2, {isFrivate: true})
+		return JSON.stringify(decrypted3)
+	}
+
 	return new TextDecoder('utf-8').decode(_decryptedMessage)
 }
 
