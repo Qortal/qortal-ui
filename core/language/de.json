@@ -468,7 +468,7 @@
 		"rchange6": "Empfänger",
 		"rchange7": "Aktion",
 		"rchange8": "Typ",
-		"rchange9": "Die Stufen 1–4 können nur Self-Share-(Minting-)Schlüssel erstellen. Nur Level 5 oder höher kann einen Prämienanteil erstellen!",
+		"rchange9": "Die Stufen 0–4 können nur Self-Share-(Minting-)Schlüssel erstellen. Nur Level 5 oder höher kann einen Prämienanteil erstellen!",
 		"rchange10": "Öffentlicher Schlüssel des Empfängers",
 		"rchange11": "Belohnungsanteil in Prozent",
 		"rchange12": "Angeforderter Befehl wird ausgeführt...",
