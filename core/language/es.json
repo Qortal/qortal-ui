@@ -468,7 +468,7 @@
 		"rchange6": "Receptor",
 		"rchange7": "Acción",
 		"rchange8": "Tipo",
-		"rchange9": "Los niveles 1 a 4 solo pueden crear claves Self-Share (acuñación). ¡Solo el nivel 5 o superior puede crear una recompensa compartida!",
+		"rchange9": "Los niveles 0 a 4 solo pueden crear claves Self-Share (acuñación). ¡Solo el nivel 5 o superior puede crear una recompensa compartida!",
 		"rchange10": "Clave pública del receptor",
 		"rchange11": "Porcentaje de Reward share",
 		"rchange12": "Ejecutando el comando solicitado",

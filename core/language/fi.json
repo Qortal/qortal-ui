@@ -468,7 +468,7 @@
 		"rchange6": "Vastaanottaja",
 		"rchange7": "Toiminta",
 		"rchange8": "Tyyppi",
-		"rchange9": "Tasot 1 - 4 voivat luoda erillisen jaon. Taso 5 tai korkeampi voi luoda palkintoosuuden!",
+		"rchange9": "Tasot 0 - 4 voivat luoda erillisen jaon. Taso 5 tai korkeampi voi luoda palkintoosuuden!",
 		"rchange10": "Vastaanottajan julkinen avain",
 		"rchange11": "Palkintojen jakoprosentti",
 		"rchange12": "Tekee jotain herkullista",
