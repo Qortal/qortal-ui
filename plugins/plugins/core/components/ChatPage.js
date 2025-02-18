@@ -2600,12 +2600,17 @@ class ChatPage extends LitElement {
 					let getInitialMessages = []
 					let count = 0
 					let isUnread = false
+					let chatInfoTimestamp
 
 					const chatId = this.chatId
 					const findContent = this.chatHeads.find((item) => item.url === chatId)
-					const chatInfoTimestamp = findContent.timestamp || 0
 					const lastReadMessageTimestamp = this.lastReadMessageTimestamp
 
+					if (findContent === undefined) {
+						chatInfoTimestamp = 0
+					} else {
+						chatInfoTimestamp = findContent.timestamp || 0
+					}
 
 					if (lastReadMessageTimestamp && chatInfoTimestamp) {
 						if (lastReadMessageTimestamp < chatInfoTimestamp) {
@@ -2721,13 +2726,18 @@ class ChatPage extends LitElement {
 					this.lastReadMessageTimestamp = await chatLastSeen.getItem(this.chatId) || 0
 					if (noInitial) return
 					let getInitialMessages = []
-					const lastReadMessageTimestamp = this.lastReadMessageTimestamp
-
 					let isUnread = false
+					let chatInfoTimestamp
 
 					const chatId = this.chatId
 					const findContent = this.chatHeads.find((item) => item.url === chatId)
-					const chatInfoTimestamp = findContent.timestamp || 0
+					const lastReadMessageTimestamp = this.lastReadMessageTimestamp
+
+					if (findContent === undefined) {
+						chatInfoTimestamp = 0
+					} else {
+						chatInfoTimestamp = findContent.timestamp || 0
+					}
 
 					if (lastReadMessageTimestamp && chatInfoTimestamp) {
 						if (lastReadMessageTimestamp < chatInfoTimestamp) {

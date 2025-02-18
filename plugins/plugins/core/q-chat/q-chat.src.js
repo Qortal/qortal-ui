@@ -39,6 +39,7 @@ import '@polymer/paper-icon-button/paper-icon-button.js'
 import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@vaadin/grid'
 import '@vaadin/tooltip'
+import '@vaadin/text-field'
 
 // Multi language support
 import { get, registerTranslateConfig, translate, use } from '../../../../core/translate'
@@ -62,6 +63,7 @@ class Chat extends LitElement {
 			messages: { type: Array },
 			btnDisable: { type: Boolean },
 			isLoading: { type: Boolean },
+			isViewOpen: { type: Boolean },
 			balance: { type: Number },
 			theme: { type: String, reflect: true },
 			blockedUsers: { type: Array },
@@ -69,6 +71,7 @@ class Chat extends LitElement {
 			privateMessagePlaceholder: { type: String },
 			imageFile: { type: Object },
 			activeChatHeadUrl: { type: String },
+			switchChatHeadUrl: { type: String },
 			openPrivateMessage: { type: Boolean },
 			userFound: { type: Array },
 			userFoundModalOpen: { type: Boolean },
@@ -102,6 +105,7 @@ class Chat extends LitElement {
 		this.messages = []
 		this.btnDisable = false
 		this.isLoading = false
+		this.isViewOpen = false
 		this.showNewMessageBar = this.showNewMessageBar.bind(this)
 		this.hideNewMessageBar = this.hideNewMessageBar.bind(this)
 		this.setOpenPrivateMessage = this.setOpenPrivateMessage.bind(this)
@@ -113,6 +117,7 @@ class Chat extends LitElement {
 		this.privateMessagePlaceholder = ''
 		this.imageFile = null
 		this.activeChatHeadUrl = ''
+		this.switchChatHeadUrl = ''
 		this.openPrivateMessage = false
 		this.userFound = []
 		this.userFoundModalOpen = false
@@ -140,7 +145,7 @@ class Chat extends LitElement {
 							</vaadin-tooltip>
 						</div>
 						<div style="display:flex; align-items:center;gap:10px">
-							<div id="viewChat" class="create-chat" @click=${() => { this.shadowRoot.querySelector('#viewChatDialog').show() }}>
+							<div id="viewChat" class="create-chat" @click=${() => { this.openView(this.activeChatHeadUrl) }}>
 								<mwc-icon style="color: var(--black);">pageview</mwc-icon>
 								<vaadin-tooltip
 									for="viewChat"
@@ -185,7 +190,11 @@ class Chat extends LitElement {
 						<span>${translate("chatpage.cchange5")} <mwc-icon style="font-size: 16px; vertical-align: bottom;">keyboard_arrow_down</mwc-icon></span>
 					</div>
 					<div class="chat-history">
-						${this.activeChatHeadUrl ? html`${this.renderChatPage()}` : html`${this.renderChatWelcomePage()}`}
+						${this.activeChatHeadUrl ?
+							html`${this.renderChatPage()}`
+							: this.isViewOpen ? html`${this.renderChatViewPage()}`
+							: html`${this.renderChatWelcomePage()}`
+						}
 					</div>
 				</div>
 				<!-- Start Chatting Dialog -->
@@ -315,43 +324,24 @@ class Chat extends LitElement {
 					</mwc-button>
 				</mwc-dialog>
 				<!-- View Chat Over ID -->
-				<mwc-dialog id="viewChatDialog">
-					<div style="text-align: center;">
-						<h1>${translate("modals.mpchange87")}</h1>
-						<hr>
-						<br>
+				<paper-dialog id="viewChatDialog" class="viewSettings" modal>
+					<div style="display: inline;">
+						<div class="view">
+							<vaadin-text-field
+								style="width: 350px"
+								id="groupIdInput"
+								required
+								allowed-char-pattern="[0-9]"
+								placeholder="${translate("modals.mpchange87")}"
+								value=""
+								@keydown="${this.viewKeyListener}"
+								clear-button-visible
+							>
+							</vaadin-text-field>
+							<paper-icon-button icon="icons:visibility" @click="${() => this.switchChatID()}" title="${translate("general.view")}"></paper-icon-button>
+							<paper-icon-button icon="icons:close" @click="${() => this.closeView()}" title="${translate("general.close")}"></paper-icon-button>
+						</div>
 					</div>
-					<div style="display: flex; align-items: center;">
-						<mwc-textfield
-							style="width: 100%;"
-							required
-							id="groupIdInput"
-							label="${translate("managegroup.mg8")}"
-							type="number"
-							auto-validate="false"
-							value=""
-						>
-						</mwc-textfield>
-					</div>
-					<mwc-button slot="primaryAction" dialogAction="cancel" class="red">
-						${translate("general.close")}
-					</mwc-button>
-					<mwc-button slot="secondaryAction" class="green" @click=${this.switchChatID}>
-						${translate("general.view")}
-					</mwc-button>
-				</mwc-dialog>
-				<paper-dialog id="checkIdDialog" class="check" modal>
-					<div class="check-roller">
-						<div></div>
-						<div></div>
-						<div></div>
-						<div></div>
-						<div></div>
-						<div></div>
-						<div></div>
-						<div></div>
-					</div>
-					<h2>Checking</h2>
 				</paper-dialog>
 			</div>
 		`
@@ -499,8 +489,6 @@ class Chat extends LitElement {
 
 		viewGroupID = this.shadowRoot.getElementById('groupIdInput').value
 
-		this.shadowRoot.getElementById('checkIdDialog').open()
-
 		await parentEpml.request('apiCall', {
 			url: `/groups/${viewGroupID}`
 		}).then(res => {
@@ -508,22 +496,52 @@ class Chat extends LitElement {
 		})
 
 		if (checkTheID.error) {
-			this.shadowRoot.getElementById('checkIdDialog').close()
 			this.shadowRoot.getElementById('viewChatDialog').close()
 			this.shadowRoot.getElementById('groupIdInput').value = ''
+			this.isViewOpen = false
+			this.activeChatHeadUrl = this.switchChatHeadUrl
+			this.switchChatHeadUrl = ''
+			this.resetChatEditor()
 			parentEpml.request('showSnackBar', `${notFound}`)
 		} else if (checkTheID.groupId) {
 			let switchToID = checkTheID.groupName
-			this.shadowRoot.getElementById('checkIdDialog').close()
 			this.shadowRoot.getElementById('viewChatDialog').close()
 			this.shadowRoot.getElementById('groupIdInput').value = ''
+			this.switchChatHeadUrl = ''
 			parentEpml.request('showSnackBar', `${switchToID}`)
 			this.processChatID(checkTheID.groupId)
 		} else {
-			this.shadowRoot.getElementById('checkIdDialog').close()
 			this.shadowRoot.getElementById('viewChatDialog').close()
 			this.shadowRoot.getElementById('groupIdInput').value = ''
+			this.isViewOpen = false
+			this.activeChatHeadUrl = this.switchChatHeadUrl
+			this.switchChatHeadUrl = ''
+			this.resetChatEditor()
 			parentEpml.request('showSnackBar', `${wentWrong}`)
+		}
+	}
+
+	openView(currentUrl) {
+		this.switchChatHeadUrl = currentUrl
+		this.activeChatHeadUrl = ''
+		this.isViewOpen = true
+		this.shadowRoot.getElementById('viewChatDialog').open()
+		this.shadowRoot.getElementById('groupIdInput').value = ''
+		this.resetChatEditor()
+	}
+
+	closeView() {
+		this.shadowRoot.getElementById('viewChatDialog').close()
+		this.shadowRoot.getElementById('groupIdInput').value = ''
+		this.isViewOpen = false
+		this.activeChatHeadUrl = this.switchChatHeadUrl
+		this.switchChatHeadUrl = ''
+		this.resetChatEditor()
+	}
+
+	viewKeyListener(e) {
+		if (e.key === 'Enter') {
+			this.switchChatID()
 		}
 	}
 
@@ -535,6 +553,7 @@ class Chat extends LitElement {
 
 	async setActiveChatHeadUrl(url) {
 		await this.getSymKeyFile(url)
+		this.isViewOpen = false
 	}
 
 	async getSymKeyFile(url) {
@@ -1150,6 +1169,22 @@ class Chat extends LitElement {
 				.setOpenPrivateMessage=${(val) => this.setOpenPrivateMessage(val)}
 			>
 			</chat-welcome-page>
+		`
+	}
+
+	renderChatViewPage() {
+		return html`
+			<div class="view-grid">
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
 		`
 	}
 
