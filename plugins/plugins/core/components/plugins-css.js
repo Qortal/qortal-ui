@@ -7146,18 +7146,28 @@ export const qchatStyles = css`
     * {
         --mdc-theme-primary: rgb(3, 169, 244);
         --mdc-theme-secondary: var(--mdc-theme-primary);
-        --paper-input-container-focus-color: var(--mdc-theme-primary);
         --mdc-theme-surface: var(--white);
         --mdc-dialog-content-ink-color: var(--black);
+        --mdc-dialog-min-width: 750px;
         --lumo-primary-text-color: rgb(0, 167, 245);
         --lumo-primary-color-50pct: rgba(0, 167, 245, 0.5);
         --lumo-primary-color-10pct: rgba(0, 167, 245, 0.1);
         --lumo-primary-color: hsl(199, 100%, 48%);
+        --lumo-secondary-text-color: var(--sectxt);
+        --lumo-contrast-60pct: var(--vdicon);
+        --item-selected-color: var(--nav-selected-color);
         --lumo-base-color: var(--white);
         --lumo-body-text-color: var(--black);
         --_lumo-grid-border-color: var(--border);
         --_lumo-grid-secondary-border-color: var(--border2);
-        --mdc-dialog-min-width: 750px;
+        --item-selected-color-text: var(--nav-selected-color-text);
+        --item-color-active: var(--nav-color-active);
+        --item-color-hover: var(--nav-color-hover);
+        --item-text-color: var(--nav-text-color);
+        --item-icon-color: var(--nav-icon-color);
+        --item-border-color: var(--nav-border-color);
+        --item-border-selected-color: var(--nav-border-selected-color);
+        --paper-input-container-focus-color: var(--mdc-theme-primary);
     }
 
     paper-spinner-lite {
@@ -7655,109 +7665,108 @@ export const qchatStyles = css`
         overflow: hidden;
     }
 
-    .check-roller {
-        display: inline-block;
-        position: relative;
-        width: 80px;
-        height: 80px;
-    }
-
-    .check-roller div {
-        animation: check-roller 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-        transform-origin: 40px 40px;
-    }
-
-    .check-roller div:after {
-        content: " ";
-        display: block;
+    .view-grid {
+        width: 120px;
+        height: 120px;
         position: absolute;
-        width: 7px;
-        height: 7px;
+        left: 50%;
+        top: 50%;
+    }
+
+    .view-grid div {
+        position: absolute;
+        width: 34px;
+        height: 34px;
         border-radius: 50%;
-        background: var(--black);
-        margin: -4px 0 0 -4px;
+        background: #03a9f4;
+        animation: view-grid 1.2s linear infinite;
     }
 
-    .check-roller div:nth-child(1) {
-        animation-delay: -0.036s;
+    .view-grid div:nth-child(1) {
+        top: 4px;
+        left: 4px;
+        animation-delay: 0s;
     }
 
-    .check-roller div:nth-child(1):after {
-        top: 63px;
-        left: 63px;
-    }
-
-    .check-roller div:nth-child(2) {
-        animation-delay: -0.072s;
-    }
-
-    .check-roller div:nth-child(2):after {
-        top: 68px;
-        left: 56px;
-    }
-
-    .check-roller div:nth-child(3) {
-        animation-delay: -0.108s;
-    }
-
-    .check-roller div:nth-child(3):after {
-        top: 71px;
+    .view-grid div:nth-child(2) {
+        top: 4px;
         left: 48px;
+        animation-delay: -0.4s;
     }
 
-    .check-roller div:nth-child(4) {
-        animation-delay: -0.144s;
+    .view-grid div:nth-child(3) {
+        top: 4px;
+        left: 90px;
+        animation-delay: -0.8s;
     }
 
-    .check-roller div:nth-child(4):after {
-        top: 72px;
-        left: 40px;
+    .view-grid div:nth-child(4) {
+        top: 50px;
+        left: 4px;
+        animation-delay: -0.4s;
     }
 
-    .check-roller div:nth-child(5) {
-        animation-delay: -0.18s;
+    .view-grid div:nth-child(5) {
+        top: 50px;
+        left: 48px;
+        animation-delay: -0.8s;
     }
 
-    .check-roller div:nth-child(5):after {
-        top: 71px;
-        left: 32px;
+    .view-grid div:nth-child(6) {
+        top: 50px;
+        left: 90px;
+        animation-delay: -1.2s;
     }
 
-    .check-roller div:nth-child(6) {
-        animation-delay: -0.216s;
+    .view-grid div:nth-child(7) {
+        top: 95px;
+        left: 4px;
+        animation-delay: -0.8s;
     }
 
-    .check-roller div:nth-child(6):after {
-        top: 68px;
-        left: 24px;
+    .view-grid div:nth-child(8) {
+        top: 95px;
+        left: 48px;
+        animation-delay: -1.2s;
     }
 
-    .check-roller div:nth-child(7) {
-        animation-delay: -0.252s;
+    .view-grid div:nth-child(9) {
+        top: 95px;
+        left: 90px;
+        animation-delay: -1.6s;
     }
 
-    .check-roller div:nth-child(7):after {
-        top: 63px;
-        left: 17px;
-    }
+    @keyframes view-grid {
 
-    .check-roller div:nth-child(8) {
-        animation-delay: -0.288s;
-    }
-
-    .check-roller div:nth-child(8):after {
-        top: 56px;
-        left: 12px;
-    }
-
-    @keyframes check-roller {
-        0% {
-            transform: rotate(0deg);
-        }
-
+        0%,
         100% {
-            transform: rotate(360deg);
+            opacity: 1;
         }
+
+        50% {
+            opacity: 0.5;
+        }
+    }
+
+    paper-dialog.viewSettings {
+        min-width: 525px;
+        max-width: 525px;
+        min-height: auto;
+        max-height: 150px;
+        background-color: var(--white);
+        color: var(--black);
+        line-height: 1.6;
+        overflow: hidden;
+        border: 1px solid var(--black);
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .view {
+        display: inline;
+        width: 50%;
+        align-items: center;
     }
 `
 
