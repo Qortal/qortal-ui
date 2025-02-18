@@ -3365,10 +3365,11 @@ class WebBrowser extends LitElement {
 					const signRequest = await showModalAndWait(
 						actions.SIGN_TRANSACTION,
 						{
-							text1: `${shouldProcess ? get("modals.mpchange65") : get("modals.mpchange6")}`,
+							text1: `${shouldProcess ? get("modals.mpchange65") : get("modals.mpchange66")}`,
 							text2: get("modals.mpchange67"),
 							text3: `${get("modals.mpchange68")} ${decodedData.type}`,
-							json: `${get("modals.mpchange69")} ${decodedData}`
+							txdata: `${get("modals.mpchange69")}`,
+							txjson: `${JSON.stringify(decodedData)}`
 						}
 					)
 					if (signRequest.action === 'accept') {
@@ -3399,10 +3400,7 @@ class WebBrowser extends LitElement {
 						const signedBytes = appendBuffer(arbitraryBytesBuffer, signature)
 						const signedBytesToBase58 = Base58.encode(signedBytes)
 						if(!shouldProcess) {
-							let myMsg1 = get("modals.mpchange70")
-							let myMsg2 = get("modals.mpchange71") + signedBytesToBase58
-							await showSuccessAndWait("REQUEST_SUCCESS", { id1: myMsg1, id2: myMsg2 })
-							response = '{"error": "Process transaction was not requested!"}'
+							response = signedBytesToBase58
 							break
 						}
 						try {
@@ -5265,7 +5263,8 @@ async function showModalAndWait(type, data) {
 							<p class="modal-paragraph">${data.text1}</p>
 							<p class="modal-paragraph">${data.text2}</p>
 							<p class="modal-paragraph">${data.text3}</p>
-							<p class="modal-paragraph">Transaction: <span>${data.json}</span></p>
+							<p class="modal-paragraph"><span>${data.txdata}</span></p>
+							<p class="modal-paragraph"><span>${convertJson(data.txjson)}</span></p>
 						` : ''}
 
 						${type === actions.CREATE_TRADE_BUY_ORDER ? `
@@ -5413,6 +5412,35 @@ async function showModalAndWait(type, data) {
 			})
 		}
 	})
+}
+
+function convertJson(jsonStr) {
+	let regeStr = ''
+	let f = {
+		brace: 0
+	}
+
+	regeStr = jsonStr.replace(/({|}[,]*|[^{}:]+:[^{}:,]*[,{]*)/g, function (m, p1) {
+		const rtnFn = function() {
+			return '<div style="text-indent: ' + (f['brace'] * 20) + 'px;color: var(--black);">' + p1 + '</div>'
+		}
+
+		let rtnStr = 0
+
+		if (p1.lastIndexOf('{') === (p1.length - 1)) {
+			rtnStr = rtnFn()
+			f['brace'] += 1
+		} else if (p1.indexOf('}') === 0) {
+			f['brace'] -= 1
+			rtnStr = rtnFn()
+		} else {
+			rtnStr = rtnFn()
+		}
+
+		return rtnStr
+	})
+
+	return regeStr
 }
 
 async function showErrorAndWait(type, data) {
