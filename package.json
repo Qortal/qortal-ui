@@ -59,7 +59,7 @@
 		"localforage": "1.10.0",
 		"lodash": "4.17.21",
 		"os-locale": "5.0.0",
-		"prosemirror-commands": "1.6.2",
+		"prosemirror-commands": "1.7.0",
 		"prosemirror-dropcursor": "1.8.1",
 		"prosemirror-gapcursor": "1.3.2",
 		"prosemirror-history": "1.4.1",
@@ -128,7 +128,7 @@
 		"@vaadin/tooltip": "24.2.9",
 		"@zip.js/zip.js": "2.7.57",
 		"axios": "1.7.9",
-		"electron": "34.2.0",
+		"electron": "32.3.1",
 		"electron-builder": "25.1.8",
 		"epml": "0.3.3",
 		"file-saver": "2.0.5",
@@ -140,13 +140,13 @@
 		"pwa-helpers": "0.9.1",
 		"redux": "5.0.1",
 		"redux-thunk": "3.1.0",
-		"rollup": "4.34.7",
+		"rollup": "4.34.8",
 		"rollup-plugin-node-globals": "1.4.0",
 		"rollup-plugin-progress": "1.1.2",
 		"rollup-plugin-scss": "3.0.0",
 		"shelljs": "0.8.5"
 	},
 	"engines": {
-		"node": ">=20.18.1"
+		"node": ">=20.16.0"
 	}
 }

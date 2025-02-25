@@ -38,16 +38,16 @@ crashReporter.start({
 })
 
 if (myMemory > 16000000000) {
-	app.commandLine.appendSwitch('js-flags', '--max-executable-size=192', '--max-old-space-size=8192', '--max-semi-space-size=2')
+	app.commandLine.appendSwitch('js-flags', '--max-old-space-size=8192')
 	log.info("Memory Size Is 16GB Using JS Memory Heap Size 8GB")
 } else if (myMemory > 12000000000) {
-	app.commandLine.appendSwitch('js-flags', '--max-executable-size=192', '--max-old-space-size=6144', '--max-semi-space-size=2')
+	app.commandLine.appendSwitch('js-flags', '--max-old-space-size=6144')
 	log.info("Memory Size Is 12GB Using JS Memory Heap Size 6GB")
 } else if (myMemory > 7000000000) {
-	app.commandLine.appendSwitch('js-flags', '--max-executable-size=192', '--max-old-space-size=4096', '--max-semi-space-size=2')
+	app.commandLine.appendSwitch('js-flags', '--max-old-space-size=4096')
 	log.info("Memory Size Is 8GB Using JS Memory Heap Size 4GB")
 } else {
-	app.commandLine.appendSwitch('js-flags', '--max-executable-size=192', '--max-old-space-size=2048', '--max-semi-space-size=2')
+	app.commandLine.appendSwitch('js-flags', '--max-old-space-size=2048')
 	log.info("Memory Size Is 4GB Using JS Memory Heap Size 2GB")
 }
 
@@ -69,8 +69,6 @@ if (process.arch === 'arm') {
 } else {
 	app.commandLine.appendSwitch('enable-experimental-web-platform-features')
 	app.commandLine.appendSwitch('disable-renderer-backgrounding')
-	app.commandLine.appendSwitch('disable-http-cache')
-	app.commandLine.appendSwitch('disable-software-rasterizer')
 	app.commandLine.appendSwitch('in-process-gpu')
 	log.info('We are on 64bit. Hardware Acceleration is enabled !')
 }
