@@ -1107,7 +1107,7 @@ class MessageTemplate extends LitElement {
 			version = parsedMessageObj.version
 			isForwarded = parsedMessageObj.type === 'forward'
 			isEdited = parsedMessageObj.isEdited && true
-			isEncrypted = parsedMessageObj.isFromHub || parsedMessageObj.isFrivate || parsedMessageObj.message ? true : false
+			isEncrypted = parsedMessageObj.isFromHub || parsedMessageObj.isPrivate || parsedMessageObj.message ? true : false
 
 			if (parsedMessageObj.images && Array.isArray(parsedMessageObj.images) && parsedMessageObj.images.length > 0) {
 				image = parsedMessageObj.images[0]
