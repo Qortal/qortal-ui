@@ -2897,7 +2897,7 @@ export const decryptChatMessageBase64 = (encryptedMessage, privateKey, recipient
 
 	if (decrypted1.includes('messageText')) {
 		let decrypted2 = JSON.parse(decrypted1)
-		let decrypted3 = Object.assign(decrypted2, {isFrivate: true})
+		let decrypted3 = Object.assign(decrypted2, {isPrivate: true})
 		return JSON.stringify(decrypted3)
 	}
 

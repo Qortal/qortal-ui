@@ -1681,7 +1681,7 @@ class ChatPage extends LitElement {
 
 				const getMembersAdmins = await parentEpml.request("apiCall", {
 					type: "api",
-					url: `/groups/members/${groupId}?onlyAdmins=true&limit=20`
+					url: `/groups/members/${groupId}?onlyAdmins=true&limit=0`
 				})
 
 				const getGroupInfo = await parentEpml.request("apiCall", {
