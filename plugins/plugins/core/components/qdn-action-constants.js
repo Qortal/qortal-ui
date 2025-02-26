@@ -122,8 +122,9 @@ export const extensionToPointer = (repString) => {
 	const replace36 = replace35.split('.7z').join('.7z</newpointer>')
 	const replace37 = replace36.split('.gz').join('.gz</newpointer>')
 	const replace38 = replace37.split('.bz2').join('.bz2</newpointer>')
+	const replace39 = replace38.split('service=QCHAT_IMAGE</p>').join('service=QCHAT_IMAGE</newpointer></p>')
 
-	return replace38
+	return replace39
 }
 
 export const encodedToChar = (encodedString) => {
