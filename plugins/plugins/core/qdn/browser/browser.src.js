@@ -5551,14 +5551,14 @@ async function showModalAndWait(type, data) {
 
 		const labelButton3 = modal.querySelector('#transactionsButtonLabel')
 		if (labelButton3) {
-			labelButton1.addEventListener('click', () => {
+			labelButton3.addEventListener('click', () => {
 				this.shadowRoot.getElementById('transactionsButton').click()
 			})
 		}
 
 		const checkbox3 = modal.querySelector('#transactionsButton')
 		if (checkbox3) {
-			checkbox1.addEventListener('click', (e) => {
+			checkbox3.addEventListener('click', (e) => {
 				if (e.target.checked) {
 					window.parent.reduxStore.dispatch(window.parent.reduxAction.removeQAPPAutoTransacions(false))
 					return
