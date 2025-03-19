@@ -20,7 +20,9 @@ import {
 	setSideEffectAction,
 	setTabNotifications,
 	allowQAPPAutoBalance,
-	removeQAPPAutoBalance
+	removeQAPPAutoBalance,
+	allowQAPPAutoTransactions,
+	removeQAPPAutoTransactions
 } from '../../redux/app/app-actions'
 import settings from '../../functional-components/settings-page'
 import './welcome-page'
@@ -56,7 +58,9 @@ window.reduxAction = {
 	allowShowSyncIndicator: allowShowSyncIndicator,
 	removeShowSyncIndicator: removeShowSyncIndicator,
 	allowQAPPAutoBalance: allowQAPPAutoBalance,
-	removeQAPPAutoBalance: removeQAPPAutoBalance
+	removeQAPPAutoBalance: removeQAPPAutoBalance,
+	allowQAPPAutoTransactions: allowQAPPAutoTransactions,
+	removeQAPPAutoTransactions: removeQAPPAutoTransactions
 }
 
 const animationDuration = 0.7 // Seconds

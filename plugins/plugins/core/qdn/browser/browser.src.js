@@ -13,7 +13,10 @@ import {
 	processTransactionV2,
 	publishData,
 	requestQueueGetAtAddresses,
-	tradeBotCreateRequest
+	tradeBotCreateRequest,
+	getArrrSyncStatus,
+	getNodeInfo,
+	getNodeStatus
 } from '../../../utils/classes'
 import {appendBuffer} from '../../../utils/utilities'
 import {QORT_DECIMALS} from '../../../../../crypto/api/constants'
@@ -316,6 +319,21 @@ class WebBrowser extends LitElement {
 			switch (data.action) {
 				case actions.IS_USING_PUBLIC_NODE: {
 					response = await isUsingPublicNode()
+				}
+					break
+
+				case actions.GET_ARRR_SYNC_STATUS: {
+					response = await getArrrSyncStatus()
+				}
+					break
+
+				case actions.GET_NODE_INFO: {
+					response = await getNodeInfo()
+				}
+					break
+
+				case actions.GET_NODE_STATUS: {
+					response = await getNodeStatus()
 				}
 					break
 
@@ -2685,6 +2703,7 @@ class WebBrowser extends LitElement {
 								break
 							case 'ARRR':
 								userWallet['address'] = arrrAddress
+								userWallet['publicKey'] = window.parent.reduxStore.getState().app.selectedAddress.arrrWallet.seed58
 								break
 							default:
 								break
@@ -2701,12 +2720,121 @@ class WebBrowser extends LitElement {
 				}
 					break
 
+				case actions.GET_USER_WALLET_TRANSACTIONS: {
+					const requiredFields = ['coin']
+					const missingFields = []
+					let dataSentBack = {}
+					let skipWalletTransactions = false
+					let resSkipWalletTransactions
+					requiredFields.forEach((field) => {
+						if (!data[field]) {
+							missingFields.push(field)
+						}
+					})
+					if (missingFields.length > 0) {
+						const missingFieldsString = missingFields.join(', ')
+						const tryAgain = get("walletpage.wchange44")
+						await showErrorAndWait(
+							"MISSING_FIELDS",
+							{
+								id1: missingFieldsString,
+								id2: tryAgain
+							}
+						)
+						dataSentBack['error'] = `Missing fields: ${missingFieldsString}`
+						response = JSON.stringify(dataSentBack)
+						break
+					}
+					if (window.parent.reduxStore.getState().app.qAPPAutoTransactions) {
+						skipWalletTransactions = true
+					}
+					if (!skipWalletTransactions) {
+						resSkipWalletTransactions = await showModalAndWait(
+							actions.GET_USER_WALLET_TRANSACTIONS
+						)
+					}
+					if ((resSkipWalletTransactions && resSkipWalletTransactions.action === 'accept') || skipWalletTransactions) {
+						let coin = data.coin
+						if (coin === "QORT") {
+							let qortAddress = window.parent.reduxStore.getState().app.selectedAddress.address
+							try {
+								response = await parentEpml.request('apiCall', {
+									url: `/transactions/address/${qortAddress}?limit=0&reverse=true`
+								})
+								break
+							} catch (error) {
+								let myMsg1 = get("browserpage.bchange21")
+								let myMsg2 = get("walletpage.wchange44")
+								await showErrorAndWait("ACTION_FAILED", {id1: myMsg1, id2: myMsg2})
+								const data = {}
+								data['error'] = error.message ? error.message : get("browserpage.bchange21")
+								response = JSON.stringify(data)
+								break
+							}
+						} else {
+							let _url = ``
+							let _body = null
+							switch (coin) {
+								case 'BTC':
+									_url = `/crosschain/btc/wallettransactions?apiKey=${this.getApiKey()}`
+									_body = window.parent.reduxStore.getState().app.selectedAddress.btcWallet.derivedMasterPublicKey
+									break
+								case 'LTC':
+									_url = `/crosschain/ltc/wallettransactions?apiKey=${this.getApiKey()}`
+									_body = window.parent.reduxStore.getState().app.selectedAddress.ltcWallet.derivedMasterPublicKey
+									break
+								case 'DOGE':
+									_url = `/crosschain/doge/wallettransactions?apiKey=${this.getApiKey()}`
+									_body = window.parent.reduxStore.getState().app.selectedAddress.dogeWallet.derivedMasterPublicKey
+									break
+								case 'DGB':
+									_url = `/crosschain/dgb/wallettransactions?apiKey=${this.getApiKey()}`
+									_body = window.parent.reduxStore.getState().app.selectedAddress.dgbWallet.derivedMasterPublicKey
+									break
+								case 'RVN':
+									_url = `/crosschain/rvn/wallettransactions?apiKey=${this.getApiKey()}`
+									_body = window.parent.reduxStore.getState().app.selectedAddress.rvnWallet.derivedMasterPublicKey
+									break
+								case 'ARRR':
+									_url = `/crosschain/arrr/wallettransactions?apiKey=${this.getApiKey()}`
+									_body = window.parent.reduxStore.getState().app.selectedAddress.arrrWallet.seed58
+									break
+								default:
+									break
+							}
+							try {
+								response = await parentEpml.request('apiCall', {
+									url: _url,
+									method: 'POST',
+									body: _body
+								})
+								break
+							} catch (error) {
+								let myMsg1 = get("browserpage.bchange21")
+								let myMsg2 = get("walletpage.wchange44")
+								await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
+								const data = {}
+								data['error'] = error.message ? error.message : get("browserpage.bchange21")
+								response = JSON.stringify(data)
+								break
+							}
+						}
+					} else if (resSkipWalletTransactions.action === 'reject') {
+						let myMsg1 = get("transactions.declined")
+						let myMsg2 = get("walletpage.wchange44")
+						await showErrorAndWait("DECLINED_REQUEST", { id1: myMsg1, id2: myMsg2 })
+						response = '{"error": "User declined request"}'
+						break
+					}
+				}
+					break
+
 				case actions.GET_WALLET_BALANCE: {
 					const requiredFields = ['coin']
 					const missingFields = []
 					let dataSentBack = {}
-					let skip = false
-					let res3
+					let skipWalletBalance = false
+					let resSkipWalletBalance
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
@@ -2731,32 +2859,30 @@ class WebBrowser extends LitElement {
 					// then set the response string from the core to the `response` variable (defined above)
 					// If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
 					if (window.parent.reduxStore.getState().app.qAPPAutoBalance) {
-						skip = true
+						skipWalletBalance = true
 					}
-					if (!skip) {
-						res3 = await showModalAndWait(
+					if (!skipWalletBalance) {
+						resSkipWalletBalance = await showModalAndWait(
 							actions.GET_WALLET_BALANCE
 						)
 					}
-					if ((res3 && res3.action === 'accept') || skip) {
+					if ((resSkipWalletBalance && resSkipWalletBalance.action === 'accept') || skipWalletBalance) {
 						let coin = data.coin
 						if (coin === "QORT") {
 							let qortAddress = window.parent.reduxStore.getState().app.selectedAddress.address
 							try {
-								this.loader.show()
 								response = await parentEpml.request('apiCall', {
 									url: `/addresses/balance/${qortAddress}?apiKey=${this.getApiKey()}`
 								})
-								this.loader.hide()
 								break
 							} catch (error) {
-								this.loader.hide()
 								let myMsg1 = get("browserpage.bchange21")
 								let myMsg2 = get("walletpage.wchange44")
 								await showErrorAndWait("ACTION_FAILED", {id1: myMsg1, id2: myMsg2})
 								const data = {}
 								data['error'] = error.message ? error.message : get("browserpage.bchange21")
 								response = JSON.stringify(data)
+								break
 							}
 						} else {
 							let _url = ``
@@ -2790,14 +2916,12 @@ class WebBrowser extends LitElement {
 									break
 							}
 							try {
-								this.loader.show()
 								const res = await parentEpml.request('apiCall', {
 									url: _url,
 									method: 'POST',
 									body: _body
 								})
 								if (isNaN(Number(res))) {
-									this.loader.hide()
 									let myMsg1 = get("browserpage.bchange21")
 									let myMsg2 = get("walletpage.wchange44")
 									await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
@@ -2806,12 +2930,10 @@ class WebBrowser extends LitElement {
 									response = JSON.stringify(data)
 									break
 								} else {
-									this.loader.hide()
 									response = (Number(res) / 1e8).toFixed(8)
 									break
 								}
 							} catch (error) {
-								this.loader.hide()
 								let myMsg1 = get("browserpage.bchange21")
 								let myMsg2 = get("walletpage.wchange44")
 								await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
@@ -2821,7 +2943,7 @@ class WebBrowser extends LitElement {
 								break
 							}
 						}
-					} else if (res3.action === 'reject') {
+					} else if (resSkipWalletBalance.action === 'reject') {
 						let myMsg1 = get("transactions.declined")
 						let myMsg2 = get("walletpage.wchange44")
 						await showErrorAndWait("DECLINED_REQUEST", { id1: myMsg1, id2: myMsg2 })
@@ -2834,7 +2956,9 @@ class WebBrowser extends LitElement {
 				case actions.GET_USER_WALLET_INFO: {
 					const requiredFields = ['coin']
 					const missingFields = []
+					let skipUserWalletInfo = false
 					let dataSentBack = {}
+					let resSkipUserWalletInfo
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
@@ -2854,16 +2978,20 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(dataSentBack)
 						break
 					}
-					const userWallet = await showModalAndWait(
-						actions.GET_USER_WALLET
-					)
-					if (userWallet.action === 'accept') {
+					if (window.parent.reduxStore.getState().app.qAPPAutoAuth) {
+						skipUserWalletInfo = true
+					}
+					if (!skipUserWalletInfo) {
+						resSkipUserWalletInfo = await showModalAndWait(
+							actions.GET_USER_WALLET
+						)
+					}
+					if ((resSkipUserWalletInfo && resSkipUserWalletInfo.action === 'accept') || skipUserWalletInfo) {
 						let coin = data.coin
 						let walletKeys = this.getUserWallet(coin)
 						let _url = `/crosschain/` + data.coin.toLowerCase() + `/addressinfos?apiKey=${this.getApiKey()}`
 						let _body = { xpub58: walletKeys['publicKey'] }
 						try {
-							this.loader.show()
 							const bodyToString = JSON.stringify(_body)
 							const res = await parentEpml.request('apiCall', {
 								url: _url,
@@ -2876,7 +3004,6 @@ class WebBrowser extends LitElement {
 							})
 							response = JSON.stringify(res)
 						} catch (error) {
-							this.loader.hide()
 							let myMsg1 = get("browserpage.bchange21")
 							let myMsg2 = get("walletpage.wchange44")
 							await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
@@ -2884,10 +3011,8 @@ class WebBrowser extends LitElement {
 							data['error'] = error.message ? error.message : get("browserpage.bchange21")
 							response = JSON.stringify(data)
 							return
-						} finally {
-							this.loader.hide()
 						}
-					} else if (userWallet.action === 'reject') {
+					} else if (resSkipUserWalletInfo.action === 'reject') {
 						let myMsg1 = get("transactions.declined")
 						let myMsg2 = get("walletpage.wchange44")
 						await showErrorAndWait("DECLINED_REQUEST", { id1: myMsg1, id2: myMsg2 })
@@ -2921,7 +3046,6 @@ class WebBrowser extends LitElement {
 					}
 					let _url = `/crosschain/` + data.coin.toLowerCase() + `/serverinfos`
 					try {
-						this.loader.show()
 						const res = await parentEpml.request('apiCall', {
 							url: _url,
 							method: 'GET',
@@ -2931,7 +3055,6 @@ class WebBrowser extends LitElement {
 						})
 						response = JSON.stringify(res.servers)
 					} catch (error) {
-						this.loader.hide()
 						let myMsg1 = get("modals.mpchange55")
 						let myMsg2 = get("walletpage.wchange44")
 						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
@@ -2939,8 +3062,6 @@ class WebBrowser extends LitElement {
 						data['error'] = error.message ? error.message : get("modals.mpchange55")
 						response = JSON.stringify(data)
 						return
-					} finally {
-						this.loader.hide()
 					}
 				}
 					break
@@ -5226,7 +5347,6 @@ async function showModalAndWait(type, data) {
 						${type === actions.GET_PROFILE_DATA ? `
 							<div class="modal-subcontainer">
 								<p class="modal-paragraph">${get("browserpage.bchange49")}: <span style="font-weight: bold"> ${data.property}</span></p>
-
 							</div>
 						` : ''}
 
@@ -5293,6 +5413,18 @@ async function showModalAndWait(type, data) {
 							<p class="modal-paragraph">${data.text2}</p>
 							<p class="modal-paragraph">${data.text3}</p>
 							<p class="modal-paragraph">${get("walletpage.wchange36")}: <span>${data.fee}</span></p>
+						` : ''}
+
+						${type === actions.GET_USER_WALLET_TRANSACTIONS ? `
+							<div class="modal-subcontainer">
+								<p class="modal-paragraph">Do you give this application permission to retrieve your wallet transactions?</p>
+								<div class="checkbox-row">
+									<label for="transactionsButton" id="transactionsButtonLabel" style="color: var(--black);">
+										Always allow wallet txs to be retrieved automatically
+									</label>
+									<mwc-checkbox style="margin-right: -15px;" id="transactionsButton" ?checked=${window.parent.reduxStore.getState().app.qAPPAutoTransactions}></mwc-checkbox>
+								</div>
+							</div>
 						` : ''}
 					</div>
 					<div class="modal-buttons">
@@ -5365,7 +5497,7 @@ async function showModalAndWait(type, data) {
 			})
 		}
 
-		const checkbox1 = modal.querySelector('#abalanceButton')
+		const checkbox1 = modal.querySelector('#balanceButton')
 		if (checkbox1) {
 			checkbox1.addEventListener('click', (e) => {
 				if (e.target.checked) {
@@ -5391,6 +5523,24 @@ async function showModalAndWait(type, data) {
 					return
 				}
 				window.parent.reduxStore.dispatch(window.parent.reduxAction.allowQAPPAutoLists(true))
+			})
+		}
+
+		const labelButton3 = modal.querySelector('#transactionsButtonLabel')
+		if (labelButton3) {
+			labelButton3.addEventListener('click', () => {
+				this.shadowRoot.getElementById('transactionsButton').click()
+			})
+		}
+
+		const checkbox3 = modal.querySelector('#transactionsButton')
+		if (checkbox3) {
+			checkbox3.addEventListener('click', (e) => {
+				if (e.target.checked) {
+					window.parent.reduxStore.dispatch(window.parent.reduxAction.removeQAPPAutoTransacions(false))
+					return
+				}
+				window.parent.reduxStore.dispatch(window.parent.reduxAction.allowQAPPAutoTransacions(true))
 			})
 		}
 

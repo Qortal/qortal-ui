@@ -1552,3 +1552,99 @@ export const cancelTradeOfferTradeBot = async (body, keyPair) => {
 		throw new Error("Failed to Cancel Sell Order. Try again!")
 	}
 }
+
+export const getArrrSyncStatus = async () => {
+	const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+	const nodeUrl = `${myNode.protocol}://${myNode.domain}:${myNode.port}`
+	const myApiKey = myNode.apiKey
+	const url = `${nodeUrl}/crosschain/arrr/syncstatus?apiKey=${myApiKey}`
+	const arrrSeed = window.parent.reduxStore.getState().app.selectedAddress.arrrWallet.seed58
+
+	try {
+		const response = await fetch(url, {
+			method: "POST",
+			headers: {
+				Accept: "*/*"
+			},
+			body: arrrSeed
+		})
+ 
+		let res
+
+		try {
+			res = await response.clone().json()
+		} catch (e) {
+			res = await response.text()
+		}
+
+		return res
+	} catch (error) {
+		console.error(error.message || "Error in retrieving arrr sync status")
+	}
+}
+
+export const getNodeInfo = async () => {
+	const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+	const nodeUrl = `${myNode.protocol}://${myNode.domain}:${myNode.port}`
+	const url = `${nodeUrl}/admin/info`
+
+	try {
+		const response = await fetch(url, {
+			method: "GET",
+			headers: {
+				Accept: "*/*"
+			}
+		})
+
+		if (!response.ok) console.error("Failed to retrieve node info")
+
+		let res
+
+		try {
+			res = await response.clone().json()
+		} catch (e) {
+			res = await response.text()
+		}
+
+		if (res.error && res.message) {
+			console.error(res.message)
+		}
+
+		return res
+	} catch (error) {
+		console.error(error.message || "Error in retrieving node info")
+	}
+}
+ 
+ export const getNodeStatus = async () => {
+	const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
+	const nodeUrl = `${myNode.protocol}://${myNode.domain}:${myNode.port}`
+   	const url = `${nodeUrl}/admin/status`
+
+	try {
+		const response = await fetch(url, {
+			method: "GET",
+			headers: {
+				Accept: "*/*"
+			}
+		})
+
+		if (!response.ok) console.error("Failed to retrieve node status")
+
+		let res
+
+		try {
+			res = await response.clone().json()
+		} catch (e) {
+			res = await response.text()
+		}
+
+		if (res.error && res.message) {
+			console.error(res.message)
+		}
+
+		return res
+	} catch (error) {
+		console.error(error.message || "Error in retrieving node status")
+	}
+}
