@@ -2703,6 +2703,7 @@ class WebBrowser extends LitElement {
 								break
 							case 'ARRR':
 								userWallet['address'] = arrrAddress
+								userWallet['publicKey'] = window.parent.reduxStore.getState().app.selectedAddress.arrrWallet.seed58
 								break
 							default:
 								break
@@ -2723,8 +2724,8 @@ class WebBrowser extends LitElement {
 					const requiredFields = ['coin']
 					const missingFields = []
 					let dataSentBack = {}
-					let skip = false
-					let res3
+					let skipWalletTransactions = false
+					let resSkipWalletTransactions
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
@@ -2745,32 +2746,30 @@ class WebBrowser extends LitElement {
 						break
 					}
 					if (window.parent.reduxStore.getState().app.qAPPAutoTransactions) {
-						skip = true
+						skipWalletTransactions = true
 					}
-					if (!skip) {
-						res3 = await showModalAndWait(
+					if (!skipWalletTransactions) {
+						resSkipWalletTransactions = await showModalAndWait(
 							actions.GET_USER_WALLET_TRANSACTIONS
 						)
 					}
-					if ((res3 && res3.action === 'accept') || skip) {
+					if ((resSkipWalletTransactions && resSkipWalletTransactions.action === 'accept') || skipWalletTransactions) {
 						let coin = data.coin
 						if (coin === "QORT") {
 							let qortAddress = window.parent.reduxStore.getState().app.selectedAddress.address
 							try {
-								this.loader.show()
 								response = await parentEpml.request('apiCall', {
 									url: `/transactions/address/${qortAddress}?limit=0&reverse=true`
 								})
-								this.loader.hide()
 								break
 							} catch (error) {
-								this.loader.hide()
 								let myMsg1 = get("browserpage.bchange21")
 								let myMsg2 = get("walletpage.wchange44")
 								await showErrorAndWait("ACTION_FAILED", {id1: myMsg1, id2: myMsg2})
 								const data = {}
 								data['error'] = error.message ? error.message : get("browserpage.bchange21")
 								response = JSON.stringify(data)
+								break
 							}
 						} else {
 							let _url = ``
@@ -2804,28 +2803,13 @@ class WebBrowser extends LitElement {
 									break
 							}
 							try {
-								this.loader.show()
-								const res = await parentEpml.request('apiCall', {
+								response = await parentEpml.request('apiCall', {
 									url: _url,
 									method: 'POST',
 									body: _body
 								})
-								if (!res.ok) {
-									this.loader.hide()
-									let myMsg1 = get("browserpage.bchange21")
-									let myMsg2 = get("walletpage.wchange44")
-									await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
-									const data = {}
-									data['error'] = get("browserpage.bchange21")
-									response = JSON.stringify(data)
-									break
-								} else {
-									this.loader.hide()
-									response = res
-									break
-								}
+								break
 							} catch (error) {
-								this.loader.hide()
 								let myMsg1 = get("browserpage.bchange21")
 								let myMsg2 = get("walletpage.wchange44")
 								await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
@@ -2835,7 +2819,7 @@ class WebBrowser extends LitElement {
 								break
 							}
 						}
-					} else if (res3.action === 'reject') {
+					} else if (resSkipWalletTransactions.action === 'reject') {
 						let myMsg1 = get("transactions.declined")
 						let myMsg2 = get("walletpage.wchange44")
 						await showErrorAndWait("DECLINED_REQUEST", { id1: myMsg1, id2: myMsg2 })
@@ -2849,8 +2833,8 @@ class WebBrowser extends LitElement {
 					const requiredFields = ['coin']
 					const missingFields = []
 					let dataSentBack = {}
-					let skip = false
-					let res3
+					let skipWalletBalance = false
+					let resSkipWalletBalance
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
@@ -2875,32 +2859,30 @@ class WebBrowser extends LitElement {
 					// then set the response string from the core to the `response` variable (defined above)
 					// If they decline, send back JSON that includes an `error` key, such as `{"error": "User declined request"}`
 					if (window.parent.reduxStore.getState().app.qAPPAutoBalance) {
-						skip = true
+						skipWalletBalance = true
 					}
-					if (!skip) {
-						res3 = await showModalAndWait(
+					if (!skipWalletBalance) {
+						resSkipWalletBalance = await showModalAndWait(
 							actions.GET_WALLET_BALANCE
 						)
 					}
-					if ((res3 && res3.action === 'accept') || skip) {
+					if ((resSkipWalletBalance && resSkipWalletBalance.action === 'accept') || skipWalletBalance) {
 						let coin = data.coin
 						if (coin === "QORT") {
 							let qortAddress = window.parent.reduxStore.getState().app.selectedAddress.address
 							try {
-								this.loader.show()
 								response = await parentEpml.request('apiCall', {
 									url: `/addresses/balance/${qortAddress}?apiKey=${this.getApiKey()}`
 								})
-								this.loader.hide()
 								break
 							} catch (error) {
-								this.loader.hide()
 								let myMsg1 = get("browserpage.bchange21")
 								let myMsg2 = get("walletpage.wchange44")
 								await showErrorAndWait("ACTION_FAILED", {id1: myMsg1, id2: myMsg2})
 								const data = {}
 								data['error'] = error.message ? error.message : get("browserpage.bchange21")
 								response = JSON.stringify(data)
+								break
 							}
 						} else {
 							let _url = ``
@@ -2934,14 +2916,12 @@ class WebBrowser extends LitElement {
 									break
 							}
 							try {
-								this.loader.show()
 								const res = await parentEpml.request('apiCall', {
 									url: _url,
 									method: 'POST',
 									body: _body
 								})
 								if (isNaN(Number(res))) {
-									this.loader.hide()
 									let myMsg1 = get("browserpage.bchange21")
 									let myMsg2 = get("walletpage.wchange44")
 									await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
@@ -2950,12 +2930,10 @@ class WebBrowser extends LitElement {
 									response = JSON.stringify(data)
 									break
 								} else {
-									this.loader.hide()
 									response = (Number(res) / 1e8).toFixed(8)
 									break
 								}
 							} catch (error) {
-								this.loader.hide()
 								let myMsg1 = get("browserpage.bchange21")
 								let myMsg2 = get("walletpage.wchange44")
 								await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
@@ -2965,7 +2943,7 @@ class WebBrowser extends LitElement {
 								break
 							}
 						}
-					} else if (res3.action === 'reject') {
+					} else if (resSkipWalletBalance.action === 'reject') {
 						let myMsg1 = get("transactions.declined")
 						let myMsg2 = get("walletpage.wchange44")
 						await showErrorAndWait("DECLINED_REQUEST", { id1: myMsg1, id2: myMsg2 })
@@ -2978,7 +2956,9 @@ class WebBrowser extends LitElement {
 				case actions.GET_USER_WALLET_INFO: {
 					const requiredFields = ['coin']
 					const missingFields = []
+					let skipUserWalletInfo = false
 					let dataSentBack = {}
+					let resSkipUserWalletInfo
 					requiredFields.forEach((field) => {
 						if (!data[field]) {
 							missingFields.push(field)
@@ -2998,16 +2978,20 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(dataSentBack)
 						break
 					}
-					const userWallet = await showModalAndWait(
-						actions.GET_USER_WALLET
-					)
-					if (userWallet.action === 'accept') {
+					if (window.parent.reduxStore.getState().app.qAPPAutoAuth) {
+						skipUserWalletInfo = true
+					}
+					if (!skipUserWalletInfo) {
+						resSkipUserWalletInfo = await showModalAndWait(
+							actions.GET_USER_WALLET
+						)
+					}
+					if ((resSkipUserWalletInfo && resSkipUserWalletInfo.action === 'accept') || skipUserWalletInfo) {
 						let coin = data.coin
 						let walletKeys = this.getUserWallet(coin)
 						let _url = `/crosschain/` + data.coin.toLowerCase() + `/addressinfos?apiKey=${this.getApiKey()}`
 						let _body = { xpub58: walletKeys['publicKey'] }
 						try {
-							this.loader.show()
 							const bodyToString = JSON.stringify(_body)
 							const res = await parentEpml.request('apiCall', {
 								url: _url,
@@ -3020,7 +3004,6 @@ class WebBrowser extends LitElement {
 							})
 							response = JSON.stringify(res)
 						} catch (error) {
-							this.loader.hide()
 							let myMsg1 = get("browserpage.bchange21")
 							let myMsg2 = get("walletpage.wchange44")
 							await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
@@ -3028,10 +3011,8 @@ class WebBrowser extends LitElement {
 							data['error'] = error.message ? error.message : get("browserpage.bchange21")
 							response = JSON.stringify(data)
 							return
-						} finally {
-							this.loader.hide()
 						}
-					} else if (userWallet.action === 'reject') {
+					} else if (resSkipUserWalletInfo.action === 'reject') {
 						let myMsg1 = get("transactions.declined")
 						let myMsg2 = get("walletpage.wchange44")
 						await showErrorAndWait("DECLINED_REQUEST", { id1: myMsg1, id2: myMsg2 })
@@ -3065,7 +3046,6 @@ class WebBrowser extends LitElement {
 					}
 					let _url = `/crosschain/` + data.coin.toLowerCase() + `/serverinfos`
 					try {
-						this.loader.show()
 						const res = await parentEpml.request('apiCall', {
 							url: _url,
 							method: 'GET',
@@ -3075,7 +3055,6 @@ class WebBrowser extends LitElement {
 						})
 						response = JSON.stringify(res.servers)
 					} catch (error) {
-						this.loader.hide()
 						let myMsg1 = get("modals.mpchange55")
 						let myMsg2 = get("walletpage.wchange44")
 						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
@@ -3083,8 +3062,6 @@ class WebBrowser extends LitElement {
 						data['error'] = error.message ? error.message : get("modals.mpchange55")
 						response = JSON.stringify(data)
 						return
-					} finally {
-						this.loader.hide()
 					}
 				}
 					break
