@@ -265,7 +265,7 @@ class WebBrowser extends LitElement {
 							${this.renderFollowUnfollowButton()}
 						</div>
 						<div class="iframe-container">
-							<iframe id="browser-iframe" src="${this.url}" sandbox="allow-scripts allow-same-origin allow-forms allow-downloads allow-modals" allow="fullscreen">
+							<iframe id="browser-iframe" src="${this.url}" sandbox="allow-scripts allow-same-origin allow-forms allow-downloads allow-modals" allow="fullscreen clipboard-read clipboard-write">
 								<span style="color: var(--black);">${translate('browserpage.bchange6')}</span>
 							</iframe>
 						</div>
