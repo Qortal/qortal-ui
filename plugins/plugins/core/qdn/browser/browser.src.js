@@ -1439,7 +1439,7 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(dataSentBack)
 						break
 					}
-					if (!data.file && !data.data64) {
+					if (!data.file && !data.data64 && !data.base64) {
 						let myMsg1 = get("modals.mpchange22")
 						let myMsg2 = get("walletpage.wchange44")
 						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
@@ -1452,7 +1452,7 @@ class WebBrowser extends LitElement {
 					const service = data.service
 					const name = data.name
 					let identifier = data.identifier
-					let data64 = data.data64
+					let data64 = data.data64 || data.base64
 					const filename = data.filename
 					const title = data.title
 					const description = data.description
@@ -1665,7 +1665,7 @@ class WebBrowser extends LitElement {
 								})
 								continue
 							}
-							if (!resource.file && !resource.data64) {
+							if (!resource.file && !resource.data64 && !resource.base64) {
 								const errorMsg = 'No data or file was submitted'
 								failedPublishesIdentifiers.push({
 									reason: errorMsg,
@@ -1676,7 +1676,7 @@ class WebBrowser extends LitElement {
 							const service = resource.service
 							const name = resource.name
 							let identifier = resource.identifier
-							let data64 = resource.data64
+							let data64 = resource.data64 || resource.base64
 							const filename = resource.filename
 							const title = resource.title
 							const description = resource.description
