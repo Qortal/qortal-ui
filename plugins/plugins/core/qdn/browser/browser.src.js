@@ -1634,10 +1634,16 @@ class WebBrowser extends LitElement {
 					}
 					const getArbitraryFee = await this.getArbitraryFee()
 					feeAmount = getArbitraryFee.fee
+					const reformatResources = resources.map((resource)=> {
+						return {
+							...resource,
+							name: resource.name || this.getMyName()
+						}
+					})
 					const res2 = await showModalAndWait(
 						actions.PUBLISH_MULTIPLE_QDN_RESOURCES,
 						{
-							resources,
+							resources: reformatResources,
 							encrypt: data.encrypt,
 							feeAmount: getArbitraryFee.feeToShow
 						}
@@ -1652,7 +1658,7 @@ class WebBrowser extends LitElement {
 					}
 					let failedPublishesIdentifiers = []
 					this.loader.show()
-					for (const resource of resources) {
+					for (const resource of reformatResources) {
 						try {
 							const requiredFields = ['service']
 							const missingFields = []
@@ -1679,7 +1685,7 @@ class WebBrowser extends LitElement {
 								continue
 							}
 							const service = resource.service
-							const name = data.name || this.getMyName()
+							const name = resource.name
 								if(!name){
 									const errorMsg = `Missing name`
 									failedPublishesIdentifiers.push({
