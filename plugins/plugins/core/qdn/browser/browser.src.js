@@ -184,6 +184,7 @@ class WebBrowser extends LitElement {
 				this.config.user.nodeSettings.pingInterval
 			)
 		}
+		
 
 		const render = () => {
 			const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
@@ -1417,7 +1418,7 @@ class WebBrowser extends LitElement {
 
 				case actions.PUBLISH_QDN_RESOURCE: {
 					// optional fields: encrypt:boolean recipientPublicKey:string
-					const requiredFields = ['service', 'name']
+					const requiredFields = ['service']
 					const missingFields = []
 					let dataSentBack = {}
 					requiredFields.forEach((field) => {
@@ -1450,7 +1451,11 @@ class WebBrowser extends LitElement {
 					}
 					// Use "default" if user hasn't specified an identifer
 					const service = data.service
-					const name = data.name
+					const name = data.name || this.getMyName()
+					if(!name){
+						dataSentBack['error'] = `Missing name`
+						break
+					}
 					let identifier = data.identifier
 					let data64 = data.data64 || data.base64
 					const filename = data.filename
@@ -1649,7 +1654,7 @@ class WebBrowser extends LitElement {
 					this.loader.show()
 					for (const resource of resources) {
 						try {
-							const requiredFields = ['service', 'name']
+							const requiredFields = ['service']
 							const missingFields = []
 							requiredFields.forEach((field) => {
 								if (!resource[field]) {
@@ -1674,7 +1679,15 @@ class WebBrowser extends LitElement {
 								continue
 							}
 							const service = resource.service
-							const name = resource.name
+							const name = data.name || this.getMyName()
+								if(!name){
+									const errorMsg = `Missing name`
+									failedPublishesIdentifiers.push({
+										reason: errorMsg,
+										identifier: resource.identifier
+									})
+									continue
+								}
 							let identifier = resource.identifier
 							let data64 = resource.data64 || resource.base64
 							const filename = resource.filename
@@ -4407,6 +4420,11 @@ class WebBrowser extends LitElement {
 		}, 60000)
 	}
 
+	getMyName(){
+		const names = window.parent.reduxStore.getState().app.accountInfo.names
+		if(names.length === 0) return null
+		return names[0].name
+	}
 	renderFullScreen() {
 		if (window.innerHeight === screen.height) {
 			return html`
