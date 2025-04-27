@@ -184,6 +184,7 @@ class WebBrowser extends LitElement {
 				this.config.user.nodeSettings.pingInterval
 			)
 		}
+		
 
 		const render = () => {
 			const myNode = window.parent.reduxStore.getState().app.nodeConfig.knownNodes[window.parent.reduxStore.getState().app.nodeConfig.node]
@@ -1417,7 +1418,7 @@ class WebBrowser extends LitElement {
 
 				case actions.PUBLISH_QDN_RESOURCE: {
 					// optional fields: encrypt:boolean recipientPublicKey:string
-					const requiredFields = ['service', 'name']
+					const requiredFields = ['service']
 					const missingFields = []
 					let dataSentBack = {}
 					requiredFields.forEach((field) => {
@@ -1439,7 +1440,7 @@ class WebBrowser extends LitElement {
 						response = JSON.stringify(dataSentBack)
 						break
 					}
-					if (!data.file && !data.data64) {
+					if (!data.file && !data.data64 && !data.base64) {
 						let myMsg1 = get("modals.mpchange22")
 						let myMsg2 = get("walletpage.wchange44")
 						await showErrorAndWait("ACTION_FAILED", { id1: myMsg1, id2: myMsg2 })
@@ -1450,9 +1451,13 @@ class WebBrowser extends LitElement {
 					}
 					// Use "default" if user hasn't specified an identifer
 					const service = data.service
-					const name = data.name
+					const name = data.name || this.getMyName()
+					if(!name){
+						dataSentBack['error'] = `Missing name`
+						break
+					}
 					let identifier = data.identifier
-					let data64 = data.data64
+					let data64 = data.data64 || data.base64
 					const filename = data.filename
 					const title = data.title
 					const description = data.description
@@ -1629,10 +1634,16 @@ class WebBrowser extends LitElement {
 					}
 					const getArbitraryFee = await this.getArbitraryFee()
 					feeAmount = getArbitraryFee.fee
+					const reformatResources = resources.map((resource)=> {
+						return {
+							...resource,
+							name: resource.name || this.getMyName()
+						}
+					})
 					const res2 = await showModalAndWait(
 						actions.PUBLISH_MULTIPLE_QDN_RESOURCES,
 						{
-							resources,
+							resources: reformatResources,
 							encrypt: data.encrypt,
 							feeAmount: getArbitraryFee.feeToShow
 						}
@@ -1647,9 +1658,9 @@ class WebBrowser extends LitElement {
 					}
 					let failedPublishesIdentifiers = []
 					this.loader.show()
-					for (const resource of resources) {
+					for (const resource of reformatResources) {
 						try {
-							const requiredFields = ['service', 'name']
+							const requiredFields = ['service']
 							const missingFields = []
 							requiredFields.forEach((field) => {
 								if (!resource[field]) {
@@ -1665,7 +1676,7 @@ class WebBrowser extends LitElement {
 								})
 								continue
 							}
-							if (!resource.file && !resource.data64) {
+							if (!resource.file && !resource.data64 && !resource.base64) {
 								const errorMsg = 'No data or file was submitted'
 								failedPublishesIdentifiers.push({
 									reason: errorMsg,
@@ -1675,8 +1686,16 @@ class WebBrowser extends LitElement {
 							}
 							const service = resource.service
 							const name = resource.name
+								if(!name){
+									const errorMsg = `Missing name`
+									failedPublishesIdentifiers.push({
+										reason: errorMsg,
+										identifier: resource.identifier
+									})
+									continue
+								}
 							let identifier = resource.identifier
-							let data64 = resource.data64
+							let data64 = resource.data64 || resource.base64
 							const filename = resource.filename
 							const title = resource.title
 							const description = resource.description
@@ -4407,6 +4426,11 @@ class WebBrowser extends LitElement {
 		}, 60000)
 	}
 
+	getMyName(){
+		const names = window.parent.reduxStore.getState().app.accountInfo.names
+		if(names.length === 0) return null
+		return names[0].name
+	}
 	renderFullScreen() {
 		if (window.innerHeight === screen.height) {
 			return html`
